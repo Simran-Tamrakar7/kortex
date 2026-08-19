@@ -1,0 +1,449 @@
+datasource db {
+  provider = "sqlite"
+  url      = "file:./dev.db"
+}
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+model User {
+  id                         String            @id @default(uuid())
+  email                      String            @unique
+  passwordHash               String
+  name                       String
+  avatarUrl                  String?
+  timezone                   String            @default("UTC")
+  workingHoursJson           String?           @default("{\"start\":\"09:00\",\"end\":\"17:00\",\"daysOfWeek\":[1,2,3,4,5],\"dailyCapacityHours\":8}")
+  notificationPreferencesJson String?          @default("{\"emailDigest\":true,\"taskAssigned\":true,\"taskMentioned\":true,\"statusChanged\":true}")
+  createdAt                  DateTime          @default(now())
+  updatedAt                  DateTime          @updatedAt
+
+  orgMemberships             OrgMember[]
+  workspaceMemberships       WorkspaceMember[]
+  reportedTasks              Task[]            @relation("ReportedTasks")
+  assignedTasks              TaskAssignee[]
+  watchedTasks               TaskWatcher[]
+  comments                   Comment[]
+  attachments                Attachment[]
+  activityLogs               ActivityLog[]
+  notifications              Notification[]
+  timeEntries                TimeEntry[]
+  authoredDocs               Doc[]
+  apiKeys                    ApiKey[]
+}
+
+model Organization {
+  id         String       @id @default(uuid())
+  name       String
+  slug       String       @unique
+  logoUrl    String?
+  plan       String       @default("TEAM") // FREE, TEAM, BUSINESS, ENTERPRISE
+  ownerId    String
+  createdAt  DateTime     @default(now())
+  updatedAt  DateTime     @updatedAt
+
+  members    OrgMember[]
+  workspaces Workspace[]
+  dashboards Dashboard[]
+}
+
+model OrgMember {
+  id           String       @id @default(uuid())
+  orgId        String
+  userId       String
+  role         String       @default("MEMBER") // OWNER, ADMIN, MEMBER, GUEST, VIEWER
+  invitedEmail String?
+  inviteStatus String       @default("ACCEPTED") // ACCEPTED, PENDING
+  createdAt    DateTime     @default(now())
+
+  org          Organization @relation(fields: [orgId], references: [id], onDelete: Cascade)
+  user         User         @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@unique([orgId, userId])
+}
+
+model Workspace {
+  id          String            @id @default(uuid())
+  orgId       String
+  name        String
+  slug        String
+  description String?
+  icon        String?           @default("Layers")
+  color       String?           @default("#6366f1")
+  createdAt   DateTime          @default(now())
+  updatedAt   DateTime          @updatedAt
+
+  org         Organization      @relation(fields: [orgId], references: [id], onDelete: Cascade)
+  folders     Folder[]
+  projects    Project[]
+  members     WorkspaceMember[]
+  docs        Doc[]
+
+  @@unique([orgId, slug])
+}
+
+model WorkspaceMember {
+  id          String    @id @default(uuid())
+  workspaceId String
+  userId      String
+  role        String    @default("MEMBER")
+  createdAt   DateTime  @default(now())
+
+  workspace   Workspace @relation(fields: [workspaceId], references: [id], onDelete: Cascade)
+  user        User      @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@unique([workspaceId, userId])
+}
+
+model Folder {
+  id          String    @id @default(uuid())
+  workspaceId String
+  name        String
+  color       String?   @default("#8b5cf6")
+  icon        String?   @default("Folder")
+  createdAt   DateTime  @default(now())
+  updatedAt   DateTime  @updatedAt
+
+  workspace   Workspace @relation(fields: [workspaceId], references: [id], onDelete: Cascade)
+  projects    Project[]
+}
+
+model Project {
+  id             String            @id @default(uuid())
+  workspaceId    String
+  folderId       String?
+  name           String
+  key            String            // e.g. "KOR"
+  type           String            @default("SOFTWARE_SCRUM") // SOFTWARE_SCRUM, SOFTWARE_KANBAN, BUSINESS, SERVICE_DESK
+  description    String?
+  icon           String?           @default("FolderGit2")
+  leadId         String?
+  estimationType String            @default("STORY_POINTS_FIBONACCI")
+  createdAt      DateTime          @default(now())
+  updatedAt      DateTime          @updatedAt
+
+  workspace      Workspace         @relation(fields: [workspaceId], references: [id], onDelete: Cascade)
+  folder         Folder?           @relation(fields: [folderId], references: [id], onDelete: SetNull)
+  statuses       Status[]
+  tasks          Task[]
+  sprints        Sprint[]
+  views          ViewConfig[]
+  customFields   CustomField[]
+  automations    AutomationRule[]
+  webhooks       Webhook[]
+  slaConfig      SLAConfig?
+  dashboards     Dashboard[]
+  docs           Doc[]
+
+  @@unique([workspaceId, key])
+}
+
+model Status {
+  id                   String   @id @default(uuid())
+  projectId            String
+  name                 String
+  category             String   // TODO, IN_PROGRESS, IN_REVIEW, DONE
+  color                String   @default("#3b82f6")
+  order                Int      @default(0)
+  wipLimit             Int?
+  allowedTransitionIds String?  @default("[]") // JSON array of status IDs
+
+  project              Project  @relation(fields: [projectId], references: [id], onDelete: Cascade)
+  tasks                Task[]
+}
+
+model CustomField {
+  id                String             @id @default(uuid())
+  projectId         String
+  name              String
+  type              String             // TEXT, NUMBER, DROPDOWN, CHECKBOX, DATE, CURRENCY, FORMULA, USER_PICKER
+  optionsJson       String?            @default("[]")
+  formulaExpression String?
+  currencyCode      String?            @default("USD")
+  isRequired        Boolean            @default(false)
+
+  project           Project            @relation(fields: [projectId], references: [id], onDelete: Cascade)
+  values            CustomFieldValue[]
+}
+
+model CustomFieldValue {
+  id        String      @id @default(uuid())
+  taskId    String
+  fieldId   String
+  valueJson String?
+
+  task      Task        @relation(fields: [taskId], references: [id], onDelete: Cascade)
+  field     CustomField @relation(fields: [fieldId], references: [id], onDelete: Cascade)
+
+  @@unique([taskId, fieldId])
+}
+
+model Sprint {
+  id              String    @id @default(uuid())
+  projectId       String
+  name            String
+  goal            String?
+  startDate       DateTime?
+  endDate         DateTime?
+  status          String    @default("PLANNING") // PLANNING, ACTIVE, COMPLETED
+  completedAt     DateTime?
+  totalPoints     Float?    @default(0)
+  completedPoints Float?    @default(0)
+  createdAt       DateTime  @default(now())
+  updatedAt       DateTime  @updatedAt
+
+  project         Project   @relation(fields: [projectId], references: [id], onDelete: Cascade)
+  tasks           Task[]
+}
+
+model Task {
+  id                  String             @id @default(uuid())
+  key                 String             // e.g. "KOR-12"
+  projectId           String
+  title               String
+  description         String?
+  issueType           String             @default("TASK") // EPIC, STORY, TASK, SUBTASK, BUG
+  priority            String             @default("MEDIUM") // URGENT, HIGH, MEDIUM, LOW
+  statusId            String
+  reporterId          String
+  sprintId            String?
+  epicId              String?
+  parentId            String?
+  storyPoints         Float?
+  tShirtSize          String?
+  timeEstimateMinutes Int?
+  timeSpentMinutes    Int?               @default(0)
+  startDate           DateTime?
+  dueDate             DateTime?
+  labelsJson          String?            @default("[]")
+  checklistsJson      String?            @default("[]")
+  order               Int                @default(0)
+  recurringConfigJson String?
+  isArchived          Boolean            @default(false)
+  createdAt           DateTime           @default(now())
+  updatedAt           DateTime           @updatedAt
+
+  project             Project            @relation(fields: [projectId], references: [id], onDelete: Cascade)
+  status              Status             @relation(fields: [statusId], references: [id])
+  reporter            User               @relation("ReportedTasks", fields: [reporterId], references: [id])
+  sprint              Sprint?            @relation(fields: [sprintId], references: [id], onDelete: SetNull)
+  epic                Task?              @relation("EpicTasks", fields: [epicId], references: [id], onDelete: SetNull)
+  childEpicTasks      Task[]             @relation("EpicTasks")
+  parent              Task?              @relation("SubTasks", fields: [parentId], references: [id], onDelete: SetNull)
+  subtasks            Task[]             @relation("SubTasks")
+
+  assignees           TaskAssignee[]
+  watchers            TaskWatcher[]
+  dependencies        TaskDependency[]   @relation("TaskDependencies")
+  dependentOnBy       TaskDependency[]   @relation("TaskDependentOnBy")
+  customFieldValues   CustomFieldValue[]
+  comments            Comment[]
+  attachments         Attachment[]
+  activityLogs        ActivityLog[]
+  timeEntries         TimeEntry[]
+
+  @@unique([projectId, key])
+}
+
+model TaskAssignee {
+  id     String @id @default(uuid())
+  taskId String
+  userId String
+
+  task   Task   @relation(fields: [taskId], references: [id], onDelete: Cascade)
+  user   User   @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@unique([taskId, userId])
+}
+
+model TaskWatcher {
+  id     String @id @default(uuid())
+  taskId String
+  userId String
+
+  task   Task   @relation(fields: [taskId], references: [id], onDelete: Cascade)
+  user   User   @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@unique([taskId, userId])
+}
+
+model TaskDependency {
+  id              String @id @default(uuid())
+  taskId          String
+  dependsOnTaskId String
+  type            String @default("BLOCKS") // BLOCKS, BLOCKED_BY, RELATES_TO, DUPLICATES
+
+  task            Task   @relation("TaskDependencies", fields: [taskId], references: [id], onDelete: Cascade)
+  dependsOnTask   Task   @relation("TaskDependentOnBy", fields: [dependsOnTaskId], references: [id], onDelete: Cascade)
+
+  @@unique([taskId, dependsOnTaskId, type])
+}
+
+model Comment {
+  id            String   @id @default(uuid())
+  taskId        String
+  userId        String
+  parentId      String?
+  content       String
+  reactionsJson String?  @default("[]")
+  createdAt     DateTime @default(now())
+  updatedAt     DateTime @updatedAt
+
+  task          Task     @relation(fields: [taskId], references: [id], onDelete: Cascade)
+  user          User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+}
+
+model Attachment {
+  id         String   @id @default(uuid())
+  taskId     String
+  name       String
+  size       Int
+  mimeType   String
+  url        String
+  uploaderId String
+  createdAt  DateTime @default(now())
+
+  task       Task     @relation(fields: [taskId], references: [id], onDelete: Cascade)
+  uploader   User     @relation(fields: [uploaderId], references: [id], onDelete: Cascade)
+}
+
+model ActivityLog {
+  id        String   @id @default(uuid())
+  taskId    String
+  userId    String
+  action    String
+  field     String?
+  oldValue  String?
+  newValue  String?
+  createdAt DateTime @default(now())
+
+  task      Task     @relation(fields: [taskId], references: [id], onDelete: Cascade)
+  user      User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+}
+
+model Notification {
+  id         String   @id @default(uuid())
+  userId     String
+  title      String
+  message    String
+  type       String   @default("SYSTEM")
+  entityType String?
+  entityId   String?
+  isRead     Boolean  @default(false)
+  createdAt  DateTime @default(now())
+
+  user       User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+}
+
+model Doc {
+  id          String    @id @default(uuid())
+  workspaceId String
+  projectId   String?
+  title       String
+  content     String
+  icon        String?   @default("FileText")
+  coverUrl    String?
+  authorId    String
+  isPublished Boolean   @default(true)
+  createdAt   DateTime  @default(now())
+  updatedAt   DateTime  @updatedAt
+
+  workspace   Workspace @relation(fields: [workspaceId], references: [id], onDelete: Cascade)
+  project     Project?  @relation(fields: [projectId], references: [id], onDelete: SetNull)
+  author      User      @relation(fields: [authorId], references: [id], onDelete: Cascade)
+}
+
+model AutomationRule {
+  id             String    @id @default(uuid())
+  projectId      String
+  name           String
+  description    String?
+  isEnabled      Boolean   @default(true)
+  triggerJson    String    // { type: string, config: any }
+  conditionsJson String    @default("[]") // [ { field, operator, value } ]
+  actionsJson    String    @default("[]") // [ { type, config } ]
+  executionCount Int       @default(0)
+  lastExecutedAt DateTime?
+  createdAt      DateTime  @default(now())
+  updatedAt      DateTime  @updatedAt
+
+  project        Project   @relation(fields: [projectId], references: [id], onDelete: Cascade)
+}
+
+model TimeEntry {
+  id              String   @id @default(uuid())
+  taskId          String
+  userId          String
+  durationMinutes Int
+  description     String?
+  billable        Boolean  @default(true)
+  date            DateTime @default(now())
+  createdAt       DateTime @default(now())
+
+  task            Task     @relation(fields: [taskId], references: [id], onDelete: Cascade)
+  user            User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+}
+
+model ViewConfig {
+  id         String   @id @default(uuid())
+  projectId  String
+  name       String
+  type       String   // LIST, BOARD, BACKLOG, CALENDAR, GANTT, WORKLOAD, MINDMAP, TABLE
+  isDefault  Boolean  @default(false)
+  configJson String   @default("{}")
+  createdAt  DateTime @default(now())
+  updatedAt  DateTime @updatedAt
+
+  project    Project  @relation(fields: [projectId], references: [id], onDelete: Cascade)
+}
+
+model Dashboard {
+  id          String        @id @default(uuid())
+  orgId       String?
+  projectId   String?
+  name        String
+  widgetsJson String        @default("[]")
+  createdAt   DateTime      @default(now())
+  updatedAt   DateTime      @updatedAt
+
+  org         Organization? @relation(fields: [orgId], references: [id], onDelete: Cascade)
+  project     Project?      @relation(fields: [projectId], references: [id], onDelete: Cascade)
+}
+
+model SLAConfig {
+  id                    String   @id @default(uuid())
+  projectId             String   @unique
+  firstResponseMinutes  Int      @default(60)
+  resolutionMinutes     Int      @default(480)
+  priorityModifiersJson String?  @default("{\"URGENT\":0.25,\"HIGH\":0.5,\"MEDIUM\":1.0,\"LOW\":2.0}")
+  createdAt             DateTime @default(now())
+  updatedAt             DateTime @updatedAt
+
+  project               Project  @relation(fields: [projectId], references: [id], onDelete: Cascade)
+}
+
+model Webhook {
+  id         String   @id @default(uuid())
+  projectId  String
+  name       String
+  url        String
+  secret     String?
+  eventsJson String   @default("[]")
+  isActive   Boolean  @default(true)
+  createdAt  DateTime @default(now())
+
+  project    Project  @relation(fields: [projectId], references: [id], onDelete: Cascade)
+}
+
+model ApiKey {
+  id              String    @id @default(uuid())
+  userId          String
+  name            String
+  key             String    @unique
+  permissionsJson String    @default("[\"read\",\"write\"]")
+  expiresAt       DateTime?
+  createdAt       DateTime  @default(now())
+
+  user            User      @relation(fields: [userId], references: [id], onDelete: Cascade)
+}
