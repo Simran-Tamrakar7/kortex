@@ -130,6 +130,114 @@ async function main() {
     },
   });
 
+  // 4. Create Workspaces
+  const devWorkspace = await prisma.workspace.create({
+    data: {
+      orgId: org.id,
+      name: 'Product Development',
+      slug: 'product-dev',
+      description: 'Primary product development space for Kortex core platform and AI engine',
+      icon: 'Layers',
+      color: '#6366f1',
+      members: {
+        create: [
+          { userId: alex.id, role: 'OWNER' },
+          { userId: maya.id, role: 'MEMBER' },
+          { userId: jordan.id, role: 'MEMBER' },
+          { userId: devon.id, role: 'MEMBER' },
+          { userId: priya.id, role: 'MEMBER' },
+        ],
+      },
+    },
+  });
+
+  // Create Project: Kortex (DEV)
+  const devProject = await prisma.project.create({
+    data: {
+      workspaceId: devWorkspace.id,
+      name: 'Kortex',
+      key: 'DEV',
+      type: 'SOFTWARE_SCRUM',
+      description: 'Next-generation all-in-one work management platform combining Jira and ClickUp parity with AI workflows',
+      icon: 'Layers',
+      leadId: alex.id,
+      estimationType: 'STORY_POINTS_FIBONACCI',
+      statuses: {
+        create: [
+          { name: 'Backlog', category: 'TODO', color: '#64748b', order: 0 },
+          { name: 'To Do', category: 'TODO', color: '#3b82f6', order: 1, wipLimit: 10 },
+          { name: 'In Progress', category: 'IN_PROGRESS', color: '#8b5cf6', order: 2, wipLimit: 6 },
+          { name: 'Code Review', category: 'IN_REVIEW', color: '#f59e0b', order: 3, wipLimit: 4 },
+          { name: 'Done', category: 'DONE', color: '#10b981', order: 4 },
+        ],
+      },
+    },
+  });
+
+  // Create First Sprint for DEV Project: Sprint 1
+  const sprint1 = await prisma.sprint.create({
+    data: {
+      projectId: devProject.id,
+      name: 'Sprint 1',
+      goal: 'Stabilize current build and ship AI features',
+      status: 'ACTIVE',
+      totalPoints: 68,
+      completedPoints: 47,
+      startDate: new Date(),
+    },
+  });
+
+  // Create Kortex Changelog doc linked to DEV project
+  await prisma.doc.create({
+    data: {
+      workspaceId: devWorkspace.id,
+      projectId: devProject.id,
+      title: 'Kortex Changelog',
+      icon: 'Sparkles',
+      authorId: alex.id,
+      content: `# Kortex Platform Changelog & Release Notes
+
+All completed engineering work items, bug fixes, and feature releases are logged below with dated entries and direct task links.
+
+---
+
+## 🚀 [Sprint 1] — Build Stabilization & AI Engine
+*Active Sprint • Goal: Stabilize current build and ship AI features*
+
+### 📅 August 19, 2026
+
+#### 🧠 Mind Map & Visualization
+- **[DEV-11] 4-Level Hierarchical Mind Map with Infinite Pan & Zoom**: Rebuilt radial mind map into full 4-level organizational hierarchy (Project Root → Epics → Stories → Subtasks) with smooth drag-pan canvas and zoom controls.
+
+#### 📝 Docs & Markdown Engine
+- **[DEV-12] Confluence-Grade Markdown Parser & Rich Editor**: Built high-performance Markdown parser supporting Headings (#, ##, ###), bold/italic, lists, blockquotes, syntax code blocks, tables, and task checkboxes with Preview, Edit Raw, and Split modes.
+
+#### ⚡ Automations & Workflow Engine
+- **[DEV-13] Automation Pipeline Alignment & Rule Conflict Manager**: Resolved trigger/condition/action display mismatch in rule builder. Added deterministic execution ordering, loop prevention, and conflict audit notes.
+
+#### 🛡️ Core Engine & Security
+- **[DEV-1] Task Key Collision Prevention**: Fixed numeric suffix auto-generation to compute max(numeric_suffix) + 1, resolving duplicate key constraint crashes on deleted tasks.
+- **[DEV-2] API Route Aliases**: Added route aliases for /comments/:id/reactions (POST/PUT), /dashboards/analytics (GET), and /notifications/all/read.
+- **[DEV-10] Active Timer Persistence**: Stored active stopwatch in localStorage with drift recovery to survive tab sleeps and browser refreshes.
+- **[DEV-14] Server-Side RBAC Enforcement**: Added requireRoles middleware protecting project deletion, workspace management, and sprint controls.
+
+#### 🗂️ Task Execution & Collaboration
+- **[DEV-3] File Attachments Dropzone**: Added interactive file upload to /api/attachments with image thumbnails and download links.
+- **[DEV-4] Inline Subtasks Tree**: Added subtask checklist with progress bar and inline subtask creation.
+- **[DEV-5] Task Dependencies**: Added visual dependency link cards (Blocks, Is Blocked By, Relates To) with clickable key links.
+- **[DEV-6] @Mentions Autocomplete**: Suggestion menu when typing @ in comments and interactive emoji reaction pills.
+- **[DEV-7] Saved Filter Presets Toolbar**: Added 1-click filter pills (High Priority, My Tasks, Bugs, Epics) and reset button.
+- **[DEV-8] 100% Theme Token Refactor**: Removed hardcoded dark colors across Table, Gantt, Calendar, and Modals for WCAG AA compliance.
+- **[DEV-9] Real-Time Toast Alerts**: Floating bottom-right notifications with single-fire SLA breach warnings.
+
+---
+
+## 🛠️ Work In Progress (Next Deploy)
+- **[DEV-15] Server-Side AI Intelligence Engine**: Task Summaries, Subtask Generator, Writing Assistant, and Natural Language Task Parsing.
+- **[DEV-16] Confluence Page Nesting, Portfolio Roadmap & Whiteboards**: Cross-project milestone view and interactive whiteboard canvas.`,
+    },
+  });
+
   const opsWorkspace = await prisma.workspace.create({
     data: {
       orgId: org.id,

@@ -19,7 +19,7 @@ export const TimeTrackingModal: React.FC = () => {
   const { isTimeModalOpen, setTimeModalOpen, activeProjectId } = useAppStore();
   const queryClient = useQueryClient();
 
-  const { data: timeData, isLoading } = useTimeEntries(activeProjectId);
+  const { data: timeData, isLoading } = useTimeEntries(activeProjectId || undefined);
   const { data: tasks = [] } = useTasks(activeProjectId);
 
   const [isAddingTime, setIsAddingTime] = useState(false);
@@ -30,8 +30,14 @@ export const TimeTrackingModal: React.FC = () => {
 
   if (!isTimeModalOpen) return null;
 
-  const entries = timeData?.entries || [];
-  const summary = timeData?.summary || { totalHours: 0, billableHours: 0 };
+  const rawTimeData: any = timeData;
+  const entries: any[] = Array.isArray(rawTimeData) ? rawTimeData : rawTimeData?.entries || [];
+  const totalMinutes = entries.reduce((acc: number, e: any) => acc + (e.durationMinutes || 0), 0);
+  const billableMinutes = entries.filter((e: any) => e.billable).reduce((acc: number, e: any) => acc + (e.durationMinutes || 0), 0);
+  const summary = rawTimeData?.summary || {
+    totalHours: Math.round((totalMinutes / 60) * 10) / 10,
+    billableHours: Math.round((billableMinutes / 60) * 10) / 10,
+  };
 
   const handleLogTime = async (e: React.FormEvent) => {
     e.preventDefault();

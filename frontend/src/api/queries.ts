@@ -5,41 +5,52 @@ import { Task, Project, Sprint, Doc, AutomationRule, Notification, TimeEntry, Wo
 // Fallback Mock Data for standalone / Vercel demo preview
 const mockWorkspaces: any[] = [
   {
-    id: 'ws_eng',
+    id: 'ws_dev',
     orgId: 'org_acme',
-    name: 'Engineering & Product',
-    slug: 'eng-product',
-    icon: 'Cpu',
+    name: 'Product Development',
+    slug: 'product-dev',
+    icon: 'Layers',
     color: '#6366f1',
     folders: [
       {
-        id: 'fld_core',
-        name: 'Platform Core',
+        id: 'fld_kortex_core',
+        name: 'Kortex Platform',
         color: '#6366f1',
         projects: [
           {
-            id: 'proj_kor',
-            name: 'Kortex Cloud Platform',
-            key: 'KOR',
+            id: 'proj_dev',
+            name: 'Kortex',
+            key: 'DEV',
             type: 'SOFTWARE_SCRUM',
           },
         ],
       },
+    ],
+    projects: [
       {
-        id: 'fld_growth',
-        name: 'Growth & Marketing',
-        color: '#f59e0b',
-        projects: [
-          {
-            id: 'proj_mkt',
-            name: 'Product Launch & Growth Q3',
-            key: 'MKT',
-            type: 'BUSINESS',
-          },
-        ],
+        id: 'proj_dev',
+        name: 'Kortex',
+        key: 'DEV',
+        type: 'SOFTWARE_SCRUM',
       },
     ],
-    projects: [],
+  },
+  {
+    id: 'ws_eng',
+    orgId: 'org_acme',
+    name: 'Engineering & Architecture',
+    slug: 'eng-arch',
+    icon: 'Cpu',
+    color: '#3b82f6',
+    folders: [],
+    projects: [
+      {
+        id: 'proj_kor',
+        name: 'Kortex Cloud Infrastructure',
+        key: 'KOR',
+        type: 'SOFTWARE_SCRUM',
+      },
+    ],
   },
   {
     id: 'ws_ops',
@@ -60,9 +71,29 @@ const mockWorkspaces: any[] = [
   },
 ];
 
+const mockProjectDev: any = {
+  id: 'proj_dev',
+  name: 'Kortex',
+  key: 'DEV',
+  type: 'SOFTWARE_SCRUM',
+  description: 'Next-generation all-in-one work management platform combining Jira and ClickUp parity with AI workflows',
+  leadId: 'usr_alex',
+  statuses: [
+    { id: 'st_backlog', name: 'Backlog', category: 'TODO', color: '#64748b', order: 0 },
+    { id: 'st_todo', name: 'To Do', category: 'TODO', color: '#3b82f6', order: 1, wipLimit: 10 },
+    { id: 'st_inprogress', name: 'In Progress', category: 'IN_PROGRESS', color: '#8b5cf6', order: 2, wipLimit: 6 },
+    { id: 'st_review', name: 'Code Review', category: 'IN_REVIEW', color: '#f59e0b', order: 3, wipLimit: 4 },
+    { id: 'st_done', name: 'Done', category: 'DONE', color: '#10b981', order: 4 },
+  ],
+  customFields: [
+    { id: 'cf_1', name: 'Severity Level', type: 'DROPDOWN' },
+    { id: 'cf_2', name: 'Target Release', type: 'TEXT' },
+  ],
+};
+
 const mockProjectKor: any = {
   id: 'proj_kor',
-  name: 'Kortex Cloud Platform',
+  name: 'Kortex Cloud Infrastructure',
   key: 'KOR',
   type: 'SOFTWARE_SCRUM',
   description: 'Scalable distributed work management engine with real-time sync and automation',
@@ -74,245 +105,419 @@ const mockProjectKor: any = {
     { id: 'st_review', name: 'Code Review', category: 'IN_REVIEW', color: '#f59e0b', order: 3, wipLimit: 4 },
     { id: 'st_done', name: 'Done', category: 'DONE', color: '#10b981', order: 4 },
   ],
-  customFields: [
-    { id: 'cf_1', name: 'Severity Level', type: 'DROPDOWN' },
-    { id: 'cf_2', name: 'Target Release', type: 'TEXT' },
-  ],
 };
 
 const mockSprints: any[] = [
   {
-    id: 'sp_23',
-    projectId: 'proj_kor',
-    name: 'Sprint 23 - Core Architecture',
-    goal: 'Deliver initial database indexing and authentication microservices',
-    status: 'COMPLETED',
-    totalPoints: 34,
-    completedPoints: 32,
-    startDate: new Date(Date.now() - 28 * 86400000).toISOString(),
-    endDate: new Date(Date.now() - 14 * 86400000).toISOString(),
-  },
-  {
-    id: 'sp_24',
-    projectId: 'proj_kor',
-    name: 'Sprint 24 - Live Collaboration & Sprints',
-    goal: 'Launch WebSockets real-time task board, Gantt charts, and custom workflow automations',
+    id: 'sp_dev_1',
+    projectId: 'proj_dev',
+    name: 'Sprint 1',
+    goal: 'Stabilize current build and ship AI features',
     status: 'ACTIVE',
-    totalPoints: 52,
-    completedPoints: 23,
-    startDate: new Date(Date.now() - 5 * 86400000).toISOString(),
-    endDate: new Date(Date.now() + 9 * 86400000).toISOString(),
+    totalPoints: 68,
+    completedPoints: 47,
+    startDate: new Date().toISOString(),
+    endDate: null,
   },
   {
-    id: 'sp_25',
-    projectId: 'proj_kor',
-    name: 'Sprint 25 - AI Workflows & Mobile PWA',
-    goal: 'Implement intelligent task summaries and responsive mobile experience',
+    id: 'sp_dev_2',
+    projectId: 'proj_dev',
+    name: 'Sprint 2 — Docs & Search Upgrade',
+    goal: 'Confluence page tree, advanced search syntax, and portfolio cross-project roadmap',
     status: 'PLANNING',
-    totalPoints: 30,
-    startDate: new Date(Date.now() + 10 * 86400000).toISOString(),
-    endDate: new Date(Date.now() + 24 * 86400000).toISOString(),
+    totalPoints: 34,
+    startDate: new Date(Date.now() + 14 * 86400000).toISOString(),
+    endDate: null,
   },
 ];
 
 const mockTasks: any[] = [
   // Epics
   {
-    id: 't_epic_1',
-    key: 'KOR-1',
-    projectId: 'proj_kor',
-    title: 'Distributed Real-Time Engine & Data Integrity',
-    description: 'Multi-tenant real-time sync, WebSockets presence protocol, and automated RBAC security.',
+    id: 't_epic_core',
+    key: 'DEV-EPIC-1',
+    projectId: 'proj_dev',
+    title: 'Core Engine Stability, Architecture & Real-Time Sync',
+    description: 'Data integrity, robust task key generation, RBAC permission enforcement, and timer persistence.',
     issueType: 'EPIC',
     priority: 'HIGH',
     statusId: 'st_inprogress',
     status: { id: 'st_inprogress', name: 'In Progress', category: 'IN_PROGRESS', color: '#8b5cf6' },
-    sprintId: 'sp_24',
-    storyPoints: 21,
+    sprintId: 'sp_dev_1',
+    storyPoints: 26,
     order: 0,
     assignees: [{ id: 'usr_alex', name: 'Alex Rivera', avatarUrl: 'https://images.unsplash.com/photo-1534528741775-53994a69daeb?w=150&auto=format&fit=crop&q=80' }],
   },
   {
-    id: 't_epic_2',
-    key: 'KOR-2',
-    projectId: 'proj_kor',
-    title: '8-View Interactive Canvas & AI Productivity Engine',
-    description: 'Kanban, Timeline/Gantt, Backlog Grooming, Formula Spreadsheet, Mind Map, Docs, and LLM Intelligence Hub.',
+    id: 't_epic_ui',
+    key: 'DEV-EPIC-2',
+    projectId: 'proj_dev',
+    title: '8-View Interactive Canvas, Docs Markdown & Design System',
+    description: 'Kanban WIP highlights, 4-level pan/zoom Mind Map, Confluence markdown renderer, and universal typography scaling.',
     issueType: 'EPIC',
-    priority: 'URGENT',
+    priority: 'HIGH',
     statusId: 'st_inprogress',
     status: { id: 'st_inprogress', name: 'In Progress', category: 'IN_PROGRESS', color: '#8b5cf6' },
-    sprintId: 'sp_24',
+    sprintId: 'sp_dev_1',
     storyPoints: 34,
     order: 1,
     assignees: [{ id: 'usr_jordan', name: 'Jordan Smith', avatarUrl: 'https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?w=150&auto=format&fit=crop&q=80' }],
   },
-
-  // Tasks under Epic 1
   {
-    id: 't_11',
-    key: 'KOR-11',
-    projectId: 'proj_kor',
-    epicId: 't_epic_1',
-    title: 'Implement Multi-Assignee Avatar Picker with Live Presence Badges',
-    description: 'Allow assigning multiple team members to a single issue like ClickUp, displaying pulsing live active indicators.',
+    id: 't_epic_ai',
+    key: 'DEV-EPIC-3',
+    projectId: 'proj_dev',
+    title: 'Phase 2: AI Intelligence Engine & Atlassian Parity Hub',
+    description: 'Server-side task summarization, subtask generation, writing assistant, natural language parsing, and workspace Q&A search.',
+    issueType: 'EPIC',
+    priority: 'URGENT',
+    statusId: 'st_inprogress',
+    status: { id: 'st_inprogress', name: 'In Progress', category: 'IN_PROGRESS', color: '#8b5cf6' },
+    sprintId: 'sp_dev_1',
+    storyPoints: 21,
+    order: 2,
+    assignees: [{ id: 'usr_alex', name: 'Alex Rivera', avatarUrl: 'https://images.unsplash.com/photo-1534528741775-53994a69daeb?w=150&auto=format&fit=crop&q=80' }],
+  },
+
+  // Completed Tasks in Sprint 1
+  {
+    id: 't_dev_1',
+    key: 'DEV-1',
+    projectId: 'proj_dev',
+    epicId: 't_epic_core',
+    title: 'Task Key Collision Prevention & Numeric Suffix Parsing',
+    description: 'Replace count()+1 with max numeric suffix query to prevent duplicate key constraint crashes on deleted tasks.',
+    issueType: 'BUG',
+    priority: 'HIGH',
+    statusId: 'st_done',
+    status: { id: 'st_done', name: 'Done', category: 'DONE', color: '#10b981' },
+    sprintId: 'sp_dev_1',
+    storyPoints: 3,
+    order: 3,
+    assignees: [{ id: 'usr_maya', name: 'Maya Lin', avatarUrl: 'https://images.unsplash.com/photo-1517841905240-472988babdf9?w=150&auto=format&fit=crop&q=80' }],
+  },
+  {
+    id: 't_dev_2',
+    key: 'DEV-2',
+    projectId: 'proj_dev',
+    epicId: 't_epic_core',
+    title: 'API Route Aliases for Reactions, Dashboards & Notifications',
+    description: 'Support POST/PUT on /comments/:id/reactions and /dashboards/analytics to resolve client-server route mismatches.',
     issueType: 'TASK',
     priority: 'MEDIUM',
     statusId: 'st_done',
     status: { id: 'st_done', name: 'Done', category: 'DONE', color: '#10b981' },
-    sprintId: 'sp_24',
-    storyPoints: 5,
-    order: 2,
-    assignees: [
-      { id: 'usr_jordan', name: 'Jordan Smith', avatarUrl: 'https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?w=150&auto=format&fit=crop&q=80' },
-      { id: 'usr_maya', name: 'Maya Lin', avatarUrl: 'https://images.unsplash.com/photo-1517841905240-472988babdf9?w=150&auto=format&fit=crop&q=80' },
-    ],
-  },
-  {
-    id: 't_12',
-    key: 'KOR-12',
-    projectId: 'proj_kor',
-    epicId: 't_epic_1',
-    title: 'Sprint Backlog Grooming Drag-and-Drop & Rollover Logic',
-    description: 'Build Jira-style backlog page with collapsible sprint boxes, total point rollups, sprint start modal, and completion modal.',
-    issueType: 'STORY',
-    priority: 'URGENT',
-    statusId: 'st_done',
-    status: { id: 'st_done', name: 'Done', category: 'DONE', color: '#10b981' },
-    sprintId: 'sp_24',
-    storyPoints: 8,
-    order: 3,
-    assignees: [{ id: 'usr_maya', name: 'Maya Lin', avatarUrl: 'https://images.unsplash.com/photo-1517841905240-472988babdf9?w=150&auto=format&fit=crop&q=80' }],
-  },
-
-  // Tasks under Epic 2
-  {
-    id: 't_10',
-    key: 'KOR-10',
-    projectId: 'proj_kor',
-    epicId: 't_epic_2',
-    title: 'Build Interactive Gantt / Timeline View with Dependency Curves',
-    description: 'Render responsive SVG timeline bars with interactive drag-to-reschedule, dependency link connectors, and critical path highlighting.',
-    issueType: 'STORY',
-    priority: 'HIGH',
-    statusId: 'st_done',
-    status: { id: 'st_done', name: 'Done', category: 'DONE', color: '#10b981' },
-    sprintId: 'sp_24',
-    storyPoints: 8,
-    timeEstimateMinutes: 960,
-    timeSpentMinutes: 360,
-    startDate: new Date(Date.now() - 4 * 86400000).toISOString(),
-    dueDate: new Date(Date.now() + 3 * 86400000).toISOString(),
-    labels: ['Gantt', 'UI/UX', 'Interactive'],
+    sprintId: 'sp_dev_1',
+    storyPoints: 2,
     order: 4,
-    assignees: [{ id: 'usr_jordan', name: 'Jordan Smith', avatarUrl: 'https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?w=150&auto=format&fit=crop&q=80' }],
+    assignees: [{ id: 'usr_devon', name: 'Devon Vance', avatarUrl: 'https://images.unsplash.com/photo-1500648767791-00dcc994a43e?w=150&auto=format&fit=crop&q=80' }],
   },
   {
-    id: 't_sub_1',
-    key: 'KOR-10-A',
-    projectId: 'proj_kor',
-    parentId: 't_10',
-    title: 'SVG Bezier Curve Connector Math',
-    issueType: 'SUBTASK',
-    priority: 'HIGH',
-    statusId: 'st_done',
-    status: { id: 'st_done', name: 'Done', category: 'DONE', color: '#10b981' },
-    order: 1,
-  },
-  {
-    id: 't_sub_2',
-    key: 'KOR-10-B',
-    projectId: 'proj_kor',
-    parentId: 't_10',
-    title: 'Drag Handle Time Resizing & Zoom Modes',
-    issueType: 'SUBTASK',
-    priority: 'MEDIUM',
-    statusId: 'st_done',
-    status: { id: 'st_done', name: 'Done', category: 'DONE', color: '#10b981' },
-    order: 2,
-  },
-  {
-    id: 't_20',
-    key: 'KOR-20',
-    projectId: 'proj_kor',
-    epicId: 't_epic_2',
-    title: 'Rebuild 4-Level Hierarchical Mind Map with Pan & Zoom Canvas',
-    description: 'Hierarchical node visualizer: Project -> Epics -> Stories -> Subtasks with smooth interactive pan, drag, and zoom.',
+    id: 't_dev_3',
+    key: 'DEV-3',
+    projectId: 'proj_dev',
+    epicId: 't_epic_ui',
+    title: 'Task Detail Modal Interactive File Attachment Dropzone & Thumbnail Preview',
+    description: 'Add drag-and-drop file upload, file list with download links, file size formatting, and image thumbnail viewer in task drawer.',
     issueType: 'STORY',
     priority: 'HIGH',
     statusId: 'st_done',
     status: { id: 'st_done', name: 'Done', category: 'DONE', color: '#10b981' },
-    sprintId: 'sp_24',
+    sprintId: 'sp_dev_1',
     storyPoints: 5,
     order: 5,
     assignees: [{ id: 'usr_jordan', name: 'Jordan Smith', avatarUrl: 'https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?w=150&auto=format&fit=crop&q=80' }],
   },
   {
-    id: 't_21',
-    key: 'KOR-21',
-    projectId: 'proj_kor',
-    epicId: 't_epic_2',
-    title: 'Confluence-Grade Markdown Parser & Rich Editor with Split Preview',
-    description: 'Parse headings, lists, blockquotes, code blocks, tables, and task checkboxes with live preview mode.',
-    issueType: 'TASK',
+    id: 't_dev_4',
+    key: 'DEV-4',
+    projectId: 'proj_dev',
+    epicId: 't_epic_ui',
+    title: 'Inline Subtasks Tree & Parent-Child Linkage Engine',
+    description: 'Add subtasks list in task detail drawer with completion checkboxes, progress bar, inline quick-add, and subtask navigation.',
+    issueType: 'STORY',
     priority: 'HIGH',
     statusId: 'st_done',
     status: { id: 'st_done', name: 'Done', category: 'DONE', color: '#10b981' },
-    sprintId: 'sp_24',
+    sprintId: 'sp_dev_1',
     storyPoints: 5,
     order: 6,
+    assignees: [{ id: 'usr_jordan', name: 'Jordan Smith', avatarUrl: 'https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?w=150&auto=format&fit=crop&q=80' }],
+  },
+  {
+    id: 't_dev_5',
+    key: 'DEV-5',
+    projectId: 'proj_dev',
+    epicId: 't_epic_ui',
+    title: 'Task Dependencies Selector (Blocks, Is Blocked By, Relates To)',
+    description: 'Interactive issue linker supporting dependency types and clickable badge navigators in task drawer.',
+    issueType: 'STORY',
+    priority: 'MEDIUM',
+    statusId: 'st_done',
+    status: { id: 'st_done', name: 'Done', category: 'DONE', color: '#10b981' },
+    sprintId: 'sp_dev_1',
+    storyPoints: 3,
+    order: 7,
+    assignees: [{ id: 'usr_maya', name: 'Maya Lin', avatarUrl: 'https://images.unsplash.com/photo-1517841905240-472988babdf9?w=150&auto=format&fit=crop&q=80' }],
+  },
+  {
+    id: 't_dev_6',
+    key: 'DEV-6',
+    projectId: 'proj_dev',
+    epicId: 't_epic_ui',
+    title: '@Mentions Teammate Autocomplete in Comments & Reaction Emojis',
+    description: 'Dropdown menu appears when typing @ in comments to tag teammates with interactive emoji reaction pills.',
+    issueType: 'STORY',
+    priority: 'MEDIUM',
+    statusId: 'st_done',
+    status: { id: 'st_done', name: 'Done', category: 'DONE', color: '#10b981' },
+    sprintId: 'sp_dev_1',
+    storyPoints: 3,
+    order: 8,
     assignees: [{ id: 'usr_alex', name: 'Alex Rivera', avatarUrl: 'https://images.unsplash.com/photo-1534528741775-53994a69daeb?w=150&auto=format&fit=crop&q=80' }],
   },
   {
-    id: 't_22',
-    key: 'KOR-22',
-    projectId: 'proj_kor',
-    epicId: 't_epic_1',
-    title: 'Workflow Automation Pipeline Alignment & Rule Conflict Manager',
-    description: 'Audit trigger-condition-action pipeline cards and add execution loop prevention with conflict tracking.',
+    id: 't_dev_7',
+    key: 'DEV-7',
+    projectId: 'proj_dev',
+    epicId: 't_epic_ui',
+    title: 'Saved Filter Presets Toolbar (High Priority, My Tasks, Bugs, Epics)',
+    description: 'Add 1-click filter preset pills and active filter reset button in ViewTabs.',
+    issueType: 'STORY',
+    priority: 'MEDIUM',
+    statusId: 'st_done',
+    status: { id: 'st_done', name: 'Done', category: 'DONE', color: '#10b981' },
+    sprintId: 'sp_dev_1',
+    storyPoints: 3,
+    order: 9,
+    assignees: [{ id: 'usr_jordan', name: 'Jordan Smith', avatarUrl: 'https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?w=150&auto=format&fit=crop&q=80' }],
+  },
+  {
+    id: 't_dev_8',
+    key: 'DEV-8',
+    projectId: 'proj_dev',
+    epicId: 't_epic_ui',
+    title: '100% Theme Token Refactor for Table, Gantt, Calendar & Modals',
+    description: 'Eliminate hardcoded dark colors and ensure 100% clean contrast in both Light Mode and Dark Mode.',
     issueType: 'TASK',
     priority: 'HIGH',
     statusId: 'st_done',
     status: { id: 'st_done', name: 'Done', category: 'DONE', color: '#10b981' },
-    sprintId: 'sp_24',
+    sprintId: 'sp_dev_1',
     storyPoints: 5,
-    order: 7,
+    order: 10,
+    assignees: [{ id: 'usr_jordan', name: 'Jordan Smith', avatarUrl: 'https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?w=150&auto=format&fit=crop&q=80' }],
+  },
+  {
+    id: 't_dev_9',
+    key: 'DEV-9',
+    projectId: 'proj_dev',
+    epicId: 't_epic_core',
+    title: 'In-App Floating Real-Time Toast Notification System',
+    description: 'Build ToastManager.tsx with single-fire SLA breach alerts and socket task update notifications.',
+    issueType: 'STORY',
+    priority: 'MEDIUM',
+    statusId: 'st_done',
+    status: { id: 'st_done', name: 'Done', category: 'DONE', color: '#10b981' },
+    sprintId: 'sp_dev_1',
+    storyPoints: 3,
+    order: 11,
     assignees: [{ id: 'usr_devon', name: 'Devon Vance', avatarUrl: 'https://images.unsplash.com/photo-1500648767791-00dcc994a43e?w=150&auto=format&fit=crop&q=80' }],
   },
   {
-    id: 't_23',
-    key: 'KOR-23',
-    projectId: 'proj_kor',
-    epicId: 't_epic_2',
-    title: 'Phase 2: Server-Side AI Intelligence Engine (Summaries, Subtasks, NL Parsing)',
-    description: 'LLM integrations for task summarization, atomic subtask generation, writing assistant, natural language creation, and workspace Q&A.',
+    id: 't_dev_10',
+    key: 'DEV-10',
+    projectId: 'proj_dev',
+    epicId: 't_epic_core',
+    title: 'Active Timer LocalStorage Persistence & Background Drift Recovery',
+    description: 'Persist active stopwatch timer across browser refreshes, tab sleep, and page switches without losing elapsed seconds.',
+    issueType: 'BUG',
+    priority: 'HIGH',
+    statusId: 'st_done',
+    status: { id: 'st_done', name: 'Done', category: 'DONE', color: '#10b981' },
+    sprintId: 'sp_dev_1',
+    storyPoints: 3,
+    order: 12,
+    assignees: [{ id: 'usr_maya', name: 'Maya Lin', avatarUrl: 'https://images.unsplash.com/photo-1517841905240-472988babdf9?w=150&auto=format&fit=crop&q=80' }],
+  },
+  {
+    id: 't_dev_11',
+    key: 'DEV-11',
+    projectId: 'proj_dev',
+    epicId: 't_epic_ui',
+    title: 'Rebuild 4-Level Hierarchical Mind Map with Infinite Pan & Zoom',
+    description: 'Rebuild mind map tree: Project Root -> Epics -> Stories -> Subtasks with drag-pan canvas and zoom controls.',
+    issueType: 'STORY',
+    priority: 'HIGH',
+    statusId: 'st_done',
+    status: { id: 'st_done', name: 'Done', category: 'DONE', color: '#10b981' },
+    sprintId: 'sp_dev_1',
+    storyPoints: 5,
+    order: 13,
+    assignees: [{ id: 'usr_jordan', name: 'Jordan Smith', avatarUrl: 'https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?w=150&auto=format&fit=crop&q=80' }],
+  },
+  {
+    id: 't_dev_12',
+    key: 'DEV-12',
+    projectId: 'proj_dev',
+    epicId: 't_epic_ui',
+    title: 'Confluence-Grade Markdown Parser & Rich Editor with Live Split Preview',
+    description: 'Parse headings, lists, blockquotes, code blocks, tables, and task checkboxes with Preview, Edit Raw, and Split modes.',
+    issueType: 'STORY',
+    priority: 'HIGH',
+    statusId: 'st_done',
+    status: { id: 'st_done', name: 'Done', category: 'DONE', color: '#10b981' },
+    sprintId: 'sp_dev_1',
+    storyPoints: 5,
+    order: 14,
+    assignees: [{ id: 'usr_alex', name: 'Alex Rivera', avatarUrl: 'https://images.unsplash.com/photo-1534528741775-53994a69daeb?w=150&auto=format&fit=crop&q=80' }],
+  },
+  {
+    id: 't_dev_13',
+    key: 'DEV-13',
+    projectId: 'proj_dev',
+    epicId: 't_epic_core',
+    title: 'Workflow Automation Rule Pipeline Alignment & Conflict Tracking',
+    description: 'Audit trigger-condition-action pipeline display and add execution loop prevention with conflict tracking.',
+    issueType: 'TASK',
+    priority: 'HIGH',
+    statusId: 'st_done',
+    status: { id: 'st_done', name: 'Done', category: 'DONE', color: '#10b981' },
+    sprintId: 'sp_dev_1',
+    storyPoints: 3,
+    order: 15,
+    assignees: [{ id: 'usr_devon', name: 'Devon Vance', avatarUrl: 'https://images.unsplash.com/photo-1500648767791-00dcc994a43e?w=150&auto=format&fit=crop&q=80' }],
+  },
+  {
+    id: 't_dev_14',
+    key: 'DEV-14',
+    projectId: 'proj_dev',
+    epicId: 't_epic_core',
+    title: 'Server-Side Role-Based Access Control (RBAC) Enforcement',
+    description: 'Add requireRoles middleware on administrative endpoints preventing unauthorized actions by Guest/Viewer accounts.',
+    issueType: 'TASK',
+    priority: 'HIGH',
+    statusId: 'st_done',
+    status: { id: 'st_done', name: 'Done', category: 'DONE', color: '#10b981' },
+    sprintId: 'sp_dev_1',
+    storyPoints: 5,
+    order: 16,
+    assignees: [{ id: 'usr_devon', name: 'Devon Vance', avatarUrl: 'https://images.unsplash.com/photo-1500648767791-00dcc994a43e?w=150&auto=format&fit=crop&q=80' }],
+  },
+
+  // Ongoing Active Sprint 1 Tasks
+  {
+    id: 't_dev_15',
+    key: 'DEV-15',
+    projectId: 'proj_dev',
+    epicId: 't_epic_ai',
+    title: 'Phase 2 Part A: Server-Side AI Task Summarization, Subtask Gen & Writing Assistant',
+    description: 'Integrate LLM API server-side for task summarization, atomic subtask generation, writing assistant, natural language creation, and workspace Q&A.',
     issueType: 'STORY',
     priority: 'URGENT',
     statusId: 'st_inprogress',
     status: { id: 'st_inprogress', name: 'In Progress', category: 'IN_PROGRESS', color: '#8b5cf6' },
-    sprintId: 'sp_24',
+    sprintId: 'sp_dev_1',
     storyPoints: 13,
-    order: 8,
+    order: 17,
     assignees: [
       { id: 'usr_alex', name: 'Alex Rivera', avatarUrl: 'https://images.unsplash.com/photo-1534528741775-53994a69daeb?w=150&auto=format&fit=crop&q=80' },
       { id: 'usr_jordan', name: 'Jordan Smith', avatarUrl: 'https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?w=150&auto=format&fit=crop&q=80' },
     ],
   },
   {
-    id: 't_24',
-    key: 'KOR-24',
-    projectId: 'proj_kor',
-    epicId: 't_epic_2',
-    title: 'Phase 2: Portfolio Cross-Project Roadmap & Whiteboard Canvas',
-    description: 'Build high-level cross-project milestone roadmap and freeform visual whiteboard with task convert actions.',
+    id: 't_dev_16',
+    key: 'DEV-16',
+    projectId: 'proj_dev',
+    epicId: 't_epic_ai',
+    title: 'Phase 2 Part B: Confluence Page Nesting, Portfolio Roadmap & Whiteboards',
+    description: 'Confluence page tree hierarchy with drag-and-drop page nesting, cross-project portfolio timeline, and freeform whiteboard canvas.',
     issueType: 'STORY',
-    priority: 'MEDIUM',
+    priority: 'HIGH',
     statusId: 'st_todo',
     status: { id: 'st_todo', name: 'To Do', category: 'TODO', color: '#3b82f6' },
-    sprintId: 'sp_24',
+    sprintId: 'sp_dev_1',
     storyPoints: 8,
-    order: 9,
+    order: 18,
     assignees: [{ id: 'usr_maya', name: 'Maya Lin', avatarUrl: 'https://images.unsplash.com/photo-1517841905240-472988babdf9?w=150&auto=format&fit=crop&q=80' }],
+  },
+];
+
+const mockDocs: any[] = [
+  {
+    id: 'doc_changelog',
+    workspaceId: 'ws_dev',
+    projectId: 'proj_dev',
+    title: 'Kortex Changelog',
+    icon: 'Sparkles',
+    content: `# Kortex Platform Changelog & Release Notes
+
+All completed engineering work items, bug fixes, and feature releases are logged below with dated entries and direct task links.
+
+---
+
+## 🚀 [Sprint 1] — Build Stabilization & AI Engine
+*Active Sprint • Goal: Stabilize current build and ship AI features*
+
+### 📅 August 19, 2026
+
+#### 🧠 Mind Map & Visualization
+- **[DEV-11] 4-Level Hierarchical Mind Map with Infinite Pan & Zoom**: Rebuilt radial mind map into full 4-level organizational hierarchy (Project Root → Epics → Stories → Subtasks) with smooth drag-pan canvas and zoom controls.
+
+#### 📝 Docs & Markdown Engine
+- **[DEV-12] Confluence-Grade Markdown Parser & Rich Editor**: Built high-performance Markdown parser supporting Headings (#, ##, ###), bold/italic, lists, blockquotes, syntax code blocks, tables, and task checkboxes with Preview, Edit Raw, and Split modes.
+
+#### ⚡ Automations & Workflow Engine
+- **[DEV-13] Automation Pipeline Alignment & Rule Conflict Manager**: Resolved trigger/condition/action display mismatch in rule builder. Added deterministic execution ordering, loop prevention, and conflict audit notes.
+
+#### 🛡️ Core Engine & Security
+- **[DEV-1] Task Key Collision Prevention**: Fixed numeric suffix auto-generation to compute max(numeric_suffix) + 1, resolving duplicate key constraint crashes on deleted tasks.
+- **[DEV-2] API Route Aliases**: Added route aliases for /comments/:id/reactions (POST/PUT), /dashboards/analytics (GET), and /notifications/all/read.
+- **[DEV-10] Active Timer Persistence**: Stored active stopwatch in localStorage with drift recovery to survive tab sleeps and browser refreshes.
+- **[DEV-14] Server-Side RBAC Enforcement**: Added requireRoles middleware protecting project deletion, workspace management, and sprint controls.
+
+#### 🗂️ Task Execution & Collaboration
+- **[DEV-3] File Attachments Dropzone**: Added interactive file upload to /api/attachments with image thumbnails and download links.
+- **[DEV-4] Inline Subtasks Tree**: Added subtask checklist with progress bar and inline subtask creation.
+- **[DEV-5] Task Dependencies**: Added visual dependency link cards (Blocks, Is Blocked By, Relates To) with clickable key links.
+- **[DEV-6] @Mentions Autocomplete**: Suggestion menu when typing @ in comments and interactive emoji reaction pills.
+- **[DEV-7] Saved Filter Presets Toolbar**: Added 1-click filter pills (High Priority, My Tasks, Bugs, Epics) and reset button.
+- **[DEV-8] 100% Theme Token Refactor**: Removed hardcoded dark colors across Table, Gantt, Calendar, and Modals for WCAG AA compliance.
+- **[DEV-9] Real-Time Toast Alerts**: Floating bottom-right notifications with single-fire SLA breach warnings.
+
+---
+
+## 🛠️ Work In Progress (Next Deploy)
+- **[DEV-15] Server-Side AI Intelligence Engine**: Task Summaries, Subtask Generator, Writing Assistant, and Natural Language Task Parsing.
+- **[DEV-16] Confluence Page Nesting, Portfolio Roadmap & Whiteboards**: Cross-project milestone view and interactive whiteboard canvas.`,
+    authorId: 'usr_alex',
+    updatedAt: new Date().toISOString(),
+  },
+  {
+    id: 'doc_arch',
+    workspaceId: 'ws_dev',
+    projectId: 'proj_dev',
+    title: 'Kortex Architecture & Platform Guide',
+    icon: 'Cpu',
+    content: `# Kortex Platform Architecture & Technical Reference
+
+## Architecture Overview
+Kortex is built with a decoupled monorepo architecture:
+- **Shared Package (@kortex/shared)**: Common TypeScript types, permissions, roles, and event constants.
+- **Backend Service (@kortex/backend)**: Express, Prisma ORM, PostgreSQL/SQLite, Multer file handler, and Socket.io rooms.
+- **Frontend SPA (@kortex/frontend)**: React 18, Vite, TailwindCSS, Zustand stores, TanStack React Query, and Lucide icons.
+
+### 8 Switchable Project Views
+1. **List View**: Grouped by status/priority with collapsible accordions.
+2. **Kanban Board**: Drag-and-drop with column WIP limit alerts and swimlanes.
+3. **Sprint Backlog**: Jira-style sprint grooming and point rollups.
+4. **Timeline / Gantt**: SVG dependency link bezier curves and critical path highlight.
+5. **Calendar**: Month grid scheduling with due date mapping.
+6. **Workload Capacity**: Team capacity matrix against 40h standard baseline.
+7. **Mind Map**: 4-level hierarchical project tree visualizer with pan/zoom.
+8. **Spreadsheet Table**: Formula columns and inline cell editing.`,
+    authorId: 'usr_alex',
+    updatedAt: new Date().toISOString(),
   },
 ];
 
@@ -322,7 +527,7 @@ export function useWorkspaceTree(orgId?: string) {
     queryKey: ['workspace-tree', orgId],
     queryFn: async () => {
       try {
-        const res = await apiClient.get(`/workspaces/tree?orgId=${orgId}`);
+        const res = await apiClient.get(`/workspaces/tree?orgId=${orgId || ''}`);
         return res.data;
       } catch (e) {
         return mockWorkspaces;
@@ -337,14 +542,15 @@ export function useProject(projectId: string | null) {
     queryKey: ['project', projectId],
     queryFn: async () => {
       try {
-        if (!projectId) return mockProjectKor;
+        if (!projectId) return mockProjectDev;
         const res = await apiClient.get(`/projects/${projectId}`);
         return res.data;
       } catch (e) {
-        return mockProjectKor;
+        if (projectId === 'proj_kor') return mockProjectKor;
+        return mockProjectDev;
       }
     },
-    initialData: mockProjectKor,
+    initialData: mockProjectDev,
   });
 }
 
@@ -355,14 +561,8 @@ export function useTasks(projectId: string | null, params: Record<string, any> =
     queryFn: async () => {
       try {
         if (!projectId) return mockTasks;
-        const queryParams = new URLSearchParams();
-        queryParams.set('projectId', projectId);
-        Object.entries(params).forEach(([key, val]) => {
-          if (val !== undefined && val !== null && val !== '') {
-            queryParams.set(key, String(val));
-          }
-        });
-        const res = await apiClient.get(`/tasks?${queryParams.toString()}`);
+        const queryParams = new URLSearchParams({ projectId, ...params }).toString();
+        const res = await apiClient.get(`/tasks?${queryParams}`);
         return res.data;
       } catch (e) {
         return mockTasks;
@@ -373,10 +573,10 @@ export function useTasks(projectId: string | null, params: Record<string, any> =
 }
 
 export function useTask(taskId: string | null) {
-  return useQuery<any>({
+  return useQuery<Task>({
     queryKey: ['task', taskId],
     queryFn: async () => {
-      if (!taskId) return null;
+      if (!taskId) return null as any;
       try {
         const res = await apiClient.get(`/tasks/${taskId}`);
         return res.data;
@@ -384,22 +584,34 @@ export function useTask(taskId: string | null) {
         return mockTasks.find((t) => t.id === taskId) || mockTasks[0];
       }
     },
+    enabled: !!taskId,
   });
 }
 
 export function useCreateTaskMutation() {
   const qc = useQueryClient();
   return useMutation({
-    mutationFn: async (data: Partial<Task> & { assigneeIds?: string[]; customFieldValues?: any }) => {
+    mutationFn: async (data: any) => {
       try {
         const res = await apiClient.post('/tasks', data);
         return res.data;
       } catch (e) {
+        const keyNum = mockTasks.length + 1;
         const newTask = {
           id: `t_${Date.now()}`,
-          key: `KOR-${Math.floor(Math.random() * 80 + 20)}`,
-          ...data,
-          status: mockProjectKor.statuses.find((s: any) => s.id === data.statusId) || mockProjectKor.statuses[0],
+          key: `DEV-${keyNum}`,
+          projectId: data.projectId || 'proj_dev',
+          title: data.title,
+          description: data.description,
+          issueType: data.issueType || 'TASK',
+          priority: data.priority || 'MEDIUM',
+          statusId: data.statusId || 'st_todo',
+          status: { id: data.statusId || 'st_todo', name: 'To Do', category: 'TODO', color: '#3b82f6' },
+          sprintId: data.sprintId || 'sp_dev_1',
+          parentId: data.parentId || null,
+          storyPoints: data.storyPoints || 3,
+          order: mockTasks.length,
+          assignees: [{ id: 'usr_alex', name: 'Alex Rivera', avatarUrl: 'https://images.unsplash.com/photo-1534528741775-53994a69daeb?w=150&auto=format&fit=crop&q=80' }],
         };
         mockTasks.push(newTask);
         return newTask;
@@ -407,7 +619,7 @@ export function useCreateTaskMutation() {
     },
     onSuccess: (data) => {
       qc.invalidateQueries({ queryKey: ['tasks'] });
-      qc.invalidateQueries({ queryKey: ['sprints'] });
+      qc.invalidateQueries({ queryKey: ['dashboard-analytics'] });
     },
   });
 }
@@ -420,21 +632,17 @@ export function useUpdateTaskMutation() {
         const res = await apiClient.put(`/tasks/${id}`, updates);
         return res.data;
       } catch (e) {
-        const tIndex = mockTasks.findIndex((t) => t.id === id);
-        if (tIndex >= 0) {
-          mockTasks[tIndex] = { ...mockTasks[tIndex], ...updates };
-          if (updates.statusId) {
-            mockTasks[tIndex].status = mockProjectKor.statuses.find((s: any) => s.id === updates.statusId);
-          }
-          return mockTasks[tIndex];
+        const idx = mockTasks.findIndex((t) => t.id === id);
+        if (idx !== -1) {
+          mockTasks[idx] = { ...mockTasks[idx], ...updates };
+          return mockTasks[idx];
         }
-        return { id, ...updates };
+        return updates;
       }
     },
     onSuccess: (data) => {
       qc.invalidateQueries({ queryKey: ['tasks'] });
-      qc.invalidateQueries({ queryKey: ['task', data?.id] });
-      qc.invalidateQueries({ queryKey: ['sprints'] });
+      qc.invalidateQueries({ queryKey: ['task'] });
       qc.invalidateQueries({ queryKey: ['dashboard-analytics'] });
     },
   });
@@ -446,16 +654,16 @@ export function useDeleteTaskMutation() {
     mutationFn: async (id: string) => {
       try {
         const res = await apiClient.delete(`/tasks/${id}`);
-        return { id, ...res.data };
+        return res.data;
       } catch (e) {
         const idx = mockTasks.findIndex((t) => t.id === id);
-        if (idx >= 0) mockTasks.splice(idx, 1);
-        return { id };
+        if (idx !== -1) mockTasks.splice(idx, 1);
+        return { success: true };
       }
     },
     onSuccess: () => {
       qc.invalidateQueries({ queryKey: ['tasks'] });
-      qc.invalidateQueries({ queryKey: ['sprints'] });
+      qc.invalidateQueries({ queryKey: ['dashboard-analytics'] });
     },
   });
 }
@@ -463,25 +671,17 @@ export function useDeleteTaskMutation() {
 export function useBulkUpdateTasksMutation() {
   const qc = useQueryClient();
   return useMutation({
-    mutationFn: async (data: {
-      taskIds: string[];
-      statusId?: string;
-      priority?: any;
-      sprintId?: string | null;
-      action?: 'delete';
-      deletePermanent?: boolean;
-      projectId?: string;
-    }) => {
+    mutationFn: async (data: any) => {
       try {
         const res = await apiClient.post('/tasks/bulk', data);
         return res.data;
       } catch (e) {
-        return { count: data.taskIds.length };
+        return { success: true };
       }
     },
     onSuccess: () => {
       qc.invalidateQueries({ queryKey: ['tasks'] });
-      qc.invalidateQueries({ queryKey: ['sprints'] });
+      qc.invalidateQueries({ queryKey: ['dashboard-analytics'] });
     },
   });
 }
@@ -492,6 +692,7 @@ export function useSprints(projectId: string | null) {
     queryKey: ['sprints', projectId],
     queryFn: async () => {
       try {
+        if (!projectId) return mockSprints;
         const res = await apiClient.get(`/sprints?projectId=${projectId}`);
         return res.data;
       } catch (e) {
@@ -511,25 +712,22 @@ export function useSprintReport(sprintId: string | null) {
         return res.data;
       } catch (e) {
         return {
-          sprint: mockSprints[1],
+          sprint: mockSprints[0],
           burndown: [
-            { day: 'Day 1', ideal: 52, actual: 52 },
-            { day: 'Day 2', ideal: 47, actual: 50 },
-            { day: 'Day 3', ideal: 42, actual: 44 },
-            { day: 'Day 4', ideal: 37, actual: 38 },
-            { day: 'Day 5', ideal: 32, actual: 29 },
-            { day: 'Day 6', ideal: 27, actual: 29 },
+            { day: 'Day 1', ideal: 68, actual: 68 },
+            { day: 'Day 2', ideal: 60, actual: 64 },
+            { day: 'Day 3', ideal: 52, actual: 55 },
+            { day: 'Day 4', ideal: 44, actual: 47 },
+            { day: 'Day 5', ideal: 36, actual: 35 },
+            { day: 'Day 6', ideal: 28, actual: 21 },
           ],
           velocity: [
-            { name: 'Sprint 22', commitment: 40, completed: 38 },
-            { name: 'Sprint 23', commitment: 34, completed: 32 },
-            { name: 'Sprint 24', commitment: 52, completed: 23 },
+            { name: 'Sprint 1', commitment: 68, completed: 47 },
           ],
           statusCounts: [
-            { name: 'To Do', value: 12, color: '#3b82f6' },
-            { name: 'In Progress', value: 16, color: '#8b5cf6' },
-            { name: 'Code Review', value: 8, color: '#f59e0b' },
-            { name: 'Done', value: 23, color: '#10b981' },
+            { name: 'To Do', value: 8, color: '#3b82f6' },
+            { name: 'In Progress', value: 13, color: '#8b5cf6' },
+            { name: 'Done', value: 47, color: '#10b981' },
           ],
         };
       }
@@ -575,30 +773,10 @@ export function useDocs(workspaceId?: string, projectId?: string | null) {
         const res = await apiClient.get(`/docs?workspaceId=${workspaceId || ''}`);
         return res.data;
       } catch (e) {
-        return [
-          {
-            id: 'doc_1',
-            workspaceId: 'ws_eng',
-            projectId: 'proj_kor',
-            title: 'Kortex Platform Architecture & Realtime Protocols',
-            icon: 'Cpu',
-            content: `# Kortex Cloud Architecture\n\n## Overview\nKortex provides high-throughput agile workflow tooling with sub-50ms optimistic UI synchronizations.\n\n### Key Components\n- **Real-Time WebSockets**: Socket.io partitioned by project & workspace rooms.\n- **Agile Engine**: Automatic burndown calculations and sprint rollover.\n- **Custom Automations**: Reactive event loop evaluating trigger -> condition -> actions.`,
-            authorId: 'usr_alex',
-            updatedAt: new Date().toISOString(),
-          },
-          {
-            id: 'doc_2',
-            workspaceId: 'ws_eng',
-            projectId: 'proj_kor',
-            title: 'Sprint 24 Goals & QA Verification Matrix',
-            icon: 'CheckSquare',
-            content: `# Sprint 24 Release Checklist\n\n- [x] WebSockets presence badges\n- [x] Interactive Gantt timeline dependencies\n- [x] Light / Dark mode typography preferences\n- [ ] Slack webhook payload delivery`,
-            authorId: 'usr_priya',
-            updatedAt: new Date().toISOString(),
-          },
-        ];
+        return mockDocs;
       }
     },
+    initialData: mockDocs,
   });
 }
 
@@ -608,24 +786,76 @@ export function useAutomations(projectId: string | null) {
     queryKey: ['automations', projectId],
     queryFn: async () => {
       try {
+        if (!projectId) return [];
         const res = await apiClient.get(`/automations?projectId=${projectId}`);
         return res.data;
       } catch (e) {
         return [
           {
-            id: 'rule_1',
-            projectId: 'proj_kor',
-            name: 'Auto-Complete Sprint Tasks to Done',
+            id: 'aut_1',
+            projectId: 'proj_dev',
+            name: 'Celebrate High-Priority Completions',
+            description: 'When high-priority items are marked as Done, automatically post a celebratory bot comment.',
             isEnabled: true,
-            trigger: { type: 'STATUS_CHANGED' },
+            trigger: { type: 'STATUS_CHANGED', config: { toStatusId: 'st_done' } },
             conditions: [{ field: 'priority', operator: 'EQUALS', value: 'HIGH' }],
-            actions: [{ type: 'POST_COMMENT' }],
-            executionCount: 7,
+            actions: [{ type: 'POST_COMMENT', config: { message: '🎉 Great job team! High-priority item resolved.' } }],
+            executionCount: 14,
+            lastExecutedAt: new Date(Date.now() - 30 * 60 * 1000).toISOString(),
+            createdAt: new Date().toISOString(),
+            updatedAt: new Date().toISOString(),
+          },
+          {
+            id: 'aut_2',
+            projectId: 'proj_dev',
+            name: 'Auto-Transition Urgent Reviews to Done',
+            description: 'When urgent tasks enter Code Review, fast-track status to Done.',
+            isEnabled: true,
+            trigger: { type: 'STATUS_CHANGED', config: { toStatusId: 'st_review' } },
+            conditions: [{ field: 'priority', operator: 'EQUALS', value: 'URGENT' }],
+            actions: [{ type: 'SET_STATUS', config: { statusId: 'st_done', statusName: 'Done' } }],
+            executionCount: 8,
+            lastExecutedAt: new Date(Date.now() - 15 * 60 * 1000).toISOString(),
+            createdAt: new Date().toISOString(),
+            updatedAt: new Date().toISOString(),
           },
         ];
       }
     },
-    enabled: !!projectId,
+  });
+}
+
+// Time Tracking
+export function useTimeEntries(taskId?: string) {
+  return useQuery<TimeEntry[]>({
+    queryKey: ['time-entries', taskId],
+    queryFn: async () => {
+      try {
+        const res = await apiClient.get(`/time-entries${taskId ? `?taskId=${taskId}` : ''}`);
+        return res.data;
+      } catch (e) {
+        return [
+          {
+            id: 'te_1',
+            taskId: 't_dev_11',
+            userId: 'usr_jordan',
+            durationMinutes: 180,
+            description: 'Built 4-level hierarchical mind map and pan/zoom canvas',
+            billable: true,
+            date: new Date().toISOString(),
+          },
+          {
+            id: 'te_2',
+            taskId: 't_dev_12',
+            userId: 'usr_alex',
+            durationMinutes: 150,
+            description: 'Built Confluence-grade markdown parser and live preview modes',
+            billable: true,
+            date: new Date().toISOString(),
+          },
+        ];
+      }
+    },
   });
 }
 
@@ -640,68 +870,29 @@ export function useDashboardAnalytics(projectId: string | null, orgId?: string) 
       } catch (e) {
         return {
           summary: {
-            totalTasks: 18,
-            completedTasks: 8,
-            inProgressTasks: 6,
-            overdueCount: 1,
-            totalHoursLogged: 24,
-            billableHoursLogged: 19,
+            totalTasks: mockTasks.length,
+            completedTasks: mockTasks.filter((t) => t.statusId === 'st_done').length,
+            inProgressTasks: mockTasks.filter((t) => t.statusId === 'st_inprogress').length,
+            overdueCount: 0,
+            totalHoursLogged: 48,
+            billableHoursLogged: 42,
           },
           statusBreakdown: [
-            { name: 'To Do', value: 4, color: '#3b82f6' },
-            { name: 'In Progress', value: 6, color: '#8b5cf6' },
-            { name: 'Code Review', value: 2, color: '#f59e0b' },
-            { name: 'Done', value: 8, color: '#10b981' },
+            { name: 'To Do', count: 2, color: '#3b82f6' },
+            { name: 'In Progress', count: 3, color: '#8b5cf6' },
+            { name: 'Code Review', count: 0, color: '#f59e0b' },
+            { name: 'Done', count: 14, color: '#10b981' },
           ],
           priorityBreakdown: [
-            { name: 'Urgent', value: 3, color: '#ef4444' },
-            { name: 'High', value: 7, color: '#f97316' },
-            { name: 'Medium', value: 5, color: '#eab308' },
-            { name: 'Low', value: 3, color: '#64748b' },
-          ],
-          overdueTasks: [
-            { id: 't_13', key: 'KOR-13', title: 'Fix optimistic UI state flicker on rapid column drag', dueDate: new Date(Date.now() - 86400000).toISOString() },
+            { name: 'URGENT', count: 2, color: '#ef4444' },
+            { name: 'HIGH', count: 10, color: '#f97316' },
+            { name: 'MEDIUM', count: 4, color: '#eab308' },
+            { name: 'LOW', count: 0, color: '#64748b' },
           ],
           recentActivity: [
-            { id: 'a_1', user: { name: 'Jordan Smith' }, action: 'Moved KOR-10 to In Progress', createdAt: new Date().toISOString(), task: { key: 'KOR-10', id: 't_10' } },
-            { id: 'a_2', user: { name: 'Alex Rivera' }, action: 'Created task KOR-17', createdAt: new Date().toISOString(), task: { key: 'KOR-17', id: 't_17' } },
-          ],
-        };
-      }
-    },
-  });
-}
-
-// Time Entries
-export function useTimeEntries(projectId?: string | null) {
-  return useQuery<any>({
-    queryKey: ['time-entries', projectId],
-    queryFn: async () => {
-      try {
-        const res = await apiClient.get(`/time-entries?projectId=${projectId || ''}`);
-        return res.data;
-      } catch (e) {
-        return {
-          summary: { totalHours: 18.5, billableHours: 15.0 },
-          entries: [
-            {
-              id: 'te_1',
-              user: { name: 'Jordan Smith' },
-              task: { key: 'KOR-10', title: 'Build Interactive Gantt View' },
-              durationMinutes: 180,
-              billable: true,
-              description: 'Created SVG timeline bar drag handles and snapping grid',
-              date: new Date().toISOString(),
-            },
-            {
-              id: 'te_2',
-              user: { name: 'Maya Lin' },
-              task: { key: 'KOR-12', title: 'Sprint Backlog Grooming Logic' },
-              durationMinutes: 240,
-              billable: true,
-              description: 'Sprint rollover modal and backlog reordering',
-              date: new Date().toISOString(),
-            },
+            { id: 'act_1', action: 'Created Kortex Changelog in Docs & Wiki', user: { name: 'Alex Rivera' }, createdAt: new Date().toISOString() },
+            { id: 'act_2', action: 'Marked DEV-11 as Done (Mind Map Pan/Zoom)', user: { name: 'Jordan Smith' }, createdAt: new Date().toISOString() },
+            { id: 'act_3', action: 'Marked DEV-12 as Done (Markdown Renderer)', user: { name: 'Alex Rivera' }, createdAt: new Date().toISOString() },
           ],
         };
       }
@@ -711,27 +902,70 @@ export function useTimeEntries(projectId?: string | null) {
 
 // Notifications
 export function useNotifications() {
-  return useQuery<{ notifications: Notification[]; unreadCount: number }>({
+  return useQuery<Notification[]>({
     queryKey: ['notifications'],
     queryFn: async () => {
       try {
         const res = await apiClient.get('/notifications');
         return res.data;
       } catch (e) {
-        return {
-          unreadCount: 1,
-          notifications: [
-            {
-              id: 'n_1',
-              title: 'Task Assigned',
-              message: 'Jordan assigned you to KOR-14: Workload & Capacity Planning View',
-              type: 'TASK_ASSIGNED',
-              isRead: false,
-              createdAt: new Date().toISOString(),
-            },
-          ],
-        };
+        return [
+          {
+            id: 'n_1',
+            userId: 'usr_alex',
+            title: 'Task Assigned',
+            message: 'You have been assigned to DEV-15: Phase 2 AI Intelligence Engine',
+            type: 'ASSIGNED',
+            entityType: 'TASK',
+            entityId: 't_dev_15',
+            isRead: false,
+            createdAt: new Date().toISOString(),
+          },
+          {
+            id: 'n_2',
+            userId: 'usr_alex',
+            title: 'Sprint 1 Active',
+            message: 'Sprint 1 has started with goal: Stabilize current build and ship AI features',
+            type: 'MENTION',
+            isRead: true,
+            createdAt: new Date(Date.now() - 3600000).toISOString(),
+          },
+        ];
       }
+    },
+  });
+}
+
+export function useMarkNotificationReadMutation() {
+  const qc = useQueryClient();
+  return useMutation({
+    mutationFn: async (id: string) => {
+      try {
+        const res = await apiClient.put(`/notifications/${id}/read`);
+        return res.data;
+      } catch (e) {
+        return { success: true };
+      }
+    },
+    onSuccess: () => {
+      qc.invalidateQueries({ queryKey: ['notifications'] });
+    },
+  });
+}
+
+export function useMarkAllNotificationsReadMutation() {
+  const qc = useQueryClient();
+  return useMutation({
+    mutationFn: async () => {
+      try {
+        const res = await apiClient.put('/notifications/all/read');
+        return res.data;
+      } catch (e) {
+        return { success: true };
+      }
+    },
+    onSuccess: () => {
+      qc.invalidateQueries({ queryKey: ['notifications'] });
     },
   });
 }

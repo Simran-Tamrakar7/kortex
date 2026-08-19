@@ -193,7 +193,7 @@ const getStoredTimer = (): ActiveTimer | null => {
 const initialTimer = getStoredTimer();
 
 export const useAppStore = create<AppState>((set, get) => ({
-  activeProjectId: 'proj_kor',
+  activeProjectId: 'proj_dev',
   activeView: 'BOARD',
   activeMainSection: 'PROJECT',
   activeTaskId: null,

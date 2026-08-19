@@ -51,7 +51,8 @@ export const TaskDetailModal: React.FC = () => {
   const queryClient = useQueryClient();
 
   const { data: task, isLoading } = useTask(activeTaskId);
-  const comments = task?.comments || [];
+  const rawTask: any = task;
+  const comments = rawTask?.comments || [];
   const { data: project } = useProject(activeProjectId);
   const { data: sprints = [] } = useSprints(activeProjectId);
   const { data: allTasks = [] } = useTasks(activeProjectId);
@@ -85,10 +86,11 @@ export const TaskDetailModal: React.FC = () => {
 
   const statuses = project?.statuses || [];
   const epics = (project as any)?.epics || [];
-  const subtasks = task.subtasks || [];
-  const attachments = task.attachments || [];
-  const dependencies = task.dependencies || [];
-  const dependentOnBy = task.dependentOnBy || [];
+  const subtasks = rawTask.subtasks || [];
+  const attachments = rawTask.attachments || [];
+  const dependencies = rawTask.dependencies || [];
+  const dependentOnBy = rawTask.dependentOnBy || [];
+  const activityLogs = rawTask.activityLogs || [];
 
   const teamMembers = [
     { id: 'usr_alex', name: 'Alex Rivera', role: 'Product Lead' },
@@ -151,21 +153,22 @@ export const TaskDetailModal: React.FC = () => {
   };
 
   const handleToggleChecklist = (index: number) => {
-    const items = [...(task.checklists || [])];
-    items[index] = { ...items[index], completed: !items[index].completed };
+    const items: any[] = [...(task.checklists || [])];
+    const currentVal = items[index].isCompleted ?? items[index].completed ?? false;
+    items[index] = { ...items[index], isCompleted: !currentVal, completed: !currentVal };
     handleUpdate('checklists', items);
   };
 
   const handleAddChecklist = (e: React.FormEvent) => {
     e.preventDefault();
     if (!newChecklistText.trim()) return;
-    const items = [...(task.checklists || []), { id: `chk-${Date.now()}`, text: newChecklistText.trim(), completed: false }];
+    const items: any[] = [...(task.checklists || []), { id: `chk-${Date.now()}`, text: newChecklistText.trim(), isCompleted: false, completed: false }];
     handleUpdate('checklists', items);
     setNewChecklistText('');
   };
 
   const handleRemoveChecklist = (index: number) => {
-    const items = [...(task.checklists || [])];
+    const items: any[] = [...(task.checklists || [])];
     items.splice(index, 1);
     handleUpdate('checklists', items);
   };
@@ -223,7 +226,7 @@ export const TaskDetailModal: React.FC = () => {
     } catch (e) {}
   };
 
-  const completedChecklistCount = (task.checklists || []).filter((c: any) => c.completed).length;
+  const completedChecklistCount = (task.checklists || []).filter((c: any) => c.isCompleted ?? c.completed).length;
   const totalChecklistCount = (task.checklists || []).length;
   const checklistProgress = totalChecklistCount ? Math.round((completedChecklistCount / totalChecklistCount) * 100) : 0;
 
@@ -244,7 +247,7 @@ export const TaskDetailModal: React.FC = () => {
             )}
             {task.parent && (
               <button
-                onClick={() => setActiveTaskId(task.parent.id)}
+                onClick={() => task.parent?.id && setActiveTaskId(task.parent.id)}
                 className="px-2 py-0.5 rounded text-[11px] font-semibold bg-[var(--bg-input)] hover:bg-[var(--bg-hover)] text-[var(--text-secondary)] border border-[var(--border-default)]"
               >
                 Subtask of {task.parent.key}
@@ -716,7 +719,7 @@ export const TaskDetailModal: React.FC = () => {
                       : 'text-[var(--text-secondary)] hover:text-[var(--text-primary)]'
                   }`}
                 >
-                  Audit Activity ({task.activityLogs?.length || 0})
+                  Audit Activity ({activityLogs.length})
                 </button>
               </div>
 
@@ -833,7 +836,7 @@ export const TaskDetailModal: React.FC = () => {
               ) : (
                 /* Activity Log Stream */
                 <div className="space-y-2 max-h-60 overflow-y-auto">
-                  {(task.activityLogs || []).map((log: any) => (
+                  {activityLogs.map((log: any) => (
                     <div
                       key={log.id}
                       className="p-2.5 bg-[var(--bg-elevated)] border border-[var(--border-subtle)] rounded-xl flex items-center justify-between text-xs"

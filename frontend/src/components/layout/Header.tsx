@@ -349,59 +349,69 @@ export const Header: React.FC = () => {
 
         {/* Notifications */}
         <div className="relative">
-          <button
-            onClick={() => setIsNotifsOpen(!isNotifsOpen)}
-            className="p-2 text-[var(--text-secondary)] hover:text-[var(--text-primary)] hover:bg-[var(--bg-hover)] rounded-lg transition-colors relative"
-            title="Notifications"
-          >
-            <Bell className="w-4 h-4" />
-            {notifData?.unreadCount ? (
-              <span className="absolute top-1 right-1 w-2 h-2 rounded-full bg-indigo-500 animate-ping" />
-            ) : null}
-            {notifData?.unreadCount ? (
-              <span className="absolute top-1 right-1 w-2 h-2 rounded-full bg-indigo-500" />
-            ) : null}
-          </button>
+          {(() => {
+            const rawNotifs: any = notifData;
+            const notificationsList: any[] = Array.isArray(rawNotifs) ? rawNotifs : rawNotifs?.notifications || [];
+            const unreadCount: number = rawNotifs?.unreadCount ?? notificationsList.filter((n: any) => !n.isRead).length;
 
-          {isNotifsOpen && (
-            <div className="absolute right-0 mt-2 w-80 bg-[var(--bg-card)] border border-[var(--border-default)] rounded-xl shadow-2xl p-3 z-50 animate-in fade-in slide-in-from-top-2 duration-150">
-              <div className="flex items-center justify-between pb-2 mb-2 border-b border-[var(--border-subtle)]">
-                <span className="font-bold text-xs text-[var(--text-primary)]">Notifications</span>
-                {notifData?.unreadCount ? (
-                  <button
-                    onClick={handleMarkAllRead}
-                    className="text-[11px] text-indigo-500 hover:underline"
-                  >
-                    Mark all read
-                  </button>
-                ) : null}
-              </div>
-              <div className="max-h-72 overflow-y-auto space-y-2">
-                {notifData?.notifications.length ? (
-                  notifData.notifications.map((n) => (
-                    <div
-                      key={n.id}
-                      className={`p-2 rounded-lg text-xs transition-colors ${
-                        n.isRead
-                          ? 'bg-[var(--bg-elevated)] text-[var(--text-secondary)]'
-                          : 'bg-indigo-50 dark:bg-indigo-950/30 text-[var(--text-primary)] border-l-2 border-indigo-500'
-                      }`}
-                    >
-                      <div className="font-semibold text-[var(--text-primary)] flex items-center justify-between">
-                        <span>{n.title}</span>
-                        <span className="text-[10px] text-[var(--text-muted)]">
-                          {new Date(n.createdAt).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })}
-                        </span>
-                      </div>
-                      <p className="text-[var(--text-secondary)] mt-0.5">{n.message}</p>
+            return (
+              <>
+                <button
+                  onClick={() => setIsNotifsOpen(!isNotifsOpen)}
+                  className="p-2 text-[var(--text-secondary)] hover:text-[var(--text-primary)] hover:bg-[var(--bg-hover)] rounded-lg transition-colors relative"
+                  title="Notifications"
+                >
+                  <Bell className="w-4 h-4" />
+                  {unreadCount > 0 ? (
+                    <span className="absolute top-1 right-1 w-2 h-2 rounded-full bg-indigo-500 animate-ping" />
+                  ) : null}
+                  {unreadCount > 0 ? (
+                    <span className="absolute top-1 right-1 w-2 h-2 rounded-full bg-indigo-500" />
+                  ) : null}
+                </button>
+
+                {isNotifsOpen && (
+                  <div className="absolute right-0 mt-2 w-80 bg-[var(--bg-card)] border border-[var(--border-default)] rounded-xl shadow-2xl p-3 z-50 animate-in fade-in slide-in-from-top-2 duration-150">
+                    <div className="flex items-center justify-between pb-2 mb-2 border-b border-[var(--border-subtle)]">
+                      <span className="font-bold text-xs text-[var(--text-primary)]">Notifications</span>
+                      {unreadCount > 0 ? (
+                        <button
+                          onClick={handleMarkAllRead}
+                          className="text-[11px] text-indigo-500 hover:underline"
+                        >
+                          Mark all read
+                        </button>
+                      ) : null}
                     </div>
-                  ))
-                ) : (
-                  <div className="py-6 text-center text-xs text-[var(--text-muted)]">No new notifications</div>
+                    <div className="max-h-72 overflow-y-auto space-y-2">
+                      {notificationsList.length > 0 ? (
+                        notificationsList.map((n: any) => (
+                          <div
+                            key={n.id}
+                            className={`p-2 rounded-lg text-xs transition-colors ${
+                              n.isRead
+                                ? 'bg-[var(--bg-elevated)] text-[var(--text-secondary)]'
+                                : 'bg-indigo-50 dark:bg-indigo-950/30 text-[var(--text-primary)] border-l-2 border-indigo-500'
+                            }`}
+                          >
+                            <div className="font-semibold text-[var(--text-primary)] flex items-center justify-between">
+                              <span>{n.title}</span>
+                              <span className="text-[10px] text-[var(--text-muted)]">
+                                {new Date(n.createdAt).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })}
+                              </span>
+                            </div>
+                            <p className="text-[11px] text-[var(--text-secondary)] mt-0.5">{n.message}</p>
+                          </div>
+                        ))
+                      ) : (
+                        <p className="text-[var(--text-muted)] text-center py-4 text-xs italic">No notifications yet</p>
+                      )}
+                    </div>
+                  </div>
                 )}
-              </div>
-            </div>
-          )}
+              </>
+            );
+          })()}
         </div>
 
         {/* User Profile & Menu */}
