@@ -1,9 +1,11 @@
 node_modules
 dist
 .env
+.vercel
 .DS_Store
 *.log
 backend/prisma/dev.db
 backend/prisma/dev.db-journal
 backend/uploads/*
 !backend/uploads/.gitkeep
+.vercel

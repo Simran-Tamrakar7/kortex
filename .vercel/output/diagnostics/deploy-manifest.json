@@ -1,1 +1,0 @@
-{"manifestVersion":"2.0","builds":{"@vercel/static-build:.":{"runtime":"node","framework":"vite","runtimeVersion":{"resolved":"24"},"dependencies":[],"root":".","builder":"@vercel/static-build"}},"services":{}}
