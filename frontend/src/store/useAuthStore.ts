@@ -118,12 +118,12 @@ const fallbackWorkspaces: Workspace[] = [
 ];
 
 export const useAuthStore = create<AuthState>((set, get) => ({
-  user: null,
-  organization: null,
-  workspaces: [],
-  activeWorkspaceId: null,
-  isAuthenticated: false,
-  isLoading: true,
+  user: demoUsersMap['alex@kortex.dev'].user,
+  organization: fallbackOrg,
+  workspaces: fallbackWorkspaces,
+  activeWorkspaceId: fallbackWorkspaces[0].id,
+  isAuthenticated: true,
+  isLoading: false,
 
   login: async (email, password) => {
     try {
@@ -241,11 +241,11 @@ export const useAuthStore = create<AuthState>((set, get) => ({
     localStorage.removeItem('kortex_token');
     localStorage.removeItem('kortex_user_email');
     set({
-      user: null,
-      organization: null,
-      workspaces: [],
-      activeWorkspaceId: null,
-      isAuthenticated: false,
+      user: demoUsersMap['alex@kortex.dev'].user,
+      organization: fallbackOrg,
+      workspaces: fallbackWorkspaces,
+      activeWorkspaceId: fallbackWorkspaces[0].id,
+      isAuthenticated: true,
       isLoading: false,
     });
   },

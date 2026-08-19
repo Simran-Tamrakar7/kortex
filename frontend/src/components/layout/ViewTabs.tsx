@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useState } from 'react';
 import { useAppStore } from '../../store/useAppStore';
 import { useProject, useSprints } from '../../api/queries';
 import { ViewType, Priority, IssueType } from '@kortex/shared';
@@ -17,6 +17,13 @@ import {
   Plus,
   Play,
   RotateCcw,
+  Flame,
+  Clock,
+  UserX,
+  CheckCircle2,
+  Zap,
+  Bug,
+  Bookmark,
 } from 'lucide-react';
 
 interface Props {
@@ -37,6 +44,8 @@ export const ViewTabs: React.FC<Props> = ({ totalTaskCount = 0 }) => {
   const { data: project } = useProject(activeProjectId);
   const { data: sprints = [] } = useSprints(activeProjectId);
 
+  const [activePreset, setActivePreset] = useState<string | null>(null);
+
   const views: { type: ViewType; label: string; icon: React.ReactNode }[] = [
     { type: 'LIST', label: 'List', icon: <List className="w-3.5 h-3.5" /> },
     { type: 'BOARD', label: 'Kanban Board', icon: <Columns3 className="w-3.5 h-3.5" /> },
@@ -48,6 +57,49 @@ export const ViewTabs: React.FC<Props> = ({ totalTaskCount = 0 }) => {
     { type: 'TABLE', label: 'Spreadsheet', icon: <TableIcon className="w-3.5 h-3.5" /> },
   ];
 
+  const presets = [
+    {
+      id: 'high-priority',
+      label: 'High Priority',
+      icon: <Flame className="w-3 h-3 text-rose-500" />,
+      apply: () => {
+        resetFilters();
+        setFilter('priorities', ['URGENT', 'HIGH'] as Priority[]);
+        setActivePreset('high-priority');
+      },
+    },
+    {
+      id: 'my-tasks',
+      label: 'My Tasks',
+      icon: <UserCheck className="w-3 h-3 text-indigo-500" />,
+      apply: () => {
+        resetFilters();
+        setFilter('onlyMyTasks', true);
+        setActivePreset('my-tasks');
+      },
+    },
+    {
+      id: 'bugs',
+      label: 'Bugs Only',
+      icon: <Bug className="w-3 h-3 text-amber-500" />,
+      apply: () => {
+        resetFilters();
+        setFilter('issueTypes', ['BUG'] as IssueType[]);
+        setActivePreset('bugs');
+      },
+    },
+    {
+      id: 'epics',
+      label: 'Epics',
+      icon: <Zap className="w-3 h-3 text-purple-500" />,
+      apply: () => {
+        resetFilters();
+        setFilter('issueTypes', ['EPIC'] as IssueType[]);
+        setActivePreset('epics');
+      },
+    },
+  ];
+
   const hasActiveFilters =
     filters.search ||
     filters.onlyMyTasks ||
@@ -55,6 +107,11 @@ export const ViewTabs: React.FC<Props> = ({ totalTaskCount = 0 }) => {
     filters.issueTypes.length > 0 ||
     filters.statusIds.length > 0 ||
     filters.sprintId !== undefined;
+
+  const handleClear = () => {
+    resetFilters();
+    setActivePreset(null);
+  };
 
   return (
     <div className="border-b border-[var(--border-subtle)] bg-[var(--bg-sidebar)] px-4 pt-2.5 pb-2 shrink-0 select-none space-y-2 transition-colors">
@@ -94,7 +151,7 @@ export const ViewTabs: React.FC<Props> = ({ totalTaskCount = 0 }) => {
         </div>
       </div>
 
-      {/* Bottom row: Filter Toolbar */}
+      {/* Bottom row: Filter Toolbar with Saved Filter Presets */}
       <div className="flex items-center justify-between flex-wrap gap-2 text-xs pt-1.5 border-t border-[var(--border-subtle)]">
         <div className="flex items-center gap-2 flex-wrap">
           {/* Quick search inside current view */}
@@ -102,79 +159,72 @@ export const ViewTabs: React.FC<Props> = ({ totalTaskCount = 0 }) => {
             type="text"
             placeholder="Filter tasks..."
             value={filters.search}
-            onChange={(e) => setFilter('search', e.target.value)}
-            className="bg-[var(--bg-input)] border border-[var(--border-default)] rounded-md px-2.5 py-1 text-xs text-[var(--text-primary)] placeholder-[var(--text-muted)] focus:border-indigo-500 outline-none w-44 shadow-sm"
+            onChange={(e) => {
+              setFilter('search', e.target.value);
+              setActivePreset(null);
+            }}
+            className="bg-[var(--bg-input)] border border-[var(--border-default)] rounded-md px-2.5 py-1 text-xs text-[var(--text-primary)] placeholder-[var(--text-muted)] focus:border-indigo-500 outline-none w-40 shadow-sm"
           />
 
-          {/* My Tasks Toggle */}
-          <button
-            onClick={() => setFilter('onlyMyTasks', !filters.onlyMyTasks)}
-            className={`flex items-center gap-1 px-2.5 py-1 rounded-md transition-colors border text-xs font-semibold ${
-              filters.onlyMyTasks
-                ? 'bg-indigo-600/15 border-indigo-500 text-indigo-600 dark:text-indigo-300'
-                : 'bg-[var(--bg-input)] border-[var(--border-default)] text-[var(--text-secondary)] hover:text-[var(--text-primary)]'
-            }`}
-          >
-            <UserCheck className="w-3.5 h-3.5" />
-            <span>My Tasks</span>
-          </button>
+          {/* Quick Saved Filter Pills */}
+          <div className="flex items-center gap-1.5">
+            {presets.map((preset) => {
+              const isSelected = activePreset === preset.id;
+              return (
+                <button
+                  key={preset.id}
+                  onClick={preset.apply}
+                  className={`flex items-center gap-1 px-2 py-1 rounded-md text-[11px] font-semibold border transition-all ${
+                    isSelected
+                      ? 'bg-indigo-600 text-white border-indigo-600 shadow-sm'
+                      : 'bg-[var(--bg-input)] border-[var(--border-default)] text-[var(--text-secondary)] hover:text-[var(--text-primary)] hover:bg-[var(--bg-hover)]'
+                  }`}
+                >
+                  {preset.icon}
+                  <span>{preset.label}</span>
+                </button>
+              );
+            })}
+          </div>
 
-          {/* Priority Quick Filter */}
+          {/* Priority Dropdown Filter */}
           <select
             value={filters.priorities[0] || ''}
-            onChange={(e) =>
-              setFilter('priorities', e.target.value ? ([e.target.value] as Priority[]) : [])
-            }
+            onChange={(e) => {
+              setFilter('priorities', e.target.value ? ([e.target.value] as Priority[]) : []);
+              setActivePreset(null);
+            }}
             className="bg-[var(--bg-input)] border border-[var(--border-default)] rounded-md px-2 py-1 text-xs text-[var(--text-primary)] outline-none cursor-pointer shadow-sm"
           >
-            <option value="">All Priorities</option>
+            <option value="">Priority</option>
             <option value="URGENT">🔴 Urgent</option>
             <option value="HIGH">🟠 High</option>
             <option value="MEDIUM">🟡 Medium</option>
             <option value="LOW">⚪ Low</option>
           </select>
 
-          {/* Issue Type Filter */}
+          {/* Issue Type Dropdown Filter */}
           <select
             value={filters.issueTypes[0] || ''}
-            onChange={(e) =>
-              setFilter('issueTypes', e.target.value ? ([e.target.value] as IssueType[]) : [])
-            }
+            onChange={(e) => {
+              setFilter('issueTypes', e.target.value ? ([e.target.value] as IssueType[]) : []);
+              setActivePreset(null);
+            }}
             className="bg-[var(--bg-input)] border border-[var(--border-default)] rounded-md px-2 py-1 text-xs text-[var(--text-primary)] outline-none cursor-pointer shadow-sm"
           >
-            <option value="">All Types</option>
+            <option value="">Type</option>
             <option value="EPIC">⚡ Epic</option>
             <option value="STORY">🔖 Story</option>
             <option value="TASK">☑️ Task</option>
             <option value="BUG">⚠️ Bug</option>
           </select>
 
-          {/* Sprint Filter */}
-          {sprints.length > 0 && (
-            <select
-              value={filters.sprintId === undefined ? 'all' : filters.sprintId || 'backlog'}
-              onChange={(e) => {
-                if (e.target.value === 'all') setFilter('sprintId', undefined);
-                else if (e.target.value === 'backlog') setFilter('sprintId', null);
-                else setFilter('sprintId', e.target.value);
-              }}
-              className="bg-[var(--bg-input)] border border-[var(--border-default)] rounded-md px-2 py-1 text-xs text-[var(--text-primary)] outline-none cursor-pointer shadow-sm"
-            >
-              <option value="all">All Sprints & Backlog</option>
-              <option value="backlog">📦 Backlog Only</option>
-              {sprints.map((s) => (
-                <option key={s.id} value={s.id}>
-                  {s.status === 'ACTIVE' ? '🏃 Active: ' : '📋 '} {s.name}
-                </option>
-              ))}
-            </select>
-          )}
-
-          {/* Clear Filters Button */}
+          {/* Clear Filters button */}
           {hasActiveFilters && (
             <button
-              onClick={resetFilters}
-              className="flex items-center gap-1 text-[11px] text-rose-500 hover:text-rose-600 bg-rose-50 dark:bg-rose-950/30 px-2 py-1 rounded border border-rose-200 dark:border-rose-900/50 font-semibold"
+              onClick={handleClear}
+              className="flex items-center gap-1 text-[11px] text-rose-500 hover:text-rose-600 font-semibold px-2 py-1 hover:bg-rose-50 dark:hover:bg-rose-950/30 rounded"
+              title="Reset all filters"
             >
               <RotateCcw className="w-3 h-3" />
               <span>Reset</span>
@@ -182,9 +232,10 @@ export const ViewTabs: React.FC<Props> = ({ totalTaskCount = 0 }) => {
           )}
         </div>
 
-        <div className="text-[11px] text-[var(--text-secondary)] font-bold">
-          {totalTaskCount} {totalTaskCount === 1 ? 'task' : 'tasks'}
-        </div>
+        {/* Task Count indicator */}
+        <span className="text-[11px] text-[var(--text-muted)] font-mono font-medium">
+          {totalTaskCount} items
+        </span>
       </div>
     </div>
   );

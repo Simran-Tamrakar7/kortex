@@ -64,32 +64,32 @@ export const TableView: React.FC<Props> = ({ tasks }) => {
   const totalSpentHours = tasks.reduce((sum, t) => sum + ((t.timeSpentMinutes || 0) / 60), 0);
 
   return (
-    <div className="flex-1 flex flex-col overflow-hidden bg-[#090e18] select-none text-xs">
+    <div className="flex-1 flex flex-col overflow-hidden bg-[var(--bg-canvas)] select-none text-xs transition-colors">
       <div className="flex-1 overflow-auto">
         <table className="w-full border-collapse text-left">
           {/* Table Header */}
-          <thead className="bg-[#101726] border-b border-[#1e293b] sticky top-0 z-10 text-slate-400 font-semibold uppercase tracking-wider text-[10px]">
+          <thead className="bg-[var(--bg-elevated)] border-b border-[var(--border-subtle)] sticky top-0 z-10 text-[var(--text-secondary)] font-semibold uppercase tracking-wider text-[10px]">
             <tr>
-              <th className="py-2.5 px-3 border-r border-[#1e293b] w-20">Key</th>
-              <th className="py-2.5 px-3 border-r border-[#1e293b] min-w-[220px]">Task Title</th>
-              <th className="py-2.5 px-3 border-r border-[#1e293b] w-28">Type</th>
-              <th className="py-2.5 px-3 border-r border-[#1e293b] w-36">Status</th>
-              <th className="py-2.5 px-3 border-r border-[#1e293b] w-28">Priority</th>
-              <th className="py-2.5 px-3 border-r border-[#1e293b] w-28">Story Pts</th>
-              <th className="py-2.5 px-3 border-r border-[#1e293b] w-32">
-                <span className="flex items-center gap-1 text-indigo-400">
+              <th className="py-2.5 px-3 border-r border-[var(--border-subtle)] w-20">Key</th>
+              <th className="py-2.5 px-3 border-r border-[var(--border-subtle)] min-w-[220px]">Task Title</th>
+              <th className="py-2.5 px-3 border-r border-[var(--border-subtle)] w-28">Type</th>
+              <th className="py-2.5 px-3 border-r border-[var(--border-subtle)] w-36">Status</th>
+              <th className="py-2.5 px-3 border-r border-[var(--border-subtle)] w-28">Priority</th>
+              <th className="py-2.5 px-3 border-r border-[var(--border-subtle)] w-28">Story Pts</th>
+              <th className="py-2.5 px-3 border-r border-[var(--border-subtle)] w-32">
+                <span className="flex items-center gap-1 text-indigo-600 dark:text-indigo-400">
                   <Calculator className="w-3 h-3" />
                   <span>Formula: Left</span>
                 </span>
               </th>
-              <th className="py-2.5 px-3 border-r border-[#1e293b] w-28">Est. Hours</th>
-              <th className="py-2.5 px-3 border-r border-[#1e293b] w-28">Logged Hours</th>
+              <th className="py-2.5 px-3 border-r border-[var(--border-subtle)] w-28">Est. Hours</th>
+              <th className="py-2.5 px-3 border-r border-[var(--border-subtle)] w-28">Logged Hours</th>
               <th className="py-2.5 px-3 w-32">Assignees</th>
             </tr>
           </thead>
 
           {/* Table Body */}
-          <tbody className="divide-y divide-[#1e293b]/60">
+          <tbody className="divide-y divide-[var(--border-subtle)]">
             {tasks.map((task) => {
               const isEditing = (field: string) =>
                 editingCell?.taskId === task.id && editingCell?.field === field;
@@ -97,104 +97,126 @@ export const TableView: React.FC<Props> = ({ tasks }) => {
               return (
                 <tr
                   key={task.id}
-                  className="hover:bg-[#131d31]/80 transition-colors group text-slate-200"
+                  className="hover:bg-[var(--bg-hover)] transition-colors group text-[var(--text-primary)]"
                 >
                   {/* Key */}
-                  <td
-                    onClick={() => setActiveTaskId(task.id)}
-                    className="py-2 px-3 border-r border-[#1e293b]/60 font-mono text-[11px] font-semibold text-slate-400 cursor-pointer group-hover:text-indigo-300"
-                  >
-                    {task.key}
+                  <td className="py-2 px-3 border-r border-[var(--border-subtle)] font-mono text-[11px] text-indigo-600 dark:text-indigo-400 font-bold">
+                    <button
+                      onClick={() => setActiveTaskId(task.id)}
+                      className="hover:underline"
+                    >
+                      {task.key}
+                    </button>
                   </td>
 
-                  {/* Title */}
-                  <td
-                    onClick={() => setActiveTaskId(task.id)}
-                    className="py-2 px-3 border-r border-[#1e293b]/60 font-medium cursor-pointer"
-                  >
-                    <div className="flex items-center justify-between">
-                      <span className="truncate">{task.title}</span>
-                    </div>
+                  {/* Title (Inline Editable) */}
+                  <td className="py-2 px-3 border-r border-[var(--border-subtle)] font-semibold">
+                    {isEditing('title') ? (
+                      <div className="flex items-center gap-1">
+                        <input
+                          type="text"
+                          autoFocus
+                          value={editValue}
+                          onChange={(e) => setEditValue(e.target.value)}
+                          onKeyDown={(e) => e.key === 'Enter' && handleSaveCell(task)}
+                          onBlur={() => handleSaveCell(task)}
+                          className="bg-[var(--bg-input)] border border-indigo-500 rounded px-1.5 py-0.5 text-xs text-[var(--text-primary)] outline-none w-full"
+                        />
+                      </div>
+                    ) : (
+                      <div
+                        onClick={() => handleCellClick(task, 'title', task.title)}
+                        className="cursor-pointer truncate hover:text-indigo-600 dark:hover:text-indigo-400"
+                      >
+                        {task.title}
+                      </div>
+                    )}
                   </td>
 
-                  {/* Type */}
-                  <td className="py-2 px-3 border-r border-[#1e293b]/60">
+                  {/* Issue Type */}
+                  <td className="py-2 px-3 border-r border-[var(--border-subtle)]">
                     <IssueTypeBadge type={task.issueType} />
                   </td>
 
-                  {/* Status */}
-                  <td className="py-2 px-3 border-r border-[#1e293b]/60">
+                  {/* Status Dropdown */}
+                  <td className="py-2 px-3 border-r border-[var(--border-subtle)]">
                     <select
                       value={task.statusId}
-                      onChange={(e) =>
-                        updateTaskMutation.mutate({ id: task.id, statusId: e.target.value })
-                      }
-                      className="bg-transparent text-xs outline-none cursor-pointer"
+                      onChange={(e) => updateTaskMutation.mutate({ id: task.id, statusId: e.target.value })}
+                      className="bg-[var(--bg-input)] border border-[var(--border-default)] rounded px-1.5 py-0.5 text-xs text-[var(--text-primary)] outline-none cursor-pointer w-full font-medium"
                     >
                       {statuses.map((s) => (
-                        <option key={s.id} value={s.id} className="bg-[#131b2a] text-slate-200">
+                        <option key={s.id} value={s.id}>
                           {s.name}
                         </option>
                       ))}
                     </select>
                   </td>
 
-                  {/* Priority */}
-                  <td className="py-2 px-3 border-r border-[#1e293b]/60">
+                  {/* Priority Dropdown */}
+                  <td className="py-2 px-3 border-r border-[var(--border-subtle)]">
                     <select
                       value={task.priority}
-                      onChange={(e) =>
-                        updateTaskMutation.mutate({ id: task.id, priority: e.target.value })
-                      }
-                      className="bg-transparent text-xs outline-none cursor-pointer"
+                      onChange={(e) => updateTaskMutation.mutate({ id: task.id, priority: e.target.value as Priority })}
+                      className="bg-[var(--bg-input)] border border-[var(--border-default)] rounded px-1.5 py-0.5 text-xs text-[var(--text-primary)] outline-none cursor-pointer w-full font-medium"
                     >
-                      <option value="URGENT" className="bg-[#131b2a] text-red-400">Urgent</option>
-                      <option value="HIGH" className="bg-[#131b2a] text-orange-400">High</option>
-                      <option value="MEDIUM" className="bg-[#131b2a] text-yellow-400">Medium</option>
-                      <option value="LOW" className="bg-[#131b2a] text-slate-400">Low</option>
+                      <option value="URGENT">🔴 Urgent</option>
+                      <option value="HIGH">🟠 High</option>
+                      <option value="MEDIUM">🟡 Medium</option>
+                      <option value="LOW">⚪ Low</option>
                     </select>
                   </td>
 
-                  {/* Story Points */}
-                  <td
-                    onDoubleClick={() => handleCellClick(task, 'storyPoints', task.storyPoints)}
-                    className="py-2 px-3 border-r border-[#1e293b]/60 font-mono"
-                  >
+                  {/* Story Points (Inline Editable) */}
+                  <td className="py-2 px-3 border-r border-[var(--border-subtle)] font-mono">
                     {isEditing('storyPoints') ? (
                       <input
                         type="number"
                         autoFocus
                         value={editValue}
                         onChange={(e) => setEditValue(e.target.value)}
-                        onBlur={() => handleSaveCell(task)}
                         onKeyDown={(e) => e.key === 'Enter' && handleSaveCell(task)}
-                        className="w-16 bg-[#0b0f17] border border-indigo-500 rounded px-1.5 py-0.5 text-xs text-slate-100"
+                        onBlur={() => handleSaveCell(task)}
+                        className="bg-[var(--bg-input)] border border-indigo-500 rounded px-1.5 py-0.5 text-xs text-[var(--text-primary)] outline-none w-16"
                       />
                     ) : (
-                      <span>{task.storyPoints ?? '-'}</span>
+                      <div
+                        onClick={() => handleCellClick(task, 'storyPoints', task.storyPoints)}
+                        className="cursor-pointer hover:bg-[var(--bg-hover)] px-1 py-0.5 rounded font-bold"
+                      >
+                        {task.storyPoints ?? '-'}
+                      </div>
                     )}
                   </td>
 
-                  {/* Formula: Days Remaining */}
-                  <td className="py-2 px-3 border-r border-[#1e293b]/60 font-mono text-[11px] text-indigo-300">
-                    {calculateDaysRemaining(task.dueDate)}
+                  {/* Calculated Formula: Days Remaining */}
+                  <td className="py-2 px-3 border-r border-[var(--border-subtle)] font-mono font-bold">
+                    <span
+                      className={`px-1.5 py-0.5 rounded text-[11px] ${
+                        calculateDaysRemaining(task.dueDate).includes('overdue')
+                          ? 'text-rose-600 dark:text-rose-400 bg-rose-50 dark:bg-rose-950/40 border border-rose-200 dark:border-rose-800'
+                          : 'text-[var(--text-secondary)]'
+                      }`}
+                    >
+                      {calculateDaysRemaining(task.dueDate)}
+                    </span>
                   </td>
 
                   {/* Estimated Hours */}
-                  <td className="py-2 px-3 border-r border-[#1e293b]/60 font-mono">
-                    {task.timeEstimateMinutes ? `${task.timeEstimateMinutes / 60}h` : '-'}
+                  <td className="py-2 px-3 border-r border-[var(--border-subtle)] font-mono">
+                    {Math.round((task.timeEstimateMinutes || 0) / 60)}h
                   </td>
 
                   {/* Logged Hours */}
-                  <td className="py-2 px-3 border-r border-[#1e293b]/60 font-mono">
-                    {task.timeSpentMinutes ? `${Math.round((task.timeSpentMinutes / 60) * 10) / 10}h` : '0h'}
+                  <td className="py-2 px-3 border-r border-[var(--border-subtle)] font-mono text-emerald-600 dark:text-emerald-400 font-bold">
+                    {Math.round((task.timeSpentMinutes || 0) / 60)}h
                   </td>
 
                   {/* Assignees */}
                   <td className="py-2 px-3">
-                    <div className="flex items-center -space-x-1">
-                      {task.assignees?.map((u) => (
-                        <Avatar key={u.id} name={u.name} avatarUrl={u.avatarUrl} size="xs" />
+                    <div className="flex items-center -space-x-1.5">
+                      {(task.assignees || []).map((a) => (
+                        <Avatar key={a.id} name={a.name} avatarUrl={a.avatarUrl} size="sm" />
                       ))}
                     </div>
                   </td>
@@ -204,19 +226,19 @@ export const TableView: React.FC<Props> = ({ tasks }) => {
           </tbody>
 
           {/* Table Summary Footer */}
-          <tfoot className="bg-[#101726] border-t-2 border-[#1e293b] font-semibold text-[11px] text-slate-300">
+          <tfoot className="bg-[var(--bg-elevated)] border-t-2 border-[var(--border-default)] font-bold text-[11px] sticky bottom-0 text-[var(--text-primary)]">
             <tr>
-              <td className="py-2.5 px-3 border-r border-[#1e293b]">Total</td>
-              <td className="py-2.5 px-3 border-r border-[#1e293b]">{tasks.length} tasks</td>
-              <td className="py-2.5 px-3 border-r border-[#1e293b]">-</td>
-              <td className="py-2.5 px-3 border-r border-[#1e293b]">-</td>
-              <td className="py-2.5 px-3 border-r border-[#1e293b]">-</td>
-              <td className="py-2.5 px-3 border-r border-[#1e293b] font-mono text-indigo-300">
+              <td className="py-2.5 px-3 border-r border-[var(--border-subtle)] font-mono">Total ({tasks.length})</td>
+              <td className="py-2.5 px-3 border-r border-[var(--border-subtle)]">-</td>
+              <td className="py-2.5 px-3 border-r border-[var(--border-subtle)]">-</td>
+              <td className="py-2.5 px-3 border-r border-[var(--border-subtle)]">-</td>
+              <td className="py-2.5 px-3 border-r border-[var(--border-subtle)]">-</td>
+              <td className="py-2.5 px-3 border-r border-[var(--border-subtle)] font-mono text-indigo-600 dark:text-indigo-400">
                 {totalStoryPoints} pts
               </td>
-              <td className="py-2.5 px-3 border-r border-[#1e293b]">-</td>
-              <td className="py-2.5 px-3 border-r border-[#1e293b] font-mono">{totalEstHours}h</td>
-              <td className="py-2.5 px-3 border-r border-[#1e293b] font-mono">{Math.round(totalSpentHours * 10) / 10}h</td>
+              <td className="py-2.5 px-3 border-r border-[var(--border-subtle)]">-</td>
+              <td className="py-2.5 px-3 border-r border-[var(--border-subtle)] font-mono">{totalEstHours}h</td>
+              <td className="py-2.5 px-3 border-r border-[var(--border-subtle)] font-mono text-emerald-600 dark:text-emerald-400">{totalSpentHours}h</td>
               <td className="py-2.5 px-3">-</td>
             </tr>
           </tfoot>

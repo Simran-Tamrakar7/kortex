@@ -170,7 +170,7 @@ const applyAppearance = (theme: ThemeMode, font: FontFamily, size: FontSize, siz
 const initialAppearance = getStoredAppearance();
 
 export const useAppStore = create<AppState>((set, get) => ({
-  activeProjectId: null,
+  activeProjectId: 'proj_kor',
   activeView: 'BOARD',
   activeMainSection: 'PROJECT',
   activeTaskId: null,

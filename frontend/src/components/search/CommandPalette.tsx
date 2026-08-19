@@ -18,6 +18,7 @@ import {
   Moon,
   Zap,
   BookOpen,
+  X,
 } from 'lucide-react';
 
 export const CommandPalette: React.FC = () => {
@@ -31,6 +32,7 @@ export const CommandPalette: React.FC = () => {
     setAutomationsOpen,
     setGuideOpen,
     toggleTheme,
+    theme,
   } = useAppStore();
 
   const [query, setQuery] = useState('');
@@ -86,19 +88,19 @@ export const CommandPalette: React.FC = () => {
 
   return (
     <div className="fixed inset-0 z-50 flex items-start justify-center pt-20 p-4 bg-black/75 backdrop-blur-sm animate-in fade-in select-none">
-      <div className="w-full max-w-xl bg-[#0e1626] border border-[#233352] rounded-2xl shadow-2xl overflow-hidden flex flex-col max-h-[75vh]">
+      <div className="w-full max-w-xl bg-[var(--bg-card)] border border-[var(--border-default)] rounded-2xl shadow-2xl overflow-hidden flex flex-col max-h-[75vh] transition-colors">
         {/* Search input header */}
-        <div className="p-3 border-b border-[#1e293b] flex items-center gap-3 bg-[#131d31]">
-          <Search className="w-4 h-4 text-indigo-400 shrink-0" />
+        <div className="p-3 border-b border-[var(--border-subtle)] flex items-center gap-3 bg-[var(--bg-elevated)]">
+          <Search className="w-4 h-4 text-indigo-500 shrink-0" />
           <input
             type="text"
             autoFocus
             placeholder="Type a task name, doc, or command..."
             value={query}
             onChange={(e) => setQuery(e.target.value)}
-            className="flex-1 bg-transparent text-sm text-slate-100 placeholder-slate-500 outline-none"
+            className="flex-1 bg-transparent text-sm text-[var(--text-primary)] placeholder-[var(--text-muted)] outline-none font-sans"
           />
-          <kbd className="bg-[#0b0f17] text-slate-400 text-[10px] px-1.5 py-0.5 rounded font-mono border border-slate-700">
+          <kbd className="bg-[var(--bg-input)] text-[var(--text-muted)] text-[10px] px-1.5 py-0.5 rounded font-mono border border-[var(--border-default)]">
             ESC
           </kbd>
         </div>
@@ -108,7 +110,7 @@ export const CommandPalette: React.FC = () => {
           {/* Quick Actions */}
           {!query && (
             <div className="space-y-1">
-              <div className="px-2 py-1 text-[10px] font-semibold text-slate-500 uppercase tracking-wider">
+              <div className="px-2 py-1 text-[10px] font-bold text-[var(--text-muted)] uppercase tracking-wider">
                 Quick Actions & Views
               </div>
               <button
@@ -116,13 +118,13 @@ export const CommandPalette: React.FC = () => {
                   setCommandPaletteOpen(false);
                   setCreateTaskOpen(true);
                 }}
-                className="w-full text-left px-2.5 py-2 rounded-lg text-slate-300 hover:bg-slate-800/60 flex items-center justify-between"
+                className="w-full text-left px-2.5 py-2 rounded-lg text-[var(--text-primary)] hover:bg-[var(--bg-hover)] flex items-center justify-between transition-colors"
               >
                 <div className="flex items-center gap-2">
-                  <Plus className="w-3.5 h-3.5 text-indigo-400" />
-                  <span>Create New Issue</span>
+                  <Plus className="w-3.5 h-3.5 text-indigo-500" />
+                  <span className="font-semibold">Create New Issue</span>
                 </div>
-                <kbd className="text-[10px] font-mono text-slate-500">C</kbd>
+                <kbd className="text-[10px] font-mono text-[var(--text-muted)]">C</kbd>
               </button>
 
               <button
@@ -130,9 +132,9 @@ export const CommandPalette: React.FC = () => {
                   setActiveView('BOARD');
                   setCommandPaletteOpen(false);
                 }}
-                className="w-full text-left px-2.5 py-2 rounded-lg text-slate-300 hover:bg-slate-800/60 flex items-center gap-2"
+                className="w-full text-left px-2.5 py-2 rounded-lg text-[var(--text-primary)] hover:bg-[var(--bg-hover)] flex items-center gap-2 transition-colors"
               >
-                <Columns3 className="w-3.5 h-3.5 text-blue-400" />
+                <Columns3 className="w-3.5 h-3.5 text-blue-500" />
                 <span>Go to Kanban Board</span>
               </button>
 
@@ -141,9 +143,9 @@ export const CommandPalette: React.FC = () => {
                   setActiveView('BACKLOG');
                   setCommandPaletteOpen(false);
                 }}
-                className="w-full text-left px-2.5 py-2 rounded-lg text-slate-300 hover:bg-slate-800/60 flex items-center gap-2"
+                className="w-full text-left px-2.5 py-2 rounded-lg text-[var(--text-primary)] hover:bg-[var(--bg-hover)] flex items-center gap-2 transition-colors"
               >
-                <Layers className="w-3.5 h-3.5 text-emerald-400" />
+                <Layers className="w-3.5 h-3.5 text-emerald-500" />
                 <span>Go to Sprint Backlog</span>
               </button>
 
@@ -152,21 +154,10 @@ export const CommandPalette: React.FC = () => {
                   setActiveView('GANTT');
                   setCommandPaletteOpen(false);
                 }}
-                className="w-full text-left px-2.5 py-2 rounded-lg text-slate-300 hover:bg-slate-800/60 flex items-center gap-2"
+                className="w-full text-left px-2.5 py-2 rounded-lg text-[var(--text-primary)] hover:bg-[var(--bg-hover)] flex items-center gap-2 transition-colors"
               >
-                <BarChart2 className="w-3.5 h-3.5 text-amber-400 rotate-90" />
+                <BarChart2 className="w-3.5 h-3.5 text-purple-500 rotate-90" />
                 <span>Go to Timeline / Gantt</span>
-              </button>
-
-              <button
-                onClick={() => {
-                  setAutomationsOpen(true);
-                  setCommandPaletteOpen(false);
-                }}
-                className="w-full text-left px-2.5 py-2 rounded-lg text-slate-300 hover:bg-slate-800/60 flex items-center gap-2"
-              >
-                <Zap className="w-3.5 h-3.5 text-purple-400" />
-                <span>Open Workflow Automations</span>
               </button>
 
               <button
@@ -174,7 +165,7 @@ export const CommandPalette: React.FC = () => {
                   setGuideOpen(true);
                   setCommandPaletteOpen(false);
                 }}
-                className="w-full text-left px-2.5 py-2 rounded-lg text-[var(--text-primary)] hover:bg-[var(--bg-hover)] flex items-center gap-2"
+                className="w-full text-left px-2.5 py-2 rounded-lg text-[var(--text-primary)] hover:bg-[var(--bg-hover)] flex items-center gap-2 transition-colors"
               >
                 <BookOpen className="w-3.5 h-3.5 text-indigo-500" />
                 <span>Open Platform Documentation & User Guide</span>
@@ -185,69 +176,58 @@ export const CommandPalette: React.FC = () => {
                   toggleTheme();
                   setCommandPaletteOpen(false);
                 }}
-                className="w-full text-left px-2.5 py-2 rounded-lg text-[var(--text-primary)] hover:bg-[var(--bg-hover)] flex items-center gap-2"
+                className="w-full text-left px-2.5 py-2 rounded-lg text-[var(--text-primary)] hover:bg-[var(--bg-hover)] flex items-center gap-2 transition-colors"
               >
-                <Sun className="w-3.5 h-3.5 text-yellow-400" />
-                <span>Toggle Light / Dark Theme</span>
+                {theme === 'dark' ? <Sun className="w-3.5 h-3.5 text-amber-400" /> : <Moon className="w-3.5 h-3.5 text-indigo-600" />}
+                <span>Toggle {theme === 'dark' ? 'Light' : 'Dark'} Mode</span>
               </button>
             </div>
           )}
 
-          {/* Search Result Tasks */}
+          {/* Search Results */}
           {results.tasks.length > 0 && (
             <div className="space-y-1">
-              <div className="px-2 py-1 text-[10px] font-semibold text-slate-500 uppercase tracking-wider">
+              <div className="px-2 py-1 text-[10px] font-bold text-[var(--text-muted)] uppercase tracking-wider">
                 Tasks ({results.tasks.length})
               </div>
               {results.tasks.map((task) => (
-                <div
+                <button
                   key={task.id}
                   onClick={() => {
                     setActiveTaskId(task.id);
                     setCommandPaletteOpen(false);
                   }}
-                  className="px-2.5 py-2 rounded-lg hover:bg-[#141e30] cursor-pointer flex items-center justify-between text-slate-200 transition-colors"
+                  className="w-full text-left px-2.5 py-2 rounded-lg hover:bg-[var(--bg-hover)] flex items-center justify-between text-xs transition-colors"
                 >
-                  <div className="flex items-center gap-2 truncate pr-2">
+                  <div className="flex items-center gap-2 truncate">
                     <IssueTypeBadge type={task.issueType} showLabel={false} />
-                    <span className="font-mono text-indigo-400 text-[11px] font-semibold">
-                      {task.key}
-                    </span>
-                    <span className="truncate">{task.title}</span>
+                    <span className="font-mono text-indigo-600 dark:text-indigo-400 font-bold">{task.key}</span>
+                    <span className="truncate text-[var(--text-primary)] font-medium">{task.title}</span>
                   </div>
-                  <span className="text-[10px] text-slate-500 font-mono shrink-0">
-                    {task.project?.name}
-                  </span>
-                </div>
+                  <span className="text-[10px] font-semibold text-[var(--text-muted)]">{task.project?.name}</span>
+                </button>
               ))}
             </div>
           )}
 
-          {/* Search Result Docs */}
           {results.docs.length > 0 && (
             <div className="space-y-1">
-              <div className="px-2 py-1 text-[10px] font-semibold text-slate-500 uppercase tracking-wider">
-                Docs & Wiki ({results.docs.length})
+              <div className="px-2 py-1 text-[10px] font-bold text-[var(--text-muted)] uppercase tracking-wider">
+                Docs ({results.docs.length})
               </div>
               {results.docs.map((doc) => (
-                <div
+                <button
                   key={doc.id}
                   onClick={() => {
                     setActiveMainSection('DOCS');
                     setCommandPaletteOpen(false);
                   }}
-                  className="px-2.5 py-2 rounded-lg hover:bg-[#141e30] cursor-pointer flex items-center gap-2 text-slate-200"
+                  className="w-full text-left px-2.5 py-2 rounded-lg hover:bg-[var(--bg-hover)] flex items-center gap-2 text-xs transition-colors text-[var(--text-primary)] font-medium"
                 >
-                  <FileText className="w-3.5 h-3.5 text-amber-400" />
+                  <FileText className="w-3.5 h-3.5 text-amber-500" />
                   <span className="truncate">{doc.title}</span>
-                </div>
+                </button>
               ))}
-            </div>
-          )}
-
-          {query && !results.tasks.length && !results.docs.length && (
-            <div className="py-6 text-center text-slate-500">
-              No results found for "{query}"
             </div>
           )}
         </div>

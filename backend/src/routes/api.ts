@@ -78,6 +78,8 @@ router.get('/sprints/:id/report', sprintCtrl.getSprintReport);
 // Comments
 router.post('/comments', commentCtrl.createComment);
 router.put('/comments/:id/react', commentCtrl.toggleReaction);
+router.post('/comments/:id/reactions', commentCtrl.toggleReaction);
+router.put('/comments/:id/reactions', commentCtrl.toggleReaction);
 router.delete('/comments/:id', commentCtrl.deleteComment);
 
 // Attachments
@@ -100,6 +102,7 @@ router.post('/automations/:id/test', automationCtrl.testAutomation);
 
 // Dashboards & Analytics
 router.get('/dashboard/analytics', dashboardCtrl.getDashboardData);
+router.get('/dashboards/analytics', dashboardCtrl.getDashboardData);
 router.get('/dashboards', dashboardCtrl.getCustomDashboards);
 router.post('/dashboards', dashboardCtrl.saveDashboard);
 
@@ -113,6 +116,7 @@ router.get('/search', searchCtrl.globalSearch);
 
 // Notifications
 router.get('/notifications', notificationCtrl.getNotifications);
+router.put('/notifications/all/read', notificationCtrl.markAsRead);
 router.put('/notifications/:id/read', notificationCtrl.markAsRead);
 
 // Integrations & Webhooks

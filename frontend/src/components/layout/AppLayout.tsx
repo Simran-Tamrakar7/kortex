@@ -38,6 +38,7 @@ import { CommandPalette } from '../search/CommandPalette';
 import { OrgSettingsModal } from '../settings/OrgSettingsModal';
 import { ProjectSettingsModal } from '../settings/ProjectSettingsModal';
 import { PlatformGuideModal } from '../docs/PlatformGuideModal';
+import { ToastManager } from '../common/ToastManager';
 
 export const AppLayout: React.FC = () => {
   const { user, isAuthenticated, isLoading, checkAuth } = useAuthStore();
@@ -135,9 +136,10 @@ export const AppLayout: React.FC = () => {
     );
   }
 
-  if (!isAuthenticated) {
-    return <AuthModal />;
-  }
+  // Direct dashboard entry mode (auth modal disabled for open preview)
+  // if (!isAuthenticated) {
+  //   return <AuthModal />;
+  // }
 
   return (
     <div className="h-screen w-screen bg-[#0b0f17] text-slate-100 flex flex-col overflow-hidden font-sans">
@@ -182,6 +184,7 @@ export const AppLayout: React.FC = () => {
       <OrgSettingsModal />
       <ProjectSettingsModal />
       <PlatformGuideModal />
+      <ToastManager />
     </div>
   );
 };

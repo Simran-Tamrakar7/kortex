@@ -256,8 +256,12 @@ export async function createTask(req: AuthRequest, res: Response) {
       customFieldValues,
     } = req.body;
 
-    if (!projectId || !title) {
+    if (!projectId || !title.trim()) {
       return res.status(400).json({ error: 'projectId and title are required' });
+    }
+
+    if (startDate && dueDate && new Date(startDate) > new Date(dueDate)) {
+      return res.status(400).json({ error: 'Start date cannot be after due date' });
     }
 
     const project = await prisma.project.findUnique({
@@ -267,10 +271,22 @@ export async function createTask(req: AuthRequest, res: Response) {
 
     if (!project) return res.status(404).json({ error: 'Project not found' });
 
-    // Generate task key (e.g. KOR-101)
-    const taskCount = await prisma.task.count({ where: { projectId } });
-    const taskKey = `${project.key}-${taskCount + 1}`;
+    // Robust task key generation: find highest numeric suffix
+    const existingProjectTasks = await prisma.task.findMany({
+      where: { projectId },
+      select: { key: true },
+    });
 
+    let maxKeyNum = 0;
+    existingProjectTasks.forEach((t) => {
+      const parts = t.key.split('-');
+      const num = parseInt(parts[parts.length - 1], 10);
+      if (!isNaN(num) && num > maxKeyNum) {
+        maxKeyNum = num;
+      }
+    });
+
+    const taskKey = `${project.key}-${maxKeyNum + 1}`;
     const chosenStatusId = statusId || project.statuses[0]?.id;
 
     const task = await prisma.task.create({
@@ -293,7 +309,7 @@ export async function createTask(req: AuthRequest, res: Response) {
         dueDate: dueDate ? new Date(dueDate) : null,
         labelsJson: JSON.stringify(labels || []),
         checklistsJson: JSON.stringify(checklists || []),
-        order: taskCount,
+        order: maxKeyNum,
         assignees: assigneeIds?.length
           ? {
               create: assigneeIds.map((userId: string) => ({ userId })),
@@ -386,6 +402,13 @@ export async function updateTask(req: AuthRequest, res: Response) {
     if (updates.storyPoints !== undefined) updateData.storyPoints = updates.storyPoints !== null ? Number(updates.storyPoints) : null;
     if (updates.tShirtSize !== undefined) updateData.tShirtSize = updates.tShirtSize;
     if (updates.timeEstimateMinutes !== undefined) updateData.timeEstimateMinutes = updates.timeEstimateMinutes;
+    const effectiveStartDate = updates.startDate !== undefined ? (updates.startDate ? new Date(updates.startDate) : null) : existingTask.startDate;
+    const effectiveDueDate = updates.dueDate !== undefined ? (updates.dueDate ? new Date(updates.dueDate) : null) : existingTask.dueDate;
+
+    if (effectiveStartDate && effectiveDueDate && effectiveStartDate > effectiveDueDate) {
+      return res.status(400).json({ error: 'Start date cannot be after due date' });
+    }
+
     if (updates.startDate !== undefined) updateData.startDate = updates.startDate ? new Date(updates.startDate) : null;
     if (updates.dueDate !== undefined) updateData.dueDate = updates.dueDate ? new Date(updates.dueDate) : null;
     if (updates.labels !== undefined) updateData.labelsJson = JSON.stringify(updates.labels);
