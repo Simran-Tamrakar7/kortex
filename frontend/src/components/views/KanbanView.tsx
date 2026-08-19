@@ -2,7 +2,7 @@ import React, { useState } from 'react';
 import { DragDropContext, Droppable, Draggable, DropResult } from '@hello-pangea/dnd';
 import { Task, Status } from '@kortex/shared';
 import { useAppStore } from '../../store/useAppStore';
-import { useProject, useUpdateTaskMutation, useCreateTaskMutation } from '../../api/queries';
+import { useProject, useSprints, useUpdateTaskMutation, useCreateTaskMutation } from '../../api/queries';
 import { IssueTypeBadge } from '../common/IssueTypeBadge';
 import { PriorityBadge } from '../common/PriorityBadge';
 import { Avatar } from '../common/Avatar';
@@ -14,6 +14,9 @@ import {
   CheckSquare2,
   MoreVertical,
   CheckCircle2,
+  Zap,
+  Filter,
+  Sparkles,
 } from 'lucide-react';
 
 interface Props {
@@ -23,9 +26,11 @@ interface Props {
 export const KanbanView: React.FC<Props> = ({ tasks }) => {
   const { activeProjectId, setActiveTaskId } = useAppStore();
   const { data: project } = useProject(activeProjectId);
+  const { data: sprints = [] } = useSprints(activeProjectId);
   const updateTaskMutation = useUpdateTaskMutation();
   const createTaskMutation = useCreateTaskMutation();
 
+  const [selectedSprintId, setSelectedSprintId] = useState<string>('all');
   const [swimlaneBy, setSwimlaneBy] = useState<'none' | 'assignee' | 'epic' | 'priority'>('none');
   const [quickAddStatusId, setQuickAddStatusId] = useState<string | null>(null);
   const [quickAddTitle, setQuickAddTitle] = useState('');
@@ -47,9 +52,11 @@ export const KanbanView: React.FC<Props> = ({ tasks }) => {
 
   const handleQuickAdd = async (statusId: string) => {
     if (!quickAddTitle.trim() || !activeProjectId) return;
+    const activeSprint = sprints.find((s) => s.status === 'ACTIVE');
     await createTaskMutation.mutateAsync({
       projectId: activeProjectId,
       statusId,
+      sprintId: selectedSprintId !== 'all' ? selectedSprintId : activeSprint?.id,
       title: quickAddTitle.trim(),
       issueType: 'TASK',
       priority: 'MEDIUM',
@@ -58,26 +65,69 @@ export const KanbanView: React.FC<Props> = ({ tasks }) => {
     setQuickAddStatusId(null);
   };
 
+  // Filter tasks by selected sprint if set
+  const filteredTasks = tasks.filter((t) => {
+    if (selectedSprintId === 'all') return true;
+    if (selectedSprintId === 'backlog') return !t.sprintId;
+    return t.sprintId === selectedSprintId;
+  });
+
   const getTasksForColumn = (statusId: string) => {
-    return tasks.filter((t) => t.statusId === statusId).sort((a, b) => a.order - b.order);
+    return filteredTasks.filter((t) => t.statusId === statusId).sort((a, b) => a.order - b.order);
+  };
+
+  const getSprintName = (sprintId?: string) => {
+    if (!sprintId) return null;
+    const s = sprints.find((sp) => sp.id === sprintId);
+    return s?.name || sprintId;
   };
 
   return (
     <div className="flex-1 flex flex-col overflow-hidden select-none bg-[var(--bg-canvas)] transition-colors">
-      {/* Kanban Header controls (Swimlane switcher) */}
-      <div className="px-4 py-2 border-b border-[var(--border-subtle)] flex items-center justify-between text-xs bg-[var(--bg-sidebar)]">
+      {/* Kanban Header controls (Sprint Filter & Swimlanes) */}
+      <div className="px-4 py-2 border-b border-[var(--border-subtle)] flex items-center justify-between text-xs bg-[var(--bg-sidebar)] flex-wrap gap-2">
+        <div className="flex items-center gap-3">
+          {/* Sprint Filter */}
+          <div className="flex items-center gap-1.5">
+            <span className="text-[var(--text-secondary)] font-bold text-[11px] uppercase tracking-wider">Sprint:</span>
+            <select
+              value={selectedSprintId}
+              onChange={(e) => setSelectedSprintId(e.target.value)}
+              className="bg-[var(--bg-input)] border border-[var(--border-default)] rounded-lg px-2.5 py-1 text-xs text-[var(--text-primary)] outline-none cursor-pointer shadow-sm font-medium"
+            >
+              <option value="all">All Sprints & Backlog ({tasks.length} tasks)</option>
+              {sprints.map((s) => (
+                <option key={s.id} value={s.id}>
+                  {s.status === 'ACTIVE' ? '🚀 ' : s.status === 'COMPLETED' ? '✅ ' : '📋 '}
+                  {s.name} ({s.status})
+                </option>
+              ))}
+              <option value="backlog">Backlog / Unassigned Sprints</option>
+            </select>
+          </div>
+
+          <div className="w-px h-4 bg-[var(--border-subtle)] hidden sm:block" />
+
+          {/* Swimlanes */}
+          <div className="flex items-center gap-1.5">
+            <span className="text-[var(--text-secondary)] font-semibold text-[11px]">Swimlanes:</span>
+            <select
+              value={swimlaneBy}
+              onChange={(e) => setSwimlaneBy(e.target.value as any)}
+              className="bg-[var(--bg-input)] border border-[var(--border-default)] rounded-lg px-2 py-1 text-xs text-[var(--text-primary)] outline-none cursor-pointer shadow-sm"
+            >
+              <option value="none">None (Standard Columns)</option>
+              <option value="assignee">Group by Assignee</option>
+              <option value="epic">Group by Epic</option>
+              <option value="priority">Group by Priority</option>
+            </select>
+          </div>
+        </div>
+
         <div className="flex items-center gap-2">
-          <span className="text-[var(--text-secondary)] font-semibold">Swimlanes:</span>
-          <select
-            value={swimlaneBy}
-            onChange={(e) => setSwimlaneBy(e.target.value as any)}
-            className="bg-[var(--bg-input)] border border-[var(--border-default)] rounded px-2 py-0.5 text-xs text-[var(--text-primary)] outline-none cursor-pointer shadow-sm"
-          >
-            <option value="none">None (Standard)</option>
-            <option value="assignee">Group by Assignee</option>
-            <option value="epic">Group by Epic</option>
-            <option value="priority">Group by Priority</option>
-          </select>
+          <span className="text-[11px] text-[var(--text-muted)] font-mono">
+            Showing {filteredTasks.length} of {tasks.length} total issues
+          </span>
         </div>
       </div>
 
@@ -98,34 +148,31 @@ export const KanbanView: React.FC<Props> = ({ tasks }) => {
                 }`}
               >
                 {/* Column Header */}
-                <div className="p-3 border-b border-[var(--border-subtle)] flex items-center justify-between bg-[var(--bg-elevated)] rounded-t-xl">
+                <div className="p-3 border-b border-[var(--border-subtle)] flex items-center justify-between bg-[var(--bg-elevated)]/50 rounded-t-xl shrink-0">
                   <div className="flex items-center gap-2">
-                    <span className="w-2.5 h-2.5 rounded-full" style={{ backgroundColor: status.color }} />
-                    <span className="font-bold text-xs text-[var(--text-primary)]">{status.name}</span>
                     <span
-                      className={`text-[11px] font-mono px-1.5 py-0.2 rounded font-bold ${
-                        isWipExceeded
-                          ? 'bg-rose-500/20 text-rose-500 border border-rose-500/40'
-                          : 'bg-[var(--bg-surface)] text-[var(--text-secondary)] border border-[var(--border-subtle)]'
-                      }`}
-                    >
+                      className="w-2.5 h-2.5 rounded-full shadow-sm"
+                      style={{ backgroundColor: status.color || '#64748b' }}
+                    />
+                    <span className="font-bold text-xs text-[var(--text-primary)]">{status.name}</span>
+                    <span className="font-mono text-[11px] text-[var(--text-muted)] font-semibold px-1.5 py-0.2 rounded bg-[var(--bg-input)]">
                       {columnTasks.length}
                       {status.wipLimit ? ` / ${status.wipLimit}` : ''}
                     </span>
                   </div>
 
                   <button
-                    onClick={() => setQuickAddStatusId(status.id)}
-                    className="p-1 hover:bg-[var(--bg-hover)] rounded text-[var(--text-muted)] hover:text-[var(--text-primary)]"
-                    title="Add task to column"
+                    onClick={() => setQuickAddStatusId(quickAddStatusId === status.id ? null : status.id)}
+                    className="p-1 hover:bg-[var(--bg-hover)] text-[var(--text-secondary)] hover:text-[var(--text-primary)] rounded-lg transition-colors"
+                    title="Quick add task"
                   >
                     <Plus className="w-3.5 h-3.5" />
                   </button>
                 </div>
 
-                {/* WIP Exceeded Warning Strip */}
+                {/* WIP Limit Alert Banner */}
                 {isWipExceeded && (
-                  <div className="px-3 py-1 bg-rose-500/10 border-b border-rose-500/20 text-[10px] font-semibold text-rose-600 dark:text-rose-400 flex items-center gap-1">
+                  <div className="px-3 py-1.5 bg-rose-50 dark:bg-rose-950/80 border-b border-rose-200 dark:border-rose-800/60 text-rose-700 dark:text-rose-300 text-[10px] font-bold flex items-center gap-1.5 shrink-0 animate-in fade-in">
                     <AlertCircle className="w-3 h-3 shrink-0" />
                     <span>WIP Limit Exceeded (+{columnTasks.length - status.wipLimit!} items)</span>
                   </div>
@@ -141,117 +188,133 @@ export const KanbanView: React.FC<Props> = ({ tasks }) => {
                         snapshot.isDraggingOver ? 'bg-indigo-50/50 dark:bg-indigo-950/20' : ''
                       }`}
                     >
-                      {columnTasks.map((task, index) => (
-                        <Draggable key={task.id} draggableId={task.id} index={index}>
-                          {(dragProvided, dragSnapshot) => (
-                            <div
-                              ref={dragProvided.innerRef}
-                              {...dragProvided.draggableProps}
-                              {...dragProvided.dragHandleProps}
-                              onClick={() => setActiveTaskId(task.id)}
-                              className={`p-3 bg-[var(--bg-surface)] border rounded-xl hover:border-indigo-400 dark:hover:border-slate-600 transition-all cursor-grab active:cursor-grabbing shadow-sm hover:shadow-md ${
-                                dragSnapshot.isDragging
-                                  ? 'border-indigo-500 shadow-2xl scale-[1.02] bg-[var(--bg-elevated)] ring-2 ring-indigo-500/20'
-                                  : 'border-[var(--border-subtle)]'
-                              }`}
-                            >
-                              {/* Epic label if attached */}
-                              {task.epic && (
-                                <div className="mb-1.5">
-                                  <span className="px-1.5 py-0.5 rounded text-[10px] font-bold bg-purple-50 dark:bg-purple-500/15 text-purple-600 dark:text-purple-300 border border-purple-200 dark:border-purple-500/30">
-                                    ⚡ {task.epic.key}: {task.epic.title}
-                                  </span>
-                                </div>
-                              )}
+                      {columnTasks.map((task, index) => {
+                        const sprintName = getSprintName(task.sprintId);
 
-                              {/* Task Title */}
-                              <p className="text-xs font-semibold text-[var(--text-primary)] leading-snug hover:text-indigo-600 dark:hover:text-indigo-400 transition-colors line-clamp-2 mb-2.5">
-                                {task.title}
-                              </p>
-
-                              {/* Labels */}
-                              {task.labels && task.labels.length > 0 && (
-                                <div className="flex flex-wrap gap-1 mb-2.5">
-                                  {task.labels.map((l) => (
-                                    <span
-                                      key={l}
-                                      className="px-1.5 py-0.2 rounded text-[10px] bg-[var(--bg-elevated)] text-[var(--text-secondary)] border border-[var(--border-subtle)]"
-                                    >
-                                      {l}
-                                    </span>
-                                  ))}
-                                </div>
-                              )}
-
-                              {/* Card Footer: Key, Type, Priority, Points, Assignees */}
-                              <div className="flex items-center justify-between pt-1 border-t border-[var(--border-subtle)] text-[11px]">
-                                <div className="flex items-center gap-1.5">
-                                  <IssueTypeBadge type={task.issueType} showLabel={false} />
-                                  <span className="font-mono text-[var(--text-muted)] font-bold text-[10px]">
-                                    {task.key}
-                                  </span>
-                                </div>
-
-                                <div className="flex items-center gap-2">
-                                  {task.storyPoints !== null && task.storyPoints !== undefined && (
-                                    <span className="px-1.5 py-0.2 rounded bg-[var(--bg-elevated)] text-[var(--text-secondary)] font-mono text-[10px] font-bold border border-[var(--border-subtle)]">
-                                      {task.storyPoints}
+                        return (
+                          <Draggable key={task.id} draggableId={task.id} index={index}>
+                            {(dragProvided, dragSnapshot) => (
+                              <div
+                                ref={dragProvided.innerRef}
+                                {...dragProvided.draggableProps}
+                                {...dragProvided.dragHandleProps}
+                                onClick={() => setActiveTaskId(task.id)}
+                                className={`p-3 bg-[var(--bg-surface)] border rounded-xl hover:border-indigo-400 dark:hover:border-slate-600 transition-all cursor-grab active:cursor-grabbing shadow-sm hover:shadow-md ${
+                                  dragSnapshot.isDragging
+                                    ? 'border-indigo-500 shadow-2xl scale-[1.02] bg-[var(--bg-elevated)] ring-2 ring-indigo-500/20'
+                                    : 'border-[var(--border-subtle)]'
+                                }`}
+                              >
+                                {/* Sprint & Epic badges if present */}
+                                <div className="flex items-center gap-1.5 flex-wrap mb-1.5">
+                                  {task.epic && (
+                                    <span className="px-1.5 py-0.2 rounded text-[10px] font-bold bg-purple-50 dark:bg-purple-500/15 text-purple-600 dark:text-purple-300 border border-purple-200 dark:border-purple-500/30">
+                                      ⚡ {task.epic.key}: {task.epic.title}
                                     </span>
                                   )}
-                                  <PriorityBadge priority={task.priority} showLabel={false} />
-                                  <div className="flex items-center -space-x-1">
-                                    {task.assignees?.slice(0, 2).map((u) => (
-                                      <Avatar key={u.id} name={u.name} avatarUrl={u.avatarUrl} size="xs" />
+                                  {selectedSprintId === 'all' && sprintName && (
+                                    <span className="px-1.5 py-0.2 rounded text-[9px] font-semibold bg-indigo-50 dark:bg-indigo-950/50 text-indigo-600 dark:text-indigo-300 border border-indigo-200 dark:border-indigo-800">
+                                      🏃 {sprintName.split(' — ')[0]}
+                                    </span>
+                                  )}
+                                </div>
+
+                                {/* Task Title */}
+                                <p className="text-xs font-semibold text-[var(--text-primary)] leading-snug hover:text-indigo-600 dark:hover:text-indigo-400 transition-colors line-clamp-2 mb-2">
+                                  {task.title}
+                                </p>
+
+                                {/* Labels / Tags */}
+                                {task.labels && task.labels.length > 0 && (
+                                  <div className="flex flex-wrap gap-1 mb-2.5">
+                                    {task.labels.map((l) => (
+                                      <span
+                                        key={l}
+                                        className={`px-1.5 py-0.2 rounded text-[10px] font-medium border ${
+                                          l === 'AI' || l === 'LLM'
+                                            ? 'bg-purple-50 dark:bg-purple-950/60 text-purple-600 dark:text-purple-300 border-purple-200 dark:border-purple-800'
+                                            : l === 'Bug' || l === 'Stability'
+                                            ? 'bg-rose-50 dark:bg-rose-950/60 text-rose-600 dark:text-rose-300 border-rose-200 dark:border-rose-800'
+                                            : l === 'Docs' || l === 'Markdown'
+                                            ? 'bg-amber-50 dark:bg-amber-950/60 text-amber-600 dark:text-amber-300 border-amber-200 dark:border-amber-800'
+                                            : 'bg-[var(--bg-elevated)] text-[var(--text-secondary)] border-[var(--border-subtle)]'
+                                        }`}
+                                      >
+                                        #{l}
+                                      </span>
                                     ))}
+                                  </div>
+                                )}
+
+                                {/* Card Footer: Key, Type, Priority, Points, Assignees */}
+                                <div className="flex items-center justify-between pt-1.5 border-t border-[var(--border-subtle)] text-[11px]">
+                                  <div className="flex items-center gap-1.5">
+                                    <IssueTypeBadge type={task.issueType} showLabel={false} />
+                                    <span className="font-mono text-[var(--text-muted)] font-bold text-[10px]">
+                                      {task.key}
+                                    </span>
+                                  </div>
+
+                                  <div className="flex items-center gap-2">
+                                    {task.storyPoints !== null && task.storyPoints !== undefined && (
+                                      <span className="px-1.5 py-0.2 rounded bg-[var(--bg-elevated)] text-[var(--text-secondary)] font-mono text-[10px] font-bold border border-[var(--border-subtle)]">
+                                        {task.storyPoints}
+                                      </span>
+                                    )}
+                                    <PriorityBadge priority={task.priority} showLabel={false} />
+                                    <div className="flex items-center -space-x-1">
+                                      {task.assignees?.slice(0, 2).map((u) => (
+                                        <Avatar key={u.id} name={u.name} avatarUrl={u.avatarUrl} size="xs" />
+                                      ))}
+                                    </div>
                                   </div>
                                 </div>
                               </div>
-                            </div>
-                          )}
-                        </Draggable>
-                      ))}
+                            )}
+                          </Draggable>
+                        );
+                      })}
                       {provided.placeholder}
 
-                      {/* Quick Add Form in Column */}
-                      {quickAddStatusId === status.id && (
-                        <div className="p-2.5 bg-[var(--bg-elevated)] rounded-xl border border-indigo-500/50 shadow-md">
-                          <textarea
-                            autoFocus
-                            rows={2}
-                            placeholder="Task title..."
-                            value={quickAddTitle}
-                            onChange={(e) => setQuickAddTitle(e.target.value)}
-                            onKeyDown={(e) => {
-                              if (e.key === 'Enter' && !e.shiftKey) {
-                                e.preventDefault();
-                                handleQuickAdd(status.id);
-                              }
-                              if (e.key === 'Escape') setQuickAddStatusId(null);
-                            }}
-                            className="w-full bg-[var(--bg-input)] border border-[var(--border-default)] rounded-lg p-2 text-xs text-[var(--text-primary)] outline-none resize-none"
-                          />
-                          <div className="flex justify-end gap-1.5 mt-2">
-                            <button
-                              onClick={() => setQuickAddStatusId(null)}
-                              className="px-2 py-1 text-[var(--text-muted)] hover:text-[var(--text-primary)] text-xs"
-                            >
-                              Cancel
-                            </button>
-                            <button
-                              onClick={() => handleQuickAdd(status.id)}
-                              className="px-3 py-1 bg-indigo-600 hover:bg-indigo-500 text-white rounded-lg text-xs font-semibold shadow"
-                            >
-                              Add
-                            </button>
+                        {/* Quick Add Form in Column */}
+                        {quickAddStatusId === status.id && (
+                          <div className="p-2.5 bg-[var(--bg-elevated)] rounded-xl border border-indigo-500/50 shadow-md">
+                            <textarea
+                              autoFocus
+                              rows={2}
+                              value={quickAddTitle}
+                              onChange={(e) => setQuickAddTitle(e.target.value)}
+                              placeholder="What needs to be done?"
+                              className="w-full bg-[var(--bg-input)] border border-[var(--border-default)] rounded-lg p-2 text-xs text-[var(--text-primary)] outline-none resize-none"
+                              onKeyDown={(e) => {
+                                if (e.key === 'Enter' && !e.shiftKey) {
+                                  e.preventDefault();
+                                  handleQuickAdd(status.id);
+                                }
+                              }}
+                            />
+                            <div className="flex items-center justify-end gap-1.5 mt-2">
+                              <button
+                                onClick={() => setQuickAddStatusId(null)}
+                                className="px-2 py-1 text-[11px] text-[var(--text-secondary)] hover:text-[var(--text-primary)]"
+                              >
+                                Cancel
+                              </button>
+                              <button
+                                onClick={() => handleQuickAdd(status.id)}
+                                className="px-3 py-1 bg-indigo-600 hover:bg-indigo-500 text-white rounded-lg text-[11px] font-bold shadow-sm"
+                              >
+                                Add Task
+                              </button>
+                            </div>
                           </div>
-                        </div>
-                      )}
-                    </div>
-                  )}
-                </Droppable>
-              </div>
-            );
-          })}
+                        )}
+                      </div>
+                    )}
+                  </Droppable>
+                </div>
+              );
+            })}
         </div>
       </DragDropContext>
     </div>
