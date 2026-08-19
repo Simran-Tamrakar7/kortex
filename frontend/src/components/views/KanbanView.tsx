@@ -91,7 +91,11 @@ export const KanbanView: React.FC<Props> = ({ tasks }) => {
             return (
               <div
                 key={status.id}
-                className="w-72 shrink-0 bg-[var(--bg-card)] border border-[var(--border-subtle)] rounded-xl flex flex-col max-h-full shadow-sm transition-colors"
+                className={`w-72 shrink-0 bg-[var(--bg-card)] border rounded-xl flex flex-col max-h-full shadow-sm transition-all ${
+                  isWipExceeded
+                    ? 'border-rose-300 dark:border-rose-800/80 ring-1 ring-rose-500/20'
+                    : 'border-[var(--border-subtle)]'
+                }`}
               >
                 {/* Column Header */}
                 <div className="p-3 border-b border-[var(--border-subtle)] flex items-center justify-between bg-[var(--bg-elevated)] rounded-t-xl">
@@ -118,6 +122,14 @@ export const KanbanView: React.FC<Props> = ({ tasks }) => {
                     <Plus className="w-3.5 h-3.5" />
                   </button>
                 </div>
+
+                {/* WIP Exceeded Warning Strip */}
+                {isWipExceeded && (
+                  <div className="px-3 py-1 bg-rose-500/10 border-b border-rose-500/20 text-[10px] font-semibold text-rose-600 dark:text-rose-400 flex items-center gap-1">
+                    <AlertCircle className="w-3 h-3 shrink-0" />
+                    <span>WIP Limit Exceeded (+{columnTasks.length - status.wipLimit!} items)</span>
+                  </div>
+                )}
 
                 {/* Droppable Card Container */}
                 <Droppable droppableId={status.id}>

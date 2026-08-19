@@ -49,3 +49,31 @@ export async function authenticate(req: AuthRequest, res: Response, next: NextFu
     return res.status(401).json({ error: 'Invalid or expired token' });
   }
 }
+
+/**
+ * Server-side RBAC Permission Middleware
+ * Ensures user has at least one of the allowed roles
+ */
+export function requireRoles(allowedRoles: Role[]) {
+  return async (req: AuthRequest, res: Response, next: NextFunction) => {
+    if (!req.user) {
+      return res.status(401).json({ error: 'Authentication required' });
+    }
+
+    // Lookup user's highest role in the active organization or workspace
+    const orgMember = await prisma.orgMember.findFirst({
+      where: { userId: req.user.id },
+      select: { role: true },
+    });
+
+    const userRole = (orgMember?.role as Role) || 'MEMBER';
+
+    if (!allowedRoles.includes(userRole)) {
+      return res.status(403).json({
+        error: `Forbidden: Role "${userRole}" lacks permission for this action. Allowed: ${allowedRoles.join(', ')}`,
+      });
+    }
+
+    next();
+  };
+}

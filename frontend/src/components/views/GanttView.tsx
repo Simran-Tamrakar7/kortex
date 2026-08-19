@@ -54,6 +54,11 @@ export const GanttView: React.FC<Props> = ({ tasks }) => {
 
   return (
     <div className="flex-1 flex flex-col overflow-hidden bg-[var(--bg-canvas)] select-none text-xs transition-colors">
+      {/* Mobile/Narrow Screen Helper Banner */}
+      <div className="md:hidden px-4 py-1.5 bg-indigo-50 dark:bg-indigo-950/40 border-b border-indigo-200 dark:border-indigo-800 text-[11px] text-indigo-700 dark:text-indigo-300 font-medium flex items-center justify-between">
+        <span>💡 Swipe horizontally to scroll timeline bars & dependencies</span>
+      </div>
+
       {/* Gantt Top Toolbar */}
       <div className="px-4 py-2 border-b border-[var(--border-subtle)] flex items-center justify-between text-xs bg-[var(--bg-sidebar)]">
         <div className="flex items-center gap-3">

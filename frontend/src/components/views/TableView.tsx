@@ -65,6 +65,11 @@ export const TableView: React.FC<Props> = ({ tasks }) => {
 
   return (
     <div className="flex-1 flex flex-col overflow-hidden bg-[var(--bg-canvas)] select-none text-xs transition-colors">
+      {/* Mobile/Narrow Screen Helper Banner */}
+      <div className="md:hidden px-4 py-1.5 bg-indigo-50 dark:bg-indigo-950/40 border-b border-indigo-200 dark:border-indigo-800 text-[11px] text-indigo-700 dark:text-indigo-300 font-medium flex items-center justify-between">
+        <span>💡 Swipe horizontally to view formula columns & edit cells</span>
+      </div>
+
       <div className="flex-1 overflow-auto">
         <table className="w-full border-collapse text-left">
           {/* Table Header */}

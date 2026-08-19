@@ -169,6 +169,29 @@ const applyAppearance = (theme: ThemeMode, font: FontFamily, size: FontSize, siz
 
 const initialAppearance = getStoredAppearance();
 
+const getStoredTimer = (): ActiveTimer | null => {
+  try {
+    const raw = localStorage.getItem('kortex_active_timer');
+    if (!raw) return null;
+    const parsed = JSON.parse(raw);
+    if (!parsed || !parsed.taskId) return null;
+    
+    // If was running, account for background seconds
+    if (parsed.isRunning && parsed.lastTick) {
+      const extraSeconds = Math.max(0, Math.floor((Date.now() - parsed.lastTick) / 1000));
+      return {
+        ...parsed,
+        elapsedSeconds: (parsed.elapsedSeconds || 0) + extraSeconds,
+      };
+    }
+    return parsed;
+  } catch (e) {
+    return null;
+  }
+};
+
+const initialTimer = getStoredTimer();
+
 export const useAppStore = create<AppState>((set, get) => ({
   activeProjectId: 'proj_kor',
   activeView: 'BOARD',
@@ -190,7 +213,7 @@ export const useAppStore = create<AppState>((set, get) => ({
   isGuideOpen: false,
 
   filters: initialFilters,
-  timer: null,
+  timer: initialTimer,
 
   theme: initialAppearance.theme,
   fontFamily: initialAppearance.fontFamily,
@@ -236,30 +259,53 @@ export const useAppStore = create<AppState>((set, get) => ({
   resetFilters: () => set({ filters: initialFilters }),
 
   startTimer: (task) => {
-    set({
-      timer: {
-        taskId: task.id,
-        taskKey: task.key,
-        taskTitle: task.title,
-        startTimestamp: Date.now(),
-        elapsedSeconds: 0,
-        isRunning: true,
-      },
-    });
+    const newTimer: ActiveTimer = {
+      taskId: task.id,
+      taskKey: task.key,
+      taskTitle: task.title,
+      startTimestamp: Date.now(),
+      elapsedSeconds: 0,
+      isRunning: true,
+    };
+    try {
+      localStorage.setItem('kortex_active_timer', JSON.stringify({ ...newTimer, lastTick: Date.now() }));
+    } catch (e) {}
+    set({ timer: newTimer });
   },
   pauseTimer: () => {
     const t = get().timer;
-    if (t) set({ timer: { ...t, isRunning: false } });
+    if (t) {
+      const updated = { ...t, isRunning: false };
+      try {
+        localStorage.setItem('kortex_active_timer', JSON.stringify({ ...updated, lastTick: Date.now() }));
+      } catch (e) {}
+      set({ timer: updated });
+    }
   },
   resumeTimer: () => {
     const t = get().timer;
-    if (t) set({ timer: { ...t, isRunning: true } });
+    if (t) {
+      const updated = { ...t, isRunning: true };
+      try {
+        localStorage.setItem('kortex_active_timer', JSON.stringify({ ...updated, lastTick: Date.now() }));
+      } catch (e) {}
+      set({ timer: updated });
+    }
   },
-  stopTimer: () => set({ timer: null }),
+  stopTimer: () => {
+    try {
+      localStorage.removeItem('kortex_active_timer');
+    } catch (e) {}
+    set({ timer: null });
+  },
   tickTimer: () => {
     const t = get().timer;
     if (t && t.isRunning) {
-      set({ timer: { ...t, elapsedSeconds: t.elapsedSeconds + 1 } });
+      const updated = { ...t, elapsedSeconds: t.elapsedSeconds + 1 };
+      try {
+        localStorage.setItem('kortex_active_timer', JSON.stringify({ ...updated, lastTick: Date.now() }));
+      } catch (e) {}
+      set({ timer: updated });
     }
   },
 

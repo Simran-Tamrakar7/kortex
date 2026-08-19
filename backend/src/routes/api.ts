@@ -1,5 +1,5 @@
 import { Router } from 'express';
-import { authenticate } from '../middleware/auth';
+import { authenticate, requireRoles } from '../middleware/auth';
 import * as authCtrl from '../controllers/authController';
 import * as orgCtrl from '../controllers/orgController';
 import * as workspaceCtrl from '../controllers/workspaceController';
@@ -34,71 +34,71 @@ router.delete('/auth/api-keys/:id', authCtrl.deleteApiKey);
 
 // Organizations
 router.get('/orgs/:id', orgCtrl.getOrg);
-router.put('/orgs/:id', orgCtrl.updateOrg);
-router.post('/orgs/:id/invite', orgCtrl.inviteMember);
-router.put('/orgs/:id/members/:memberId', orgCtrl.updateMemberRole);
-router.delete('/orgs/:id/members/:memberId', orgCtrl.removeMember);
+router.put('/orgs/:id', requireRoles(['OWNER', 'ADMIN']), orgCtrl.updateOrg);
+router.post('/orgs/:id/invite', requireRoles(['OWNER', 'ADMIN', 'MEMBER']), orgCtrl.inviteMember);
+router.put('/orgs/:id/members/:memberId', requireRoles(['OWNER', 'ADMIN']), orgCtrl.updateMemberRole);
+router.delete('/orgs/:id/members/:memberId', requireRoles(['OWNER', 'ADMIN']), orgCtrl.removeMember);
 
 // Workspaces & Folders
 router.get('/workspaces/tree', workspaceCtrl.getWorkspaceTree);
-router.post('/workspaces', workspaceCtrl.createWorkspace);
-router.put('/workspaces/:id', workspaceCtrl.updateWorkspace);
-router.delete('/workspaces/:id', workspaceCtrl.deleteWorkspace);
-router.post('/folders', workspaceCtrl.createFolder);
-router.put('/folders/:id', workspaceCtrl.updateFolder);
-router.delete('/folders/:id', workspaceCtrl.deleteFolder);
+router.post('/workspaces', requireRoles(['OWNER', 'ADMIN', 'MEMBER']), workspaceCtrl.createWorkspace);
+router.put('/workspaces/:id', requireRoles(['OWNER', 'ADMIN']), workspaceCtrl.updateWorkspace);
+router.delete('/workspaces/:id', requireRoles(['OWNER', 'ADMIN']), workspaceCtrl.deleteWorkspace);
+router.post('/folders', requireRoles(['OWNER', 'ADMIN', 'MEMBER']), workspaceCtrl.createFolder);
+router.put('/folders/:id', requireRoles(['OWNER', 'ADMIN']), workspaceCtrl.updateFolder);
+router.delete('/folders/:id', requireRoles(['OWNER', 'ADMIN']), workspaceCtrl.deleteFolder);
 
 // Projects
 router.get('/projects/:id', projectCtrl.getProject);
-router.post('/projects', projectCtrl.createProject);
-router.put('/projects/:id', projectCtrl.updateProject);
-router.delete('/projects/:id', projectCtrl.deleteProject);
-router.put('/projects/:id/statuses', projectCtrl.updateStatuses);
-router.post('/projects/:id/custom-fields', projectCtrl.createCustomField);
-router.delete('/projects/:id/custom-fields/:fieldId', projectCtrl.deleteCustomField);
+router.post('/projects', requireRoles(['OWNER', 'ADMIN', 'MEMBER']), projectCtrl.createProject);
+router.put('/projects/:id', requireRoles(['OWNER', 'ADMIN']), projectCtrl.updateProject);
+router.delete('/projects/:id', requireRoles(['OWNER', 'ADMIN']), projectCtrl.deleteProject);
+router.put('/projects/:id/statuses', requireRoles(['OWNER', 'ADMIN']), projectCtrl.updateStatuses);
+router.post('/projects/:id/custom-fields', requireRoles(['OWNER', 'ADMIN']), projectCtrl.createCustomField);
+router.delete('/projects/:id/custom-fields/:fieldId', requireRoles(['OWNER', 'ADMIN']), projectCtrl.deleteCustomField);
 router.post('/projects/:id/views', projectCtrl.saveViewConfig);
 
 // Tasks
 router.get('/tasks', taskCtrl.getTasks);
 router.get('/tasks/:id', taskCtrl.getTask);
-router.post('/tasks', taskCtrl.createTask);
-router.put('/tasks/:id', taskCtrl.updateTask);
-router.delete('/tasks/:id', taskCtrl.deleteTask);
-router.post('/tasks/bulk', taskCtrl.bulkUpdateTasks);
-router.post('/tasks/dependencies', taskCtrl.addDependency);
-router.delete('/tasks/dependencies/:id', taskCtrl.removeDependency);
+router.post('/tasks', requireRoles(['OWNER', 'ADMIN', 'MEMBER', 'GUEST']), taskCtrl.createTask);
+router.put('/tasks/:id', requireRoles(['OWNER', 'ADMIN', 'MEMBER', 'GUEST']), taskCtrl.updateTask);
+router.delete('/tasks/:id', requireRoles(['OWNER', 'ADMIN', 'MEMBER']), taskCtrl.deleteTask);
+router.post('/tasks/bulk', requireRoles(['OWNER', 'ADMIN', 'MEMBER']), taskCtrl.bulkUpdateTasks);
+router.post('/tasks/dependencies', requireRoles(['OWNER', 'ADMIN', 'MEMBER']), taskCtrl.addDependency);
+router.delete('/tasks/dependencies/:id', requireRoles(['OWNER', 'ADMIN', 'MEMBER']), taskCtrl.removeDependency);
 
 // Sprints
 router.get('/sprints', sprintCtrl.getSprints);
-router.post('/sprints', sprintCtrl.createSprint);
-router.put('/sprints/:id/start', sprintCtrl.startSprint);
-router.put('/sprints/:id/complete', sprintCtrl.completeSprint);
+router.post('/sprints', requireRoles(['OWNER', 'ADMIN', 'MEMBER']), sprintCtrl.createSprint);
+router.put('/sprints/:id/start', requireRoles(['OWNER', 'ADMIN', 'MEMBER']), sprintCtrl.startSprint);
+router.put('/sprints/:id/complete', requireRoles(['OWNER', 'ADMIN', 'MEMBER']), sprintCtrl.completeSprint);
 router.get('/sprints/:id/report', sprintCtrl.getSprintReport);
 
 // Comments
-router.post('/comments', commentCtrl.createComment);
+router.post('/comments', requireRoles(['OWNER', 'ADMIN', 'MEMBER', 'GUEST']), commentCtrl.createComment);
 router.put('/comments/:id/react', commentCtrl.toggleReaction);
 router.post('/comments/:id/reactions', commentCtrl.toggleReaction);
 router.put('/comments/:id/reactions', commentCtrl.toggleReaction);
-router.delete('/comments/:id', commentCtrl.deleteComment);
+router.delete('/comments/:id', requireRoles(['OWNER', 'ADMIN', 'MEMBER']), commentCtrl.deleteComment);
 
 // Attachments
 router.post('/attachments', attachmentCtrl.uploadMiddleware.single('file'), attachmentCtrl.uploadAttachment);
-router.delete('/attachments/:id', attachmentCtrl.deleteAttachment);
+router.delete('/attachments/:id', requireRoles(['OWNER', 'ADMIN', 'MEMBER']), attachmentCtrl.deleteAttachment);
 
 // Docs
 router.get('/docs', docCtrl.getDocs);
 router.get('/docs/:id', docCtrl.getDoc);
-router.post('/docs', docCtrl.createDoc);
-router.put('/docs/:id', docCtrl.updateDoc);
-router.delete('/docs/:id', docCtrl.deleteDoc);
+router.post('/docs', requireRoles(['OWNER', 'ADMIN', 'MEMBER']), docCtrl.createDoc);
+router.put('/docs/:id', requireRoles(['OWNER', 'ADMIN', 'MEMBER']), docCtrl.updateDoc);
+router.delete('/docs/:id', requireRoles(['OWNER', 'ADMIN']), docCtrl.deleteDoc);
 
 // Automations
 router.get('/automations', automationCtrl.getAutomations);
-router.post('/automations', automationCtrl.createAutomation);
-router.put('/automations/:id', automationCtrl.updateAutomation);
-router.delete('/automations/:id', automationCtrl.deleteAutomation);
-router.post('/automations/:id/test', automationCtrl.testAutomation);
+router.post('/automations', requireRoles(['OWNER', 'ADMIN', 'MEMBER']), automationCtrl.createAutomation);
+router.put('/automations/:id', requireRoles(['OWNER', 'ADMIN', 'MEMBER']), automationCtrl.updateAutomation);
+router.delete('/automations/:id', requireRoles(['OWNER', 'ADMIN']), automationCtrl.deleteAutomation);
+router.post('/automations/:id/test', requireRoles(['OWNER', 'ADMIN', 'MEMBER']), automationCtrl.testAutomation);
 
 // Dashboards & Analytics
 router.get('/dashboard/analytics', dashboardCtrl.getDashboardData);

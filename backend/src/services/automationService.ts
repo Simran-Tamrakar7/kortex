@@ -10,15 +10,23 @@ interface AutomationTriggerPayload {
   triggerType: 'STATUS_CHANGED' | 'ASSIGNEE_ADDED' | 'DUE_DATE_PASSED' | 'TASK_CREATED' | 'PRIORITY_CHANGED';
   triggerData?: Record<string, any>;
   userId?: string;
+  depth?: number;
 }
 
 export async function processAutomations(payload: AutomationTriggerPayload) {
+  // Prevent infinite automation loops / cascades
+  if ((payload.depth || 0) > 3) {
+    return;
+  }
+
   try {
+    // 1. Fetch active rules ordered deterministically by creation time
     const rules = await prisma.automationRule.findMany({
       where: {
         projectId: payload.projectId,
         isEnabled: true,
       },
+      orderBy: { createdAt: 'asc' },
     });
 
     if (!rules.length) return;
@@ -33,6 +41,9 @@ export async function processAutomations(payload: AutomationTriggerPayload) {
     });
 
     if (!task) return;
+
+    // Track field modifications in this cycle to detect & handle conflicting rules
+    const modifiedFieldsMap = new Map<string, string>(); // fieldName -> ruleName
 
     for (const rule of rules) {
       let triggerJson: any = {};
@@ -86,9 +97,19 @@ export async function processAutomations(payload: AutomationTriggerPayload) {
 
       if (!conditionsMet) continue;
 
-      // 3. Execute Actions
+      // 3. Execute Actions with Conflict Awareness
       for (const action of actionsJson) {
         if (action.type === 'SET_STATUS' && action.config?.statusId) {
+          const prevRule = modifiedFieldsMap.get('status');
+          if (prevRule) {
+            await logActivity({
+              taskId: task.id,
+              userId: payload.userId || task.reporterId,
+              action: `ℹ️ Conflict Note: Automation "${rule.name}" overrode status previously set by "${prevRule}"`,
+            });
+          }
+          modifiedFieldsMap.set('status', rule.name);
+
           await prisma.task.update({
             where: { id: task.id },
             data: { statusId: action.config.statusId },
@@ -99,6 +120,16 @@ export async function processAutomations(payload: AutomationTriggerPayload) {
             action: `Automation "${rule.name}" changed status to ${action.config.statusName || 'new status'}`,
           });
         } else if (action.type === 'SET_PRIORITY' && action.config?.priority) {
+          const prevRule = modifiedFieldsMap.get('priority');
+          if (prevRule) {
+            await logActivity({
+              taskId: task.id,
+              userId: payload.userId || task.reporterId,
+              action: `ℹ️ Conflict Note: Automation "${rule.name}" overrode priority previously set by "${prevRule}"`,
+            });
+          }
+          modifiedFieldsMap.set('priority', rule.name);
+
           await prisma.task.update({
             where: { id: task.id },
             data: { priority: action.config.priority },

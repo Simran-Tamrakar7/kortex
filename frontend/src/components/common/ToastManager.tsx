@@ -1,8 +1,8 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useRef } from 'react';
 import { socketService } from '../../api/socket';
 import { SOCKET_EVENTS } from '@kortex/shared';
 import { useAppStore } from '../../store/useAppStore';
-import { Bell, CheckCircle2, AlertTriangle, X, Zap } from 'lucide-react';
+import { Bell, CheckCircle2, AlertTriangle, X, Zap, ShieldAlert } from 'lucide-react';
 
 interface Toast {
   id: string;
@@ -15,6 +15,9 @@ interface Toast {
 export const ToastManager: React.FC = () => {
   const { setActiveTaskId } = useAppStore();
   const [toasts, setToasts] = useState<Toast[]>([]);
+  
+  // Track tasks for which SLA breach was already alerted to ensure single-fire per session
+  const alertedBreachesRef = useRef<Set<string>>(new Set());
 
   const addToast = (toast: Omit<Toast, 'id'>) => {
     const id = `toast-${Date.now()}-${Math.random()}`;
@@ -32,6 +35,19 @@ export const ToastManager: React.FC = () => {
   useEffect(() => {
     const handleTaskUpdated = (task: any) => {
       if (!task) return;
+
+      // Check for SLA Breach single-fire notification
+      if (task.slaBreached && !alertedBreachesRef.current.has(task.id)) {
+        alertedBreachesRef.current.add(task.id);
+        addToast({
+          title: `⚠️ SLA Target Breached: ${task.key}`,
+          message: `Ticket "${task.title}" has exceeded resolution deadline.`,
+          type: 'error',
+          taskId: task.id,
+        });
+        return;
+      }
+
       addToast({
         title: `Task Updated: ${task.key}`,
         message: task.title,
@@ -66,17 +82,33 @@ export const ToastManager: React.FC = () => {
       {toasts.map((t) => (
         <div
           key={t.id}
-          className="pointer-events-auto bg-[var(--bg-card)] border border-[var(--border-default)] rounded-2xl shadow-2xl p-3.5 flex items-start justify-between gap-3 text-xs animate-in slide-in-from-bottom-5 fade-in duration-200 transition-colors"
+          className={`pointer-events-auto bg-[var(--bg-card)] border rounded-2xl shadow-2xl p-3.5 flex items-start justify-between gap-3 text-xs animate-in slide-in-from-bottom-5 fade-in duration-200 transition-colors ${
+            t.type === 'error'
+              ? 'border-rose-400 dark:border-rose-800 ring-1 ring-rose-500/20'
+              : 'border-[var(--border-default)]'
+          }`}
         >
           <div
             onClick={() => t.taskId && setActiveTaskId(t.taskId)}
             className="flex items-start gap-2.5 flex-1 cursor-pointer"
           >
-            <div className="w-6 h-6 rounded-lg bg-indigo-50 dark:bg-indigo-950/60 border border-indigo-200 dark:border-indigo-500/40 text-indigo-600 dark:text-indigo-400 flex items-center justify-center shrink-0">
-              <Bell className="w-3.5 h-3.5" />
+            <div
+              className={`w-6 h-6 rounded-lg border flex items-center justify-center shrink-0 ${
+                t.type === 'error'
+                  ? 'bg-rose-50 dark:bg-rose-950/60 border-rose-200 dark:border-rose-500/40 text-rose-600 dark:text-rose-400'
+                  : 'bg-indigo-50 dark:bg-indigo-950/60 border-indigo-200 dark:border-indigo-500/40 text-indigo-600 dark:text-indigo-400'
+              }`}
+            >
+              {t.type === 'error' ? <ShieldAlert className="w-3.5 h-3.5" /> : <Bell className="w-3.5 h-3.5" />}
             </div>
             <div className="space-y-0.5 min-w-0">
-              <p className="font-bold text-[var(--text-primary)] truncate">{t.title}</p>
+              <p
+                className={`font-bold truncate ${
+                  t.type === 'error' ? 'text-rose-600 dark:text-rose-400' : 'text-[var(--text-primary)]'
+                }`}
+              >
+                {t.title}
+              </p>
               <p className="text-[11px] text-[var(--text-secondary)] truncate">{t.message}</p>
             </div>
           </div>
