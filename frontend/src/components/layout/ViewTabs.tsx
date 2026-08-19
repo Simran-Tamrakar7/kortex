@@ -47,8 +47,9 @@ export const ViewTabs: React.FC<Props> = ({ totalTaskCount = 0 }) => {
   const [activePreset, setActivePreset] = useState<string | null>(null);
 
   const views: { type: ViewType; label: string; icon: React.ReactNode }[] = [
-    { type: 'LIST', label: 'List', icon: <List className="w-3.5 h-3.5" /> },
+    { type: 'OVERVIEW', label: 'Overview', icon: <Zap className="w-3.5 h-3.5 text-amber-500" /> },
     { type: 'BOARD', label: 'Kanban Board', icon: <Columns3 className="w-3.5 h-3.5" /> },
+    { type: 'LIST', label: 'List', icon: <List className="w-3.5 h-3.5" /> },
     { type: 'BACKLOG', label: 'Sprint Backlog', icon: <Layers className="w-3.5 h-3.5" /> },
     { type: 'GANTT', label: 'Timeline / Gantt', icon: <BarChart2 className="w-3.5 h-3.5 rotate-90" /> },
     { type: 'CALENDAR', label: 'Calendar', icon: <Calendar className="w-3.5 h-3.5" /> },

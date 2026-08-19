@@ -23,6 +23,7 @@ export type CustomFieldType =
   | 'USER_PICKER';
 
 export type ViewType = 
+  | 'OVERVIEW'
   | 'LIST' 
   | 'BOARD' 
   | 'BACKLOG' 

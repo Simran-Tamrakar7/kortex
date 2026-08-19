@@ -1,7 +1,7 @@
 import React, { useState } from 'react';
 import { useAuthStore } from '../../store/useAuthStore';
 import { useAppStore } from '../../store/useAppStore';
-import { useWorkspaceTree } from '../../api/queries';
+import { useWorkspaceTree, useSprints } from '../../api/queries';
 import {
   Layers,
   Folder,
@@ -21,6 +21,7 @@ import {
   PanelLeftClose,
   PanelLeft,
   BookOpen,
+  Sparkles,
 } from 'lucide-react';
 import { apiClient } from '../../api/client';
 import { useQueryClient } from '@tanstack/react-query';
@@ -32,6 +33,9 @@ export const Sidebar: React.FC = () => {
     setActiveProjectId,
     activeMainSection,
     setActiveMainSection,
+    setActiveView,
+    setFilter,
+    setSprintModalOpen,
     setOrgSettingsOpen,
     setTimeModalOpen,
     setAutomationsOpen,
@@ -40,6 +44,7 @@ export const Sidebar: React.FC = () => {
 
   const queryClient = useQueryClient();
   const { data: workspaces = [] } = useWorkspaceTree(organization?.id);
+  const { data: sprints = [] } = useSprints(activeProjectId);
 
   const [isCollapsed, setIsCollapsed] = useState(false);
   const [openFolders, setOpenFolders] = useState<Record<string, boolean>>({ all: true });
@@ -260,28 +265,68 @@ export const Sidebar: React.FC = () => {
                         {folder.projects?.map((proj: any) => {
                           const isSelected = activeProjectId === proj.id && activeMainSection === 'PROJECT';
                           return (
-                            <button
-                              key={proj.id}
-                              onClick={() => {
-                                setActiveProjectId(proj.id);
-                                setActiveMainSection('PROJECT');
-                              }}
-                              className={`w-full flex items-center justify-between px-2 py-1 rounded transition-colors ${
-                                isSelected
-                                  ? 'bg-indigo-600/15 text-indigo-600 dark:text-indigo-300 font-bold border-l-2 border-indigo-500'
-                                  : 'text-[var(--text-secondary)] hover:text-[var(--text-primary)] hover:bg-[var(--bg-hover)]'
-                              }`}
-                            >
-                              <div className="flex items-center gap-1.5 truncate">
-                                {proj.type === 'SERVICE_DESK' ? (
-                                  <LifeBuoy className="w-3.5 h-3.5 text-emerald-500 shrink-0" />
-                                ) : (
-                                  <FolderGit2 className="w-3.5 h-3.5 text-indigo-500 shrink-0" />
-                                )}
-                                <span className="truncate">{proj.name}</span>
-                              </div>
-                              <span className="text-[10px] text-[var(--text-muted)] font-mono ml-1">{proj.key}</span>
-                            </button>
+                            <div key={proj.id} className="space-y-0.5">
+                              <button
+                                onClick={() => {
+                                  setActiveProjectId(proj.id);
+                                  setActiveMainSection('PROJECT');
+                                }}
+                                className={`w-full flex items-center justify-between px-2 py-1 rounded transition-colors ${
+                                  isSelected
+                                    ? 'bg-indigo-600/15 text-indigo-600 dark:text-indigo-300 font-bold border-l-2 border-indigo-500'
+                                    : 'text-[var(--text-secondary)] hover:text-[var(--text-primary)] hover:bg-[var(--bg-hover)]'
+                                }`}
+                              >
+                                <div className="flex items-center gap-1.5 truncate">
+                                  {proj.type === 'SERVICE_DESK' ? (
+                                    <LifeBuoy className="w-3.5 h-3.5 text-emerald-500 shrink-0" />
+                                  ) : (
+                                    <FolderGit2 className="w-3.5 h-3.5 text-indigo-500 shrink-0" />
+                                  )}
+                                  <span className="truncate">{proj.name}</span>
+                                </div>
+                                <span className="text-[10px] text-[var(--text-muted)] font-mono ml-1">{proj.key}</span>
+                              </button>
+
+                              {/* Nested Sprints List if Project Selected */}
+                              {isSelected && sprints.length > 0 && (
+                                <div className="pl-4 space-y-0.5 pt-0.5 border-l border-[var(--border-subtle)] ml-2">
+                                  {sprints.map((sp) => (
+                                    <button
+                                      key={sp.id}
+                                      onClick={(e) => {
+                                        e.stopPropagation();
+                                        setActiveView('BOARD');
+                                        setFilter('sprintId', sp.id);
+                                      }}
+                                      className="w-full flex items-center justify-between px-2 py-0.5 rounded text-[11px] text-[var(--text-secondary)] hover:text-[var(--text-primary)] hover:bg-[var(--bg-hover)] transition-colors group"
+                                    >
+                                      <div className="flex items-center gap-1.5 truncate">
+                                        <span className="text-[9px]">
+                                          {sp.status === 'ACTIVE' ? '🚀' : sp.status === 'COMPLETED' ? '🟢' : '📋'}
+                                        </span>
+                                        <span className="truncate group-hover:text-indigo-600 dark:group-hover:text-indigo-400 font-medium">
+                                          {sp.name.split(' — ')[0]}
+                                        </span>
+                                      </div>
+                                      <span className="text-[9px] font-mono px-1 rounded bg-[var(--bg-input)] text-[var(--text-muted)]">
+                                        {sp.totalPoints || 0}
+                                      </span>
+                                    </button>
+                                  ))}
+                                  <button
+                                    onClick={(e) => {
+                                      e.stopPropagation();
+                                      setSprintModalOpen(true, { mode: 'create', sprint: null });
+                                    }}
+                                    className="w-full flex items-center gap-1 px-2 py-0.5 text-[10px] text-indigo-600 dark:text-indigo-400 hover:underline font-semibold"
+                                  >
+                                    <Plus className="w-2.5 h-2.5" />
+                                    <span>Create Sprint</span>
+                                  </button>
+                                </div>
+                              )}
+                            </div>
                           );
                         })}
                       </div>

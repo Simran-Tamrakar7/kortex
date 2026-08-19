@@ -12,6 +12,7 @@ import { Sidebar } from './Sidebar';
 import { ViewTabs } from './ViewTabs';
 
 // Views
+import { OverviewView } from '../views/OverviewView';
 import { ListView } from '../views/ListView';
 import { KanbanView } from '../views/KanbanView';
 import { BacklogView } from '../views/BacklogView';
@@ -156,6 +157,7 @@ export const AppLayout: React.FC = () => {
             <>
               <ViewTabs totalTaskCount={filteredTasks.length} />
 
+              {activeView === 'OVERVIEW' && <OverviewView tasks={filteredTasks} />}
               {activeView === 'LIST' && <ListView tasks={filteredTasks} />}
               {activeView === 'BOARD' && <KanbanView tasks={filteredTasks} />}
               {activeView === 'BACKLOG' && <BacklogView tasks={filteredTasks} />}
