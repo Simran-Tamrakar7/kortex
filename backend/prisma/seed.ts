@@ -622,19 +622,34 @@ async function main() {
   });
 
   // Automations
-  await prisma.automationRule.create({
-    data: {
-      projectId: scrumProject.id,
-      name: 'Auto-Complete Sprint Tasks to Done',
-      description: 'When all subtasks of a story are completed, notify the assignees.',
-      triggerJson: JSON.stringify({ type: 'STATUS_CHANGED', config: { toStatusId: statusDone.id } }),
-      conditionsJson: JSON.stringify([{ field: 'priority', operator: 'EQUALS', value: 'HIGH' }]),
-      actionsJson: JSON.stringify([
-        { type: 'POST_COMMENT', config: { message: '🎉 Great job! High priority item marked as completed.' } },
-      ]),
-      executionCount: 7,
-      lastExecutedAt: new Date(Date.now() - 2 * 60 * 60 * 1000),
-    },
+  await prisma.automationRule.createMany({
+    data: [
+      {
+        projectId: scrumProject.id,
+        name: 'Celebrate High-Priority Completions',
+        description: 'When a high priority item is moved to Done, post a celebratory bot comment.',
+        triggerJson: JSON.stringify({ type: 'STATUS_CHANGED', config: { toStatusId: statusDone.id } }),
+        conditionsJson: JSON.stringify([{ field: 'priority', operator: 'EQUALS', value: 'HIGH' }]),
+        actionsJson: JSON.stringify([
+          { type: 'POST_COMMENT', config: { message: '🎉 Great job team! High priority deliverable successfully resolved.' } },
+        ]),
+        executionCount: 7,
+        lastExecutedAt: new Date(Date.now() - 2 * 60 * 60 * 1000),
+      },
+      {
+        projectId: scrumProject.id,
+        name: 'Auto-Transition Urgent Reviews to Done',
+        description: 'When urgent tasks enter Code Review, automatically transition to Done.',
+        triggerJson: JSON.stringify({ type: 'STATUS_CHANGED', config: { toStatusId: statusCodeReview.id } }),
+        conditionsJson: JSON.stringify([{ field: 'priority', operator: 'EQUALS', value: 'URGENT' }]),
+        actionsJson: JSON.stringify([
+          { type: 'SET_STATUS', config: { statusId: statusDone.id, statusName: 'Done' } },
+          { type: 'POST_COMMENT', config: { message: '⚡ Automated fast-track: Urgent review item moved to Done.' } },
+        ]),
+        executionCount: 4,
+        lastExecutedAt: new Date(Date.now() - 1 * 60 * 60 * 1000),
+      },
+    ],
   });
 
   // Docs
