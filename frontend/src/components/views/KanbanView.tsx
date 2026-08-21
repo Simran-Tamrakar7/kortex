@@ -243,7 +243,7 @@ export const KanbanView: React.FC<Props> = ({ tasks }) => {
                                 </div>
 
                                 {/* Task Title */}
-                                <p className="text-xs font-semibold text-[var(--text-primary)] leading-snug hover:text-indigo-600 dark:hover:text-indigo-400 transition-colors line-clamp-2 mb-2">
+                                <p className="text-xs font-semibold text-[var(--text-primary)] leading-snug hover:text-indigo-600 dark:hover:text-indigo-400 transition-colors line-clamp-2 mb-2 break-words">
                                   {task.title}
                                 </p>
 

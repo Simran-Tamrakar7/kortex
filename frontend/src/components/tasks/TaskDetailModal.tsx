@@ -16,6 +16,7 @@ import { PriorityBadge } from '../common/PriorityBadge';
 import { StatusBadge } from '../common/StatusBadge';
 import { Avatar } from '../common/Avatar';
 import { Priority, IssueType } from '@kortex/shared';
+import { sanitizePlainText, TITLE_MAX, DESC_MAX, COMMENT_MAX } from '../../lib/sanitizeText';
 import {
   X,
   Trash2,
@@ -116,17 +117,18 @@ export const TaskDetailModal: React.FC = () => {
 
   const handleAddComment = async (e: React.FormEvent) => {
     e.preventDefault();
-    if (!newComment.trim()) return;
+    const content = sanitizePlainText(newComment, COMMENT_MAX).trim();
+    if (!content) return;
     await createCommentMutation.mutateAsync({
       taskId: task.id,
-      content: newComment.trim(),
+      content,
     });
     setNewComment('');
     setMentionQuery(null);
   };
 
   const handleCommentChange = (e: React.ChangeEvent<HTMLTextAreaElement>) => {
-    const val = e.target.value;
+    const val = sanitizePlainText(e.target.value, COMMENT_MAX);
     setNewComment(val);
 
     // Check for @mention trigger
@@ -307,13 +309,16 @@ export const TaskDetailModal: React.FC = () => {
                   <input
                     type="text"
                     autoFocus
+                    maxLength={TITLE_MAX}
                     value={titleValue}
-                    onChange={(e) => setTitleValue(e.target.value)}
+                    onChange={(e) => setTitleValue(sanitizePlainText(e.target.value, TITLE_MAX))}
                     className="flex-1 bg-[var(--bg-input)] border border-indigo-500 rounded-lg px-3 py-1.5 text-sm font-bold text-[var(--text-primary)] outline-none"
                   />
                   <button
                     onClick={() => {
-                      if (titleValue.trim()) handleUpdate('title', titleValue.trim());
+                      const next = sanitizePlainText(titleValue, TITLE_MAX).trim();
+                      if (next) handleUpdate('title', next);
+                      else setTitleValue(task.title);
                       setIsEditingTitle(false);
                     }}
                     className="px-3 py-1.5 bg-indigo-600 text-white rounded-lg font-bold"
@@ -321,7 +326,10 @@ export const TaskDetailModal: React.FC = () => {
                     Save
                   </button>
                   <button
-                    onClick={() => setIsEditingTitle(false)}
+                    onClick={() => {
+                      setTitleValue(task.title);
+                      setIsEditingTitle(false);
+                    }}
                     className="px-2 py-1.5 text-[var(--text-secondary)] hover:text-[var(--text-primary)]"
                   >
                     Cancel
@@ -333,7 +341,7 @@ export const TaskDetailModal: React.FC = () => {
                     setTitleValue(task.title);
                     setIsEditingTitle(true);
                   }}
-                  className="text-base font-bold text-[var(--text-primary)] hover:text-indigo-600 dark:hover:text-indigo-400 cursor-pointer rounded px-1 -mx-1 py-0.5 transition-colors"
+                  className="text-base font-bold text-[var(--text-primary)] hover:text-indigo-600 dark:hover:text-indigo-400 cursor-pointer rounded px-1 -mx-1 py-0.5 transition-colors break-words"
                 >
                   {task.title}
                 </h1>
@@ -350,14 +358,15 @@ export const TaskDetailModal: React.FC = () => {
                   <textarea
                     rows={4}
                     autoFocus
+                    maxLength={DESC_MAX}
                     value={descValue}
-                    onChange={(e) => setDescValue(e.target.value)}
-                    className="w-full bg-[var(--bg-input)] border border-indigo-500 rounded-xl p-3 text-xs text-[var(--text-primary)] outline-none resize-y font-mono"
+                    onChange={(e) => setDescValue(sanitizePlainText(e.target.value, DESC_MAX))}
+                    className="w-full bg-[var(--bg-input)] border border-indigo-500 rounded-xl p-3 text-xs text-[var(--text-primary)] outline-none resize-y font-mono break-words"
                   />
                   <div className="flex items-center gap-2">
                     <button
                       onClick={() => {
-                        handleUpdate('description', descValue.trim());
+                        handleUpdate('description', sanitizePlainText(descValue, DESC_MAX).trim());
                         setIsEditingDesc(false);
                       }}
                       className="px-3 py-1.5 bg-indigo-600 text-white rounded-lg font-bold"
@@ -365,7 +374,10 @@ export const TaskDetailModal: React.FC = () => {
                       Save
                     </button>
                     <button
-                      onClick={() => setIsEditingDesc(false)}
+                      onClick={() => {
+                        setDescValue(task.description || '');
+                        setIsEditingDesc(false);
+                      }}
                       className="px-2 py-1.5 text-[var(--text-secondary)] hover:text-[var(--text-primary)]"
                     >
                       Cancel
@@ -378,7 +390,7 @@ export const TaskDetailModal: React.FC = () => {
                     setDescValue(task.description || '');
                     setIsEditingDesc(true);
                   }}
-                  className="p-3 bg-[var(--bg-elevated)] border border-[var(--border-subtle)] rounded-xl text-xs text-[var(--text-secondary)] hover:border-indigo-400 cursor-pointer min-h-[70px] whitespace-pre-wrap transition-colors leading-relaxed"
+                  className="p-3 bg-[var(--bg-elevated)] border border-[var(--border-subtle)] rounded-xl text-xs text-[var(--text-secondary)] hover:border-indigo-400 cursor-pointer min-h-[70px] whitespace-pre-wrap break-words transition-colors leading-relaxed"
                 >
                   {task.description || (
                     <span className="text-[var(--text-muted)] italic">Add a rich description or acceptance criteria...</span>
@@ -750,7 +762,7 @@ export const TaskDetailModal: React.FC = () => {
                                 {new Date(comm.createdAt).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })}
                               </span>
                             </div>
-                            <p className="text-[var(--text-secondary)] leading-relaxed">{comm.content}</p>
+                            <p className="text-[var(--text-secondary)] leading-relaxed break-words whitespace-pre-wrap">{comm.content}</p>
 
                             {/* Reactions bar */}
                             <div className="flex items-center gap-1.5 pt-1">
@@ -815,10 +827,11 @@ export const TaskDetailModal: React.FC = () => {
                       <textarea
                         ref={commentInputRef}
                         rows={2}
+                        maxLength={COMMENT_MAX}
                         placeholder="Write a comment... (Type @ to mention teammates)"
                         value={newComment}
                         onChange={handleCommentChange}
-                        className="w-full bg-[var(--bg-input)] border border-[var(--border-default)] rounded-xl p-3 text-xs text-[var(--text-primary)] outline-none focus:border-indigo-500 resize-none font-sans"
+                        className="w-full bg-[var(--bg-input)] border border-[var(--border-default)] rounded-xl p-3 text-xs text-[var(--text-primary)] outline-none focus:border-indigo-500 resize-none font-sans break-words"
                       />
                       <div className="flex justify-end">
                         <button
