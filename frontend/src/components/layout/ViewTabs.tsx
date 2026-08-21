@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect, useRef } from 'react';
 import { useAppStore } from '../../store/useAppStore';
 import { useProject, useSprints } from '../../api/queries';
 import { ViewType, Priority, IssueType } from '@kortex/shared';
@@ -45,6 +45,26 @@ export const ViewTabs: React.FC<Props> = ({ totalTaskCount = 0 }) => {
   const { data: sprints = [] } = useSprints(activeProjectId);
 
   const [activePreset, setActivePreset] = useState<string | null>(null);
+  // DEV-44: local draft + debounce so typing doesn't re-query the board every keystroke
+  const [searchDraft, setSearchDraft] = useState(filters.search);
+  const searchTimer = useRef<ReturnType<typeof setTimeout> | null>(null);
+
+  useEffect(() => {
+    setSearchDraft(filters.search);
+  }, [filters.search]);
+
+  useEffect(() => {
+    return () => {
+      if (searchTimer.current) clearTimeout(searchTimer.current);
+    };
+  }, []);
+
+  const onSearchChange = (value: string) => {
+    setSearchDraft(value);
+    setActivePreset(null);
+    if (searchTimer.current) clearTimeout(searchTimer.current);
+    searchTimer.current = setTimeout(() => setFilter('search', value), 200);
+  };
 
   const views: { type: ViewType; label: string; icon: React.ReactNode }[] = [
     { type: 'OVERVIEW', label: 'Overview', icon: <Zap className="w-3.5 h-3.5 text-amber-500" /> },
@@ -110,6 +130,8 @@ export const ViewTabs: React.FC<Props> = ({ totalTaskCount = 0 }) => {
     filters.sprintId !== undefined;
 
   const handleClear = () => {
+    if (searchTimer.current) clearTimeout(searchTimer.current);
+    setSearchDraft('');
     resetFilters();
     setActivePreset(null);
   };
@@ -159,11 +181,8 @@ export const ViewTabs: React.FC<Props> = ({ totalTaskCount = 0 }) => {
           <input
             type="text"
             placeholder="Filter tasks..."
-            value={filters.search}
-            onChange={(e) => {
-              setFilter('search', e.target.value);
-              setActivePreset(null);
-            }}
+            value={searchDraft}
+            onChange={(e) => onSearchChange(e.target.value)}
             className="bg-[var(--bg-input)] border border-[var(--border-default)] rounded-md px-2.5 py-1 text-xs text-[var(--text-primary)] placeholder-[var(--text-muted)] focus:border-indigo-500 outline-none w-40 shadow-sm"
           />
 
