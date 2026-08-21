@@ -1126,8 +1126,8 @@ const mockTasksSeed: any[] = [
       'Originating request: root .cursorrules capturing tech stack, folder conventions, component/Tailwind/Zustand patterns, and standing task/deploy/doc-sync rules.',
     issueType: 'TASK',
     priority: 'MEDIUM',
-    statusId: 'st_todo',
-    status: { id: 'st_todo', name: 'To Do', category: 'TODO', color: '#3b82f6' },
+    statusId: 'st_done',
+    status: { id: 'st_done', name: 'Done', category: 'DONE', color: '#10b981' },
     sprintId: 'sp_dev_2',
     storyPoints: 3,
     order: 42,
@@ -1266,6 +1266,7 @@ Agent logins: \`cursor@kortex.dev\` · \`antigravity@kortex.dev\` (password \`pa
 - 🟢 **[DEV-43]** Bug: Kanban re-filters columns every render — **Done** · **Cursor** · \`tasksByStatus\` useMemo (single pass group+sort)
 - 🟢 **[DEV-44]** Bug: search updates store every keystroke — **Done** · **Cursor** · 200ms debounce on ViewTabs search before \`setFilter\`
 - 🟢 **[DEV-39]** URL-persisted filters (List/Kanban/Spreadsheet) — **Done** · **Cursor** · \`?view=&search=&priority=&type=&sprint=&sort=&my=1\` via \`useUrlFilterSync\`
+- 🟢 **[DEV-40]** Generate \`.cursorrules\` — **Done** · **Cursor** · Root rules: stack, folders, Tailwind/Zustand patterns, agent task/deploy/doc-sync workflow
 
 ---
 
@@ -1338,7 +1339,8 @@ Agent logins: \`cursor@kortex.dev\` · \`antigravity@kortex.dev\` (password \`pa
 3. **Docs in the same task:** update this Walkthrough + Platform Guide chapter + dated Changelog (with commit/deploy). Partial features marked \`🚧 Partial\`.
 4. **Ship isolation:** one task → one commit (\`DEV-N: …\`) → one Vercel deploy → confirm success before Done. Failed deploy = Blocked, not Done. Broken prod → rollback + Blocked.
 5. **Helpers:** \`frontend/src/lib/agentWorkflow.ts\` — overlap detection, commit/deploy tags, end-of-prompt summary formatter.
-6. **Reply format:**
+6. **Cursor rules:** root \`.cursorrules\` mirrors stack, folder conventions, Tailwind/Zustand patterns, and this workflow (keep in sync when conventions change).
+7. **Reply format:**
 \`\`\`
 Tasks: DEV-N (status) …
 Changed: …
