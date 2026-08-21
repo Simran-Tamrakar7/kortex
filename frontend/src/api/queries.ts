@@ -859,8 +859,8 @@ const mockTasks: any[] = [
       'Originating request: deploy after every change; self-check before Deploying; no Done on failed deploy; rollback/Blocked on broken prod; version/task-ID tags; duplicate-task link preference.',
     issueType: 'TASK',
     priority: 'HIGH',
-    statusId: 'st_todo',
-    status: { id: 'st_todo', name: 'To Do', category: 'TODO', color: '#3b82f6' },
+    statusId: 'st_done',
+    status: { id: 'st_done', name: 'Done', category: 'DONE', color: '#10b981' },
     sprintId: 'sp_dev_2',
     storyPoints: 5,
     order: 34,
@@ -894,7 +894,7 @@ Agent logins: \`cursor@kortex.dev\` · \`antigravity@kortex.dev\` (password \`pa
 - 🟢 **[DEV-29]** ClickUp-style nested Sprints folder in Space sidebar — **Done** · **Cursor**
 - 🟢 **[DEV-30]** Add Deploying and Blocked board statuses for live agent tracking — **Done** · **Cursor**
 - 🟢 **[DEV-31]** Document agent workflow in Kortex Platform Walkthrough — **Done** · **Cursor**
-- 🟣 **[DEV-32]** Per-task deploy rules: one commit, verify, tag, changelog as deploy history — **In Progress** · **Cursor**
+- 🟢 **[DEV-32]** Per-task deploy rules: one commit, verify, tag, changelog as deploy history — **Done** · **Cursor** · helpers in \`frontend/src/lib/agentWorkflow.ts\`
 
 ---
 
@@ -966,7 +966,8 @@ Agent logins: \`cursor@kortex.dev\` · \`antigravity@kortex.dev\` (password \`pa
 2. **Live statuses:** To Do → In Progress → In Review (self-check/build) → Deploying → Done, or **Blocked**.
 3. **Docs in the same task:** update this Walkthrough + Platform Guide chapter + dated Changelog (with commit/deploy). Partial features marked \`🚧 Partial\`.
 4. **Ship isolation:** one task → one commit (\`DEV-N: …\`) → one Vercel deploy → confirm success before Done. Failed deploy = Blocked, not Done. Broken prod → rollback + Blocked.
-5. **Reply format:**
+5. **Helpers:** \`frontend/src/lib/agentWorkflow.ts\` — overlap detection, commit/deploy tags, end-of-prompt summary formatter.
+6. **Reply format:**
 \`\`\`
 Tasks: DEV-N (status) …
 Changed: …

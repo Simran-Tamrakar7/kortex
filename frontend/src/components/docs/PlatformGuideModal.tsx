@@ -470,6 +470,7 @@ export const PlatformGuideModal: React.FC = () => {
                       After In Review self-check (build + feature check): status <strong>Deploying</strong>, commit
                       <code> DEV-N: …</code>, push, deploy Vercel, tag with task ID. Success → Done. Failure → Blocked (no Done), fix deploy, note in changelog.
                       Broken prod → revert to last good deploy and reopen as Blocked. Never batch multiple tasks into one deploy.
+                      Helpers live in <code>frontend/src/lib/agentWorkflow.ts</code> (overlap detection, commit/deploy tags, summary formatter).
                     </p>
                   </div>
 
