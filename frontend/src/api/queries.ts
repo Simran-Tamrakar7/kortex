@@ -67,6 +67,12 @@ const mockWorkspaces: any[] = [
         key: 'ITS',
         type: 'SERVICE_DESK',
       },
+      {
+        id: 'proj_load',
+        name: 'Load Test (100+ tasks)',
+        key: 'LOAD',
+        type: 'SOFTWARE_SCRUM',
+      },
     ],
   },
 ];
@@ -109,6 +115,17 @@ const mockProjectKor: any = {
     { id: 'st_blocked', name: 'Blocked', category: 'BLOCKED', color: '#ef4444', order: 5 },
     { id: 'st_done', name: 'Done', category: 'DONE', color: '#10b981', order: 6 },
   ],
+};
+
+/** Perf QA sandbox — 120 seeded tasks (DEV-38) */
+const mockProjectLoad: any = {
+  id: 'proj_load',
+  name: 'Load Test (100+ tasks)',
+  key: 'LOAD',
+  type: 'SOFTWARE_SCRUM',
+  description: 'Synthetic project for drag/search/filter performance QA',
+  leadId: 'usr_alex',
+  statuses: mockProjectDev.statuses,
 };
 
 const mockSprints: any[] = [
@@ -244,6 +261,17 @@ const mockSprints: any[] = [
     completedPoints: 0,
     startDate: new Date('2026-03-23').toISOString(),
     endDate: new Date('2026-03-29').toISOString(),
+  },
+  {
+    id: 'sp_load_1',
+    projectId: 'proj_load',
+    name: 'Load Sprint 1',
+    goal: 'Perf QA fixture sprint',
+    status: 'ACTIVE',
+    totalPoints: 120,
+    completedPoints: 30,
+    startDate: new Date('2026-02-09').toISOString(),
+    endDate: new Date('2026-02-22').toISOString(),
   },
 ];
 
@@ -1062,8 +1090,8 @@ const mockTasksSeed: any[] = [
     description: 'Originating request: seed 100+ tasks; check frame drops on drag, search, filter. Fix perf bugs found.',
     issueType: 'TASK',
     priority: 'MEDIUM',
-    statusId: 'st_todo',
-    status: { id: 'st_todo', name: 'To Do', category: 'TODO', color: '#3b82f6' },
+    statusId: 'st_done',
+    status: { id: 'st_done', name: 'Done', category: 'DONE', color: '#10b981' },
     sprintId: 'sp_dev_2',
     storyPoints: 5,
     order: 40,
@@ -1106,20 +1134,91 @@ const mockTasksSeed: any[] = [
     labels: ['Cursor', 'Docs', 'Tooling'],
     assignees: [{ id: 'usr_cursor', name: 'Cursor', avatarUrl: 'https://api.dicebear.com/7.x/bottts/svg?seed=cursor' }],
   },
+  {
+    id: 't_dev_43',
+    key: 'DEV-43',
+    projectId: 'proj_dev',
+    epicId: 't_epic_agents',
+    title: 'Bug: Kanban re-filters every column on each render (jank with 100+ tasks)',
+    description:
+      'Found in DEV-38 perf QA: getTasksForColumn filters+sorts the full list per column every render (including during drag). Precompute tasks-by-status once.',
+    issueType: 'BUG',
+    priority: 'HIGH',
+    statusId: 'st_todo',
+    status: { id: 'st_todo', name: 'To Do', category: 'TODO', color: '#3b82f6' },
+    sprintId: 'sp_dev_2',
+    storyPoints: 2,
+    order: 45,
+    labels: ['Bug', 'Performance', 'Kanban', 'Cursor'],
+    assignees: [{ id: 'usr_cursor', name: 'Cursor', avatarUrl: 'https://api.dicebear.com/7.x/bottts/svg?seed=cursor' }],
+  },
+  {
+    id: 't_dev_44',
+    key: 'DEV-44',
+    projectId: 'proj_dev',
+    epicId: 't_epic_agents',
+    title: 'Bug: search filter updates store on every keystroke (board re-query jank)',
+    description:
+      'Found in DEV-38 perf QA: ViewTabs search calls setFilter on each key → useTasks queryKey changes → full list refilter. Debounce committing search to the store.',
+    issueType: 'BUG',
+    priority: 'HIGH',
+    statusId: 'st_todo',
+    status: { id: 'st_todo', name: 'To Do', category: 'TODO', color: '#3b82f6' },
+    sprintId: 'sp_dev_2',
+    storyPoints: 2,
+    order: 46,
+    labels: ['Bug', 'Performance', 'Filters', 'Cursor'],
+    assignees: [{ id: 'usr_cursor', name: 'Cursor', avatarUrl: 'https://api.dicebear.com/7.x/bottts/svg?seed=cursor' }],
+  },
 ];
+
+// Synthetic load-test tasks (DEV-38) — 120 issues across statuses
+const LOAD_STATUSES = [
+  { id: 'st_todo', name: 'To Do', category: 'TODO', color: '#3b82f6' },
+  { id: 'st_inprogress', name: 'In Progress', category: 'IN_PROGRESS', color: '#8b5cf6' },
+  { id: 'st_review', name: 'In Review', category: 'IN_REVIEW', color: '#f59e0b' },
+  { id: 'st_done', name: 'Done', category: 'DONE', color: '#10b981' },
+];
+const LOAD_PRIORITIES = ['LOW', 'MEDIUM', 'HIGH', 'URGENT'] as const;
+for (let i = 1; i <= 120; i++) {
+  const st = LOAD_STATUSES[i % LOAD_STATUSES.length];
+  mockTasksSeed.push({
+    id: `t_load_${i}`,
+    key: `LOAD-${i}`,
+    projectId: 'proj_load',
+    title: `Load fixture task ${i} — auth search filter drag sample`,
+    description: `Synthetic task #${i} for performance QA.`,
+    issueType: i % 7 === 0 ? 'BUG' : 'TASK',
+    priority: LOAD_PRIORITIES[i % LOAD_PRIORITIES.length],
+    statusId: st.id,
+    status: st,
+    sprintId: i % 5 === 0 ? null : 'sp_load_1',
+    storyPoints: (i % 5) + 1,
+    order: i,
+    labels: i % 3 === 0 ? ['LoadTest'] : [],
+    assignees: [{ id: 'usr_cursor', name: 'Cursor', avatarUrl: 'https://api.dicebear.com/7.x/bottts/svg?seed=cursor' }],
+  });
+}
 
 // Offline/Vercel demo: persist mock task mutations across refresh (DEV-42)
 const MOCK_TASKS_KEY = 'kortex_mock_tasks';
 function loadPersistedMockTasks(): any[] {
+  const seed = mockTasksSeed.map((t) => ({ ...t }));
   try {
     const raw = localStorage.getItem(MOCK_TASKS_KEY);
-    if (!raw) return mockTasksSeed.map((t) => ({ ...t }));
+    if (!raw) return seed;
     const parsed = JSON.parse(raw);
-    if (Array.isArray(parsed) && parsed.length > 0) return parsed;
+    if (!Array.isArray(parsed) || parsed.length === 0) return seed;
+    // Merge: keep user mutations, add any new seed ids (e.g. LOAD-* from DEV-38)
+    const byId = new Map<string, any>(parsed.map((t: any) => [t.id, t]));
+    for (const t of seed) {
+      if (!byId.has(t.id)) byId.set(t.id, t);
+    }
+    return Array.from(byId.values());
   } catch {
     /* ignore */
   }
-  return mockTasksSeed.map((t) => ({ ...t }));
+  return seed;
 }
 let mockTasks: any[] = loadPersistedMockTasks();
 function persistMockTasks() {
@@ -1163,6 +1262,7 @@ Agent logins: \`cursor@kortex.dev\` · \`antigravity@kortex.dev\` (password \`pa
 - 🟢 **[DEV-35]** QA audit: drag-and-drop — **Done** · **Cursor** · Fixed status object on Kanban drop + optimistic updates; Timeline/Gantt has no DnD (not rebuilt)
 - 🟢 **[DEV-36]** QA audit: CRUD edge cases — **Done** · **Cursor** · sanitizePlainText + max lengths; empty/HTML-only title reject; comment sanitize; break-words overflow
 - 🟢 **[DEV-37]** QA audit: keyboard & a11y — **Done** · **Cursor** · focus trap + Esc on Task Detail Drawer & Command Palette; ARIA dialog/listbox; Arrow/Enter navigation
+- 🟢 **[DEV-38]** QA audit: performance 100+ tasks — **Done** · **Cursor** · Seeded \`proj_load\` (LOAD-1…120). Findings → DEV-43 (Kanban regroup), DEV-44 (search debounce)
 
 ---
 
@@ -1256,6 +1356,9 @@ Deploy: <url|failed> · commit <sha>
 - Task Detail Drawer and Command Palette: \`role="dialog"\` + \`aria-modal\`, Tab focus trap (\`useFocusTrap\`), Esc closes, backdrop click closes.
 - Command Palette: ArrowUp/Down + Enter; combobox + listbox/option ARIA.
 
+## Perf QA sandbox
+- Space **Operations & IT Support** → project \`Load Test (100+ tasks)\` (\`proj_load\`, keys \`LOAD-1\`…\`LOAD-120\`) for drag/search/filter checks.
+
 ## Hierarchy
 Organization → Spaces → Folders → Projects/Lists → **ClickUp-style \`{List} Sprints\` dropdown** → Tasks
 
@@ -1308,6 +1411,7 @@ export function useProject(projectId: string | null) {
         return res.data;
       } catch (e) {
         if (projectId === 'proj_kor') return mockProjectKor;
+        if (projectId === 'proj_load') return mockProjectLoad;
         return mockProjectDev;
       }
     },
