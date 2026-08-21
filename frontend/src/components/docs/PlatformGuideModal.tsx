@@ -42,6 +42,7 @@ export const PlatformGuideModal: React.FC = () => {
     { id: 'timetracking', title: '7. Time Tracking & Timesheets', icon: <Clock className="w-4 h-4 text-cyan-500" /> },
     { id: 'shortcuts', title: '8. Command Palette & Shortcuts', icon: <Command className="w-4 h-4 text-slate-400" /> },
     { id: 'typography', title: '9. Themes & Typography Customizer', icon: <Type className="w-4 h-4 text-indigo-400" /> },
+    { id: 'agents', title: '10. Agent Workflow & Living Docs', icon: <Sparkles className="w-4 h-4 text-cyan-400" /> },
   ];
 
   const filteredTopics = topics.filter((t) =>
@@ -418,6 +419,67 @@ export const PlatformGuideModal: React.FC = () => {
                     <p className="text-xs">
                       Toggle the Sun/Moon icon for instant high-contrast daytime mode or midnight Linear dark mode.
                     </p>
+                  </div>
+                </div>
+              </div>
+            )}
+
+            {/* Topic 10: Agent Workflow — living Walkthrough contract */}
+            {activeTopic === 'agents' && (
+              <div className="space-y-4">
+                <div className="space-y-1">
+                  <span className="text-xs font-bold uppercase tracking-wider text-cyan-400 font-mono">Chapter 10</span>
+                  <h2 className="text-xl font-extrabold text-[var(--text-primary)]">Agent Workflow & Living Documentation</h2>
+                </div>
+
+                <p>
+                  Cursor and Antigravity (`cursor@kortex.dev` / `antigravity@kortex.dev`) follow a fixed contract. The
+                  <strong> Kortex Platform Walkthrough</strong> doc and this guide are living specs — updated inside every task, never batched at the end.
+                </p>
+
+                <div className="space-y-3">
+                  <div className="p-4 rounded-xl bg-[var(--bg-elevated)] border border-[var(--border-default)] space-y-2">
+                    <h4 className="font-bold text-[var(--text-primary)]">1. Every prompt creates DEV tasks first</h4>
+                    <p className="text-xs">
+                      Before any code: create <strong>one DEV task per distinct ask</strong> in the prompt (split multi-ask prompts).
+                      Titles use the user&apos;s plain wording. Assign Cursor or Antigravity. Put on the active sprint.
+                      Description links back to the originating request. If an open/recent task already covers it, <strong>link that task</strong> instead of duplicating.
+                    </p>
+                  </div>
+
+                  <div className="p-4 rounded-xl bg-[var(--bg-elevated)] border border-[var(--border-default)] space-y-2">
+                    <h4 className="font-bold text-[var(--text-primary)]">2. Live granular statuses</h4>
+                    <p className="text-xs">
+                      Board columns: <strong>To Do → In Progress → In Review → Deploying → Done</strong>, or <strong>Blocked</strong>.
+                      Update the moment the stage changes (not only at start/finish). Mid-task board checks must match reality.
+                    </p>
+                  </div>
+
+                  <div className="p-4 rounded-xl bg-[var(--bg-elevated)] border border-[var(--border-default)] space-y-2">
+                    <h4 className="font-bold text-[var(--text-primary)]">3. Docs + changelog inside the same task</h4>
+                    <p className="text-xs">
+                      Feature added/changed → update Walkthrough + Platform Guide section immediately.
+                      Partial/unbuilt claims → mark <code>🚧 Partial</code> to match reality.
+                      Dated Changelog entry with task ID + deploy/commit reference. A task is not Done until code, changelog, and Walkthrough all match.
+                    </p>
+                  </div>
+
+                  <div className="p-4 rounded-xl bg-[var(--bg-elevated)] border border-[var(--border-default)] space-y-2">
+                    <h4 className="font-bold text-[var(--text-primary)]">4. One task → one commit → one deploy</h4>
+                    <p className="text-xs">
+                      After In Review self-check (build + feature check): status <strong>Deploying</strong>, commit
+                      <code> DEV-N: …</code>, push, deploy Vercel, tag with task ID. Success → Done. Failure → Blocked (no Done), fix deploy, note in changelog.
+                      Broken prod → revert to last good deploy and reopen as Blocked. Never batch multiple tasks into one deploy.
+                    </p>
+                  </div>
+
+                  <div className="p-4 rounded-xl bg-[var(--bg-elevated)] border border-cyan-500/40 space-y-2">
+                    <h4 className="font-bold text-[var(--text-primary)]">5. End-of-prompt summary (required)</h4>
+                    <pre className="text-xs font-mono whitespace-pre-wrap text-[var(--text-secondary)] bg-[var(--bg-input)] p-3 rounded-lg border border-[var(--border-subtle)]">{`Tasks: DEV-N (Done) · DEV-M (Blocked)
+Changed: <one line each>
+Docs: Walkthrough §… · Changelog <date>
+Deploy: <url or failed> · commit <sha>
+`}</pre>
                   </div>
                 </div>
               </div>

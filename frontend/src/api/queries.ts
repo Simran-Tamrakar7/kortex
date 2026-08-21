@@ -841,8 +841,8 @@ const mockTasks: any[] = [
       'Originating request: every prompt auto-creates DEV tasks before work; docs stay in sync; end-of-prompt summary format; living Walkthrough spec (no batching docs to the end).',
     issueType: 'TASK',
     priority: 'HIGH',
-    statusId: 'st_todo',
-    status: { id: 'st_todo', name: 'To Do', category: 'TODO', color: '#3b82f6' },
+    statusId: 'st_done',
+    status: { id: 'st_done', name: 'Done', category: 'DONE', color: '#10b981' },
     sprintId: 'sp_dev_2',
     storyPoints: 5,
     order: 33,
@@ -893,8 +893,8 @@ Agent logins: \`cursor@kortex.dev\` · \`antigravity@kortex.dev\` (password \`pa
 - 🟢 **[DEV-28]** [Agent queue] Next Cursor / Antigravity turn — **Done** · **Cursor**
 - 🟢 **[DEV-29]** ClickUp-style nested Sprints folder in Space sidebar — **Done** · **Cursor**
 - 🟢 **[DEV-30]** Add Deploying and Blocked board statuses for live agent tracking — **Done** · **Cursor**
-- 🔵 **[DEV-31]** Document agent workflow in Kortex Platform Walkthrough — **To Do** · **Cursor**
-- 🔵 **[DEV-32]** Per-task deploy rules: one commit, verify, tag, changelog as deploy history — **To Do** · **Cursor**
+- 🟢 **[DEV-31]** Document agent workflow in Kortex Platform Walkthrough — **Done** · **Cursor**
+- 🟣 **[DEV-32]** Per-task deploy rules: one commit, verify, tag, changelog as deploy history — **In Progress** · **Cursor**
 
 ---
 
@@ -952,25 +952,49 @@ Agent logins: \`cursor@kortex.dev\` · \`antigravity@kortex.dev\` (password \`pa
     id: 'doc_arch',
     workspaceId: 'ws_dev',
     projectId: 'proj_dev',
-    title: 'Kortex Architecture & Platform Guide',
-    icon: 'Cpu',
-    content: `# Kortex Platform Architecture & Technical Reference
+    title: 'Kortex Platform Walkthrough',
+    icon: 'BookOpen',
+    content: `# Kortex Platform Walkthrough (Living Spec)
 
-## Architecture Overview
-Kortex is built with a decoupled monorepo architecture:
-- **Shared Package (@kortex/shared)**: Common TypeScript types, permissions, roles, and event constants.
-- **Backend Service (@kortex/backend)**: Express, Prisma ORM, PostgreSQL/SQLite, Multer file handler, and Socket.io rooms.
-- **Frontend SPA (@kortex/frontend)**: React 18, Vite, TailwindCSS, Zustand stores, TanStack React Query, and Lucide icons.
+> Updated inside every agent task. If this doc disagrees with the live app, log a DEV bug and fix it — do not leave stale claims.
 
-### 8 Switchable Project Views
+## Agent accounts
+- \`cursor@kortex.dev\` / \`antigravity@kortex.dev\` (password \`password123\`)
+
+## Agent workflow (mandatory)
+1. **Prompt → tasks first:** one DEV task per distinct ask, before code. Plain-language titles. Assign executor. Active sprint. Description cites the originating request. Prefer linking an existing open/recent task over duplicates.
+2. **Live statuses:** To Do → In Progress → In Review (self-check/build) → Deploying → Done, or **Blocked**.
+3. **Docs in the same task:** update this Walkthrough + Platform Guide chapter + dated Changelog (with commit/deploy). Partial features marked \`🚧 Partial\`.
+4. **Ship isolation:** one task → one commit (\`DEV-N: …\`) → one Vercel deploy → confirm success before Done. Failed deploy = Blocked, not Done. Broken prod → rollback + Blocked.
+5. **Reply format:**
+\`\`\`
+Tasks: DEV-N (status) …
+Changed: …
+Docs: Walkthrough §… · Changelog …
+Deploy: <url|failed> · commit <sha>
+\`\`\`
+
+## Hierarchy
+Organization → Spaces → Folders → Projects/Lists → **ClickUp-style \`{List} Sprints\` dropdown** → Tasks
+
+## Board statuses (DEV / KOR)
+Backlog · To Do · In Progress · In Review · Deploying · Blocked · Done
+
+## 8 Switchable Project Views
 1. **List View**: Grouped by status/priority with collapsible accordions.
-2. **Kanban Board**: Drag-and-drop with column WIP limit alerts and swimlanes.
+2. **Kanban Board**: Drag-and-drop with column WIP limit alerts and swimlanes (includes Deploying / Blocked).
 3. **Sprint Backlog**: Jira-style sprint grooming and point rollups.
 4. **Timeline / Gantt**: SVG dependency link bezier curves and critical path highlight.
 5. **Calendar**: Month grid scheduling with due date mapping.
 6. **Workload Capacity**: Team capacity matrix against 40h standard baseline.
 7. **Mind Map**: 4-level hierarchical project tree visualizer with pan/zoom.
-8. **Spreadsheet Table**: Formula columns and inline cell editing.`,
+8. **Spreadsheet Table**: Formula columns and inline cell editing.
+
+## Architecture
+- **@kortex/shared**: types, roles, status categories (incl. DEPLOYING, BLOCKED)
+- **@kortex/backend**: Express, Prisma, Socket.io
+- **@kortex/frontend**: React, Vite, Tailwind, Zustand, TanStack Query
+`,
     authorId: 'usr_alex',
     updatedAt: new Date().toISOString(),
   },
