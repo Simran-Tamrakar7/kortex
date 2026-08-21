@@ -74,9 +74,12 @@ export const AppLayout: React.FC = () => {
     issueType: filters.issueTypes[0],
   });
 
-  // Filter tasks in client (My Tasks + backlog-only when sprintId === null)
+  // Always enforce sprint filter client-side (API/mock/cache can disagree)
   const filteredTasks = sortTasksByParam(
-    rawTasks.filter((task) => {
+    (Array.isArray(rawTasks) ? rawTasks : []).filter((task) => {
+      if (typeof filters.sprintId === 'string' && filters.sprintId) {
+        if (task.sprintId !== filters.sprintId) return false;
+      }
       if (filters.sprintId === null && task.sprintId) return false;
       if (filters.onlyMyTasks && user) {
         const isAssigned = task.assignees?.some((a) => a.id === user.id);

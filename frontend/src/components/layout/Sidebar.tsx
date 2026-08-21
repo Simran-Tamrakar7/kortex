@@ -45,6 +45,7 @@ export const Sidebar: React.FC = () => {
     setActiveView,
     filters,
     setFilter,
+    selectProjectSprint,
     setSprintModalOpen,
     setOrgSettingsOpen,
     setTimeModalOpen,
@@ -156,14 +157,12 @@ export const Sidebar: React.FC = () => {
                   title={`${sp.name} ${dateLabel}`.trim()}
                   onClick={(e) => {
                     e.stopPropagation();
-                    setActiveProjectId(proj.id);
-                    setActiveMainSection('PROJECT');
-                    setActiveView('BOARD');
-                    setFilter('sprintId', sp.id);
+                    selectProjectSprint(proj.id, sp.id);
+                    setSprintFolderOpen(proj.id, true);
                   }}
                   className={`w-full flex items-center justify-between gap-1 px-2 py-1 rounded transition-colors group ${
                     isFilterActive
-                      ? 'bg-[var(--bg-hover)] text-[var(--text-primary)] font-semibold'
+                      ? 'bg-emerald-500/15 text-emerald-700 dark:text-emerald-300 font-semibold ring-1 ring-emerald-500/40'
                       : 'text-[var(--text-secondary)] hover:text-[var(--text-primary)] hover:bg-[var(--bg-hover)]'
                   }`}
                 >
@@ -204,10 +203,14 @@ export const Sidebar: React.FC = () => {
             <button
               onClick={(e) => {
                 e.stopPropagation();
+                selectProjectSprint(proj.id, null);
                 setActiveView('BACKLOG');
-                setFilter('sprintId', null);
               }}
-              className="w-full flex items-center justify-between px-2 py-1 rounded text-[var(--text-secondary)] hover:text-[var(--text-primary)] hover:bg-[var(--bg-hover)] transition-colors"
+              className={`w-full flex items-center justify-between px-2 py-1 rounded transition-colors ${
+                filters.sprintId === null
+                  ? 'bg-emerald-500/15 text-emerald-700 dark:text-emerald-300 font-semibold ring-1 ring-emerald-500/40'
+                  : 'text-[var(--text-secondary)] hover:text-[var(--text-primary)] hover:bg-[var(--bg-hover)]'
+              }`}
             >
               <div className="flex items-center gap-1.5 truncate">
                 <Layers className="w-3.5 h-3.5 text-[var(--text-muted)] shrink-0" />

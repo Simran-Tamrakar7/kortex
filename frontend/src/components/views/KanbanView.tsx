@@ -137,13 +137,19 @@ export const KanbanView: React.FC<Props> = ({ tasks }) => {
               onChange={(e) => setSelectedSprintId(e.target.value)}
               className="bg-[var(--bg-input)] border border-[var(--border-default)] rounded-lg px-2.5 py-1 text-xs text-[var(--text-primary)] outline-none cursor-pointer shadow-sm font-medium"
             >
-              <option value="all">All Sprints & Backlog ({tasks.length} tasks)</option>
+              <option value="all">All Sprints & Backlog</option>
               {sprints.map((s) => (
                 <option key={s.id} value={s.id}>
                   {s.status === 'ACTIVE' ? '🚀 ' : s.status === 'COMPLETED' ? '✅ ' : '📋 '}
                   {s.name} ({s.status})
                 </option>
               ))}
+              {/* Keep select valid if filter points at a sprint not in this project's list */}
+              {selectedSprintId !== 'all' &&
+                selectedSprintId !== 'backlog' &&
+                !sprints.some((s) => s.id === selectedSprintId) && (
+                  <option value={selectedSprintId}>Selected sprint</option>
+                )}
               <option value="backlog">Backlog / Unassigned Sprints</option>
             </select>
           </div>

@@ -1170,6 +1170,42 @@ const mockTasksSeed: any[] = [
     labels: ['Bug', 'Performance', 'Filters', 'Cursor'],
     assignees: [{ id: 'usr_cursor', name: 'Cursor', avatarUrl: 'https://api.dicebear.com/7.x/bottts/svg?seed=cursor' }],
   },
+  {
+    id: 't_dev_45',
+    key: 'DEV-45',
+    projectId: 'proj_dev',
+    epicId: 't_epic_agents',
+    title: 'Bug: sidebar Sprint 1 still shows Sprint 2/3 tasks (All Sprints)',
+    description:
+      'User report: selecting Sprint 1 in sidebar leaves Kanban on All Sprints; Sprint 3/2 cards visible; same tasks across sprints. Fix atomic sprint select + hard client filter + reject non-array /api (SPA HTML) responses.',
+    issueType: 'BUG',
+    priority: 'URGENT',
+    statusId: 'st_done',
+    status: { id: 'st_done', name: 'Done', category: 'DONE', color: '#10b981' },
+    sprintId: 'sp_dev_2',
+    storyPoints: 5,
+    order: 47,
+    labels: ['Bug', 'Sprints', 'Kanban', 'Cursor'],
+    assignees: [{ id: 'usr_cursor', name: 'Cursor', avatarUrl: 'https://api.dicebear.com/7.x/bottts/svg?seed=cursor' }],
+  },
+  {
+    id: 't_dev_46',
+    key: 'DEV-46',
+    projectId: 'proj_dev',
+    epicId: 't_epic_agents',
+    title: 'Rename org + add/edit/delete workspace branches with confirm',
+    description:
+      'User request: rename Acme Global Innovations; add/edit/delete breadcrumb workspace branches with Are you sure? on delete.',
+    issueType: 'STORY',
+    priority: 'HIGH',
+    statusId: 'st_todo',
+    status: { id: 'st_todo', name: 'To Do', category: 'TODO', color: '#3b82f6' },
+    sprintId: 'sp_dev_2',
+    storyPoints: 5,
+    order: 48,
+    labels: ['Org', 'Workspaces', 'Cursor'],
+    assignees: [{ id: 'usr_cursor', name: 'Cursor', avatarUrl: 'https://api.dicebear.com/7.x/bottts/svg?seed=cursor' }],
+  },
 ];
 
 // Synthetic load-test tasks (DEV-38) — 120 issues across statuses
@@ -1267,6 +1303,7 @@ Agent logins: \`cursor@kortex.dev\` · \`antigravity@kortex.dev\` (password \`pa
 - 🟢 **[DEV-44]** Bug: search updates store every keystroke — **Done** · **Cursor** · 200ms debounce on ViewTabs search before \`setFilter\`
 - 🟢 **[DEV-39]** URL-persisted filters (List/Kanban/Spreadsheet) — **Done** · **Cursor** · \`?view=&search=&priority=&type=&sprint=&sort=&my=1\` via \`useUrlFilterSync\`
 - 🟢 **[DEV-40]** Generate \`.cursorrules\` — **Done** · **Cursor** · Root rules: stack, folders, Tailwind/Zustand patterns, agent task/deploy/doc-sync workflow
+- 🟢 **[DEV-45]** Bug: sidebar sprint filter showed other sprints' tasks — **Done** · **Cursor** · \`selectProjectSprint\` atomic select; hard client sprint filter; reject non-array \`/api\` (SPA HTML)
 
 ---
 
@@ -1366,6 +1403,11 @@ Deploy: <url|failed> · commit <sha>
 - Kanban groups tasks by status once per data change (\`tasksByStatus\` memo) — avoids O(columns×n) filter during drag.
 - Toolbar search commits to filters after 200ms debounce (avoids per-keystroke board re-query).
 
+## Sprint filtering
+- Sidebar sprint click uses \`selectProjectSprint(projectId, sprintId)\` (atomic project + BOARD + filter).
+- \`filters.sprintId\`: \`undefined\` = all, \`null\` = backlog, \`string\` = that sprint only (enforced in AppLayout **and** mock \`useTasks\`).
+- Switching projects clears the sprint filter. Non-array \`/api/tasks\` responses (static HTML rewrite) fall back to mock.
+
 ## URL-persisted filters
 - On **List**, **Kanban**, and **Spreadsheet** views, active filters sync to the query string (\`?view=BOARD&search=auth&priority=HIGH&type=BUG&sprint=…&sort=priority&my=1\`).
 - Bookmark/share restores on load (URL wins over session storage for those fields). Helpers: \`frontend/src/lib/urlFilters.ts\`, \`useUrlFilterSync\`.
@@ -1434,7 +1476,10 @@ export function useProject(projectId: string | null) {
 function filterMockTasks(projectId: string | null, params: Record<string, any> = {}) {
   let list = mockTasks.slice();
   if (projectId) list = list.filter((t) => t.projectId === projectId);
-  if (params.sprintId) list = list.filter((t) => t.sprintId === params.sprintId);
+  // Strict sprint match — never return other sprints' tasks
+  if (params.sprintId != null && params.sprintId !== '' && params.sprintId !== 'undefined') {
+    list = list.filter((t) => t.sprintId === params.sprintId);
+  }
   if (params.search) {
     const q = String(params.search).toLowerCase();
     list = list.filter(
@@ -1450,20 +1495,32 @@ function filterMockTasks(projectId: string | null, params: Record<string, any> =
   return list;
 }
 
+function cleanTaskParams(params: Record<string, any> = {}) {
+  const out: Record<string, string> = {};
+  for (const [k, v] of Object.entries(params)) {
+    if (v === undefined || v === null || v === '' || v === 'undefined') continue;
+    out[k] = String(v);
+  }
+  return out;
+}
+
 export function useTasks(projectId: string | null, params: Record<string, any> = {}) {
+  const cleaned = cleanTaskParams(params);
   return useQuery<Task[]>({
-    queryKey: ['tasks', projectId, params],
+    queryKey: ['tasks', projectId, cleaned],
     queryFn: async () => {
       try {
-        if (!projectId) return filterMockTasks(null, params);
-        const queryParams = new URLSearchParams({ projectId, ...params }).toString();
+        if (!projectId) return filterMockTasks(null, cleaned);
+        const queryParams = new URLSearchParams({ projectId, ...cleaned }).toString();
         const res = await apiClient.get(`/tasks?${queryParams}`);
+        // Static/Vercel hosts rewrite /api → index.html (200). Reject non-arrays so mock filter applies.
+        if (!Array.isArray(res.data)) throw new Error('tasks: non-array response');
         return res.data;
       } catch (e) {
-        return filterMockTasks(projectId, params);
+        return filterMockTasks(projectId, cleaned);
       }
     },
-    initialData: () => filterMockTasks(projectId, params),
+    initialData: () => filterMockTasks(projectId, cleaned),
   });
 }
 
