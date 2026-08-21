@@ -1,4 +1,4 @@
-import React, { useState, useRef } from 'react';
+import React, { useState, useRef, useCallback } from 'react';
 import { useAppStore } from '../../store/useAppStore';
 import { useAuthStore } from '../../store/useAuthStore';
 import {
@@ -17,6 +17,7 @@ import { StatusBadge } from '../common/StatusBadge';
 import { Avatar } from '../common/Avatar';
 import { Priority, IssueType } from '@kortex/shared';
 import { sanitizePlainText, TITLE_MAX, DESC_MAX, COMMENT_MAX } from '../../lib/sanitizeText';
+import { useFocusTrap } from '../../lib/useFocusTrap';
 import {
   X,
   Trash2,
@@ -234,9 +235,24 @@ export const TaskDetailModal: React.FC = () => {
 
   const completedSubtasksCount = subtasks.filter((s: any) => s.status?.category === 'DONE').length;
 
+  const closeDrawer = useCallback(() => setActiveTaskId(null), [setActiveTaskId]);
+  const drawerRef = useFocusTrap(!!activeTaskId && !!task, closeDrawer);
+
   return (
-    <div className="fixed inset-0 z-50 flex items-center justify-end bg-black/70 backdrop-blur-sm animate-in fade-in select-none">
-      <div className="w-full max-w-3xl h-full bg-[var(--bg-surface)] border-l border-[var(--border-default)] shadow-2xl flex flex-col overflow-hidden text-xs transition-colors">
+    <div
+      className="fixed inset-0 z-50 flex items-center justify-end bg-black/70 backdrop-blur-sm animate-in fade-in select-none"
+      onMouseDown={(e) => {
+        if (e.target === e.currentTarget) closeDrawer();
+      }}
+    >
+      <div
+        ref={drawerRef}
+        role="dialog"
+        aria-modal="true"
+        aria-labelledby="task-drawer-title"
+        tabIndex={-1}
+        className="w-full max-w-3xl h-full bg-[var(--bg-surface)] border-l border-[var(--border-default)] shadow-2xl flex flex-col overflow-hidden text-xs transition-colors outline-none"
+      >
         {/* Top Header */}
         <div className="h-14 px-6 border-b border-[var(--border-subtle)] flex items-center justify-between bg-[var(--bg-elevated)] shrink-0">
           <div className="flex items-center gap-2.5">
@@ -276,9 +292,10 @@ export const TaskDetailModal: React.FC = () => {
               <Trash2 className="w-4 h-4" />
             </button>
             <button
-              onClick={() => setActiveTaskId(null)}
+              onClick={closeDrawer}
               className="p-2 text-[var(--text-muted)] hover:text-[var(--text-primary)] hover:bg-[var(--bg-hover)] rounded-lg transition-colors"
               title="Close Drawer"
+              aria-label="Close task detail"
             >
               <X className="w-4 h-4" />
             </button>
@@ -337,6 +354,7 @@ export const TaskDetailModal: React.FC = () => {
                 </div>
               ) : (
                 <h1
+                  id="task-drawer-title"
                   onClick={() => {
                     setTitleValue(task.title);
                     setIsEditingTitle(true);

@@ -1045,8 +1045,8 @@ const mockTasksSeed: any[] = [
     description: 'Originating request: full keyboard-only flow; focus trapping and ARIA on Task Detail Drawer and Command Palette.',
     issueType: 'TASK',
     priority: 'HIGH',
-    statusId: 'st_todo',
-    status: { id: 'st_todo', name: 'To Do', category: 'TODO', color: '#3b82f6' },
+    statusId: 'st_done',
+    status: { id: 'st_done', name: 'Done', category: 'DONE', color: '#10b981' },
     sprintId: 'sp_dev_2',
     storyPoints: 5,
     order: 39,
@@ -1162,6 +1162,7 @@ Agent logins: \`cursor@kortex.dev\` · \`antigravity@kortex.dev\` (password \`pa
 - 🟢 **[DEV-42]** Bug: offline demo task create/reorder lost on refresh — **Done** · **Cursor** · \`kortex_mock_tasks\` localStorage
 - 🟢 **[DEV-35]** QA audit: drag-and-drop — **Done** · **Cursor** · Fixed status object on Kanban drop + optimistic updates; Timeline/Gantt has no DnD (not rebuilt)
 - 🟢 **[DEV-36]** QA audit: CRUD edge cases — **Done** · **Cursor** · sanitizePlainText + max lengths; empty/HTML-only title reject; comment sanitize; break-words overflow
+- 🟢 **[DEV-37]** QA audit: keyboard & a11y — **Done** · **Cursor** · focus trap + Esc on Task Detail Drawer & Command Palette; ARIA dialog/listbox; Arrow/Enter navigation
 
 ---
 
@@ -1250,6 +1251,10 @@ Deploy: <url|failed> · commit <sha>
 ## CRUD text safety
 - Titles/descriptions/comments go through \`sanitizePlainText\` (strip tags/null bytes, max lengths). Never render user text as HTML.
 - Empty titles rejected; long titles use \`break-words\` / \`line-clamp\` on cards so layout does not overflow.
+
+## Accessibility (keyboard)
+- Task Detail Drawer and Command Palette: \`role="dialog"\` + \`aria-modal\`, Tab focus trap (\`useFocusTrap\`), Esc closes, backdrop click closes.
+- Command Palette: ArrowUp/Down + Enter; combobox + listbox/option ARIA.
 
 ## Hierarchy
 Organization → Spaces → Folders → Projects/Lists → **ClickUp-style \`{List} Sprints\` dropdown** → Tasks
