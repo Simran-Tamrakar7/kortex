@@ -1011,8 +1011,8 @@ const mockTasksSeed: any[] = [
     description: 'Originating request: QA DnD — empty column drops, rapid reorder, tablet width. Fix bugs found only.',
     issueType: 'TASK',
     priority: 'HIGH',
-    statusId: 'st_inprogress',
-    status: { id: 'st_inprogress', name: 'In Progress', category: 'IN_PROGRESS', color: '#8b5cf6' },
+    statusId: 'st_done',
+    status: { id: 'st_done', name: 'Done', category: 'DONE', color: '#10b981' },
     sprintId: 'sp_dev_2',
     storyPoints: 5,
     order: 37,
@@ -1160,6 +1160,7 @@ Agent logins: \`cursor@kortex.dev\` · \`antigravity@kortex.dev\` (password \`pa
 - 🟢 **[DEV-34]** QA audit: state persistence — **Done** · **Cursor** · Findings → DEV-41 (nav/filters), DEV-42 (offline mock tasks)
 - 🟢 **[DEV-41]** Bug: active project/view/filters lost on refresh — **Done** · **Cursor** · \`kortex_session_nav\` localStorage
 - 🟢 **[DEV-42]** Bug: offline demo task create/reorder lost on refresh — **Done** · **Cursor** · \`kortex_mock_tasks\` localStorage
+- 🟢 **[DEV-35]** QA audit: drag-and-drop — **Done** · **Cursor** · Fixed status object on Kanban drop + optimistic updates; Timeline/Gantt has no DnD (not rebuilt)
 
 ---
 
@@ -1409,10 +1410,23 @@ export function useUpdateTaskMutation() {
           persistMockTasks();
           return mockTasks[idx];
         }
-        return updates;
+        return { id, ...updates };
       }
     },
-    onSuccess: (data) => {
+    // Optimistic patch so rapid DnD does not race on refetch (DEV-35)
+    onMutate: async ({ id, ...updates }) => {
+      await qc.cancelQueries({ queryKey: ['tasks'] });
+      const previous = qc.getQueriesData({ queryKey: ['tasks'] });
+      qc.setQueriesData({ queryKey: ['tasks'] }, (old: any) => {
+        if (!Array.isArray(old)) return old;
+        return old.map((t: any) => (t.id === id ? { ...t, ...updates } : t));
+      });
+      return { previous };
+    },
+    onError: (_err, _vars, ctx) => {
+      ctx?.previous?.forEach(([key, data]: any) => qc.setQueryData(key, data));
+    },
+    onSuccess: () => {
       qc.invalidateQueries({ queryKey: ['tasks'] });
       qc.invalidateQueries({ queryKey: ['task'] });
       qc.invalidateQueries({ queryKey: ['dashboard-analytics'] });

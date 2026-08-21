@@ -52,9 +52,20 @@ export const KanbanView: React.FC<Props> = ({ tasks }) => {
     if (source.droppableId === destination.droppableId && source.index === destination.index) return;
 
     const targetStatusId = destination.droppableId;
+    const targetStatus = statuses.find((s) => s.id === targetStatusId);
     updateTaskMutation.mutate({
       id: draggableId,
       statusId: targetStatusId,
+      ...(targetStatus
+        ? {
+            status: {
+              id: targetStatus.id,
+              name: targetStatus.name,
+              category: targetStatus.category,
+              color: targetStatus.color,
+            },
+          }
+        : {}),
       order: destination.index,
     });
   };
@@ -145,7 +156,7 @@ export const KanbanView: React.FC<Props> = ({ tasks }) => {
 
       {/* Board Columns Canvas */}
       <DragDropContext onDragEnd={handleDragEnd}>
-        <div className="flex-1 overflow-x-auto p-4 flex gap-3.5 items-start">
+        <div className="flex-1 overflow-x-auto p-4 flex gap-3.5 items-start touch-pan-x">
           {statuses.map((status) => {
             const columnTasks = getTasksForColumn(status.id);
             const isWipExceeded = status.wipLimit && columnTasks.length > status.wipLimit;
