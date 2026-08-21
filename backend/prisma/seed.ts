@@ -218,7 +218,6 @@ async function main() {
     where: { projectId: devProject.id },
     orderBy: { order: 'asc' },
   });
-  const stDevTodo = devStatuses[1];
   const stDevInProgress = devStatuses[2];
   const stDevDone = devStatuses[4];
 
