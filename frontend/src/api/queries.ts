@@ -38,8 +38,8 @@ const mockWorkspaces: any[] = [
   {
     id: 'ws_eng',
     orgId: 'org_acme',
-    name: 'Engineering & Architecture',
-    slug: 'eng-arch',
+    name: 'Engineering & Product',
+    slug: 'eng-product',
     icon: 'Cpu',
     color: '#3b82f6',
     folders: [],
@@ -1198,8 +1198,8 @@ const mockTasksSeed: any[] = [
       'User request: rename Acme Global Innovations; add/edit/delete breadcrumb workspace branches with Are you sure? on delete.',
     issueType: 'STORY',
     priority: 'HIGH',
-    statusId: 'st_todo',
-    status: { id: 'st_todo', name: 'To Do', category: 'TODO', color: '#3b82f6' },
+    statusId: 'st_done',
+    status: { id: 'st_done', name: 'Done', category: 'DONE', color: '#10b981' },
     sprintId: 'sp_dev_2',
     storyPoints: 5,
     order: 48,
@@ -1304,6 +1304,7 @@ Agent logins: \`cursor@kortex.dev\` · \`antigravity@kortex.dev\` (password \`pa
 - 🟢 **[DEV-39]** URL-persisted filters (List/Kanban/Spreadsheet) — **Done** · **Cursor** · \`?view=&search=&priority=&type=&sprint=&sort=&my=1\` via \`useUrlFilterSync\`
 - 🟢 **[DEV-40]** Generate \`.cursorrules\` — **Done** · **Cursor** · Root rules: stack, folders, Tailwind/Zustand patterns, agent task/deploy/doc-sync workflow
 - 🟢 **[DEV-45]** Bug: sidebar sprint filter showed other sprints' tasks — **Done** · **Cursor** · \`selectProjectSprint\` atomic select; hard client sprint filter; reject non-array \`/api\` (SPA HTML)
+- 🟢 **[DEV-46]** Rename org + workspace branch CRUD — **Done** · **Cursor** · Click org name to rename; add/edit/delete branches with Are you sure?; \`kortex_org_meta\` persist
 
 ---
 
@@ -1407,6 +1408,10 @@ Deploy: <url|failed> · commit <sha>
 - Sidebar sprint click uses \`selectProjectSprint(projectId, sprintId)\` (atomic project + BOARD + filter).
 - \`filters.sprintId\`: \`undefined\` = all, \`null\` = backlog, \`string\` = that sprint only (enforced in AppLayout **and** mock \`useTasks\`).
 - Switching projects clears the sprint filter. Non-array \`/api/tasks\` responses (static HTML rewrite) fall back to mock.
+
+## Organization & branches
+- Click the org name in the header breadcrumb to rename (e.g. change \`Acme Global Innovations\`).
+- Workspace **branches** (Product Development, Engineering & Product, Ops…): switch from header menu or sidebar; **Add** / **Rename** / **Delete** with \`Are you sure?\` confirm on delete. Persisted in \`kortex_org_meta\`.
 
 ## URL-persisted filters
 - On **List**, **Kanban**, and **Spreadsheet** views, active filters sync to the query string (\`?view=BOARD&search=auth&priority=HIGH&type=BUG&sprint=…&sort=priority&my=1\`).
