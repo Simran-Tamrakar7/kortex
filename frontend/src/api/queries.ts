@@ -67,6 +67,12 @@ const mockWorkspaces: any[] = [
         key: 'ITS',
         type: 'SERVICE_DESK',
       },
+      {
+        id: 'proj_load',
+        name: 'Load Test (100+ tasks)',
+        key: 'LOAD',
+        type: 'SOFTWARE_SCRUM',
+      },
     ],
   },
 ];
@@ -109,6 +115,17 @@ const mockProjectKor: any = {
     { id: 'st_blocked', name: 'Blocked', category: 'BLOCKED', color: '#ef4444', order: 5 },
     { id: 'st_done', name: 'Done', category: 'DONE', color: '#10b981', order: 6 },
   ],
+};
+
+/** Perf QA sandbox — 120 seeded tasks (DEV-38) */
+const mockProjectLoad: any = {
+  id: 'proj_load',
+  name: 'Load Test (100+ tasks)',
+  key: 'LOAD',
+  type: 'SOFTWARE_SCRUM',
+  description: 'Synthetic project for drag/search/filter performance QA',
+  leadId: 'usr_alex',
+  statuses: mockProjectDev.statuses,
 };
 
 const mockSprints: any[] = [
@@ -244,6 +261,17 @@ const mockSprints: any[] = [
     completedPoints: 0,
     startDate: new Date('2026-03-23').toISOString(),
     endDate: new Date('2026-03-29').toISOString(),
+  },
+  {
+    id: 'sp_load_1',
+    projectId: 'proj_load',
+    name: 'Load Sprint 1',
+    goal: 'Perf QA fixture sprint',
+    status: 'ACTIVE',
+    totalPoints: 120,
+    completedPoints: 30,
+    startDate: new Date('2026-02-09').toISOString(),
+    endDate: new Date('2026-02-22').toISOString(),
   },
 ];
 
@@ -1028,8 +1056,8 @@ const mockTasksSeed: any[] = [
     description: 'Originating request: QA CRUD edge cases — empty titles, long text overflow, pasted HTML/markdown injection, special characters.',
     issueType: 'TASK',
     priority: 'HIGH',
-    statusId: 'st_todo',
-    status: { id: 'st_todo', name: 'To Do', category: 'TODO', color: '#3b82f6' },
+    statusId: 'st_done',
+    status: { id: 'st_done', name: 'Done', category: 'DONE', color: '#10b981' },
     sprintId: 'sp_dev_2',
     storyPoints: 5,
     order: 38,
@@ -1045,8 +1073,8 @@ const mockTasksSeed: any[] = [
     description: 'Originating request: full keyboard-only flow; focus trapping and ARIA on Task Detail Drawer and Command Palette.',
     issueType: 'TASK',
     priority: 'HIGH',
-    statusId: 'st_todo',
-    status: { id: 'st_todo', name: 'To Do', category: 'TODO', color: '#3b82f6' },
+    statusId: 'st_done',
+    status: { id: 'st_done', name: 'Done', category: 'DONE', color: '#10b981' },
     sprintId: 'sp_dev_2',
     storyPoints: 5,
     order: 39,
@@ -1062,8 +1090,8 @@ const mockTasksSeed: any[] = [
     description: 'Originating request: seed 100+ tasks; check frame drops on drag, search, filter. Fix perf bugs found.',
     issueType: 'TASK',
     priority: 'MEDIUM',
-    statusId: 'st_todo',
-    status: { id: 'st_todo', name: 'To Do', category: 'TODO', color: '#3b82f6' },
+    statusId: 'st_done',
+    status: { id: 'st_done', name: 'Done', category: 'DONE', color: '#10b981' },
     sprintId: 'sp_dev_2',
     storyPoints: 5,
     order: 40,
@@ -1080,8 +1108,8 @@ const mockTasksSeed: any[] = [
       'Originating request: persist filters/search/sort in URL query (?priority=high&search=auth) for bookmarkable/shareable filtered views.',
     issueType: 'STORY',
     priority: 'HIGH',
-    statusId: 'st_todo',
-    status: { id: 'st_todo', name: 'To Do', category: 'TODO', color: '#3b82f6' },
+    statusId: 'st_done',
+    status: { id: 'st_done', name: 'Done', category: 'DONE', color: '#10b981' },
     sprintId: 'sp_dev_2',
     storyPoints: 5,
     order: 41,
@@ -1098,28 +1126,99 @@ const mockTasksSeed: any[] = [
       'Originating request: root .cursorrules capturing tech stack, folder conventions, component/Tailwind/Zustand patterns, and standing task/deploy/doc-sync rules.',
     issueType: 'TASK',
     priority: 'MEDIUM',
-    statusId: 'st_todo',
-    status: { id: 'st_todo', name: 'To Do', category: 'TODO', color: '#3b82f6' },
+    statusId: 'st_done',
+    status: { id: 'st_done', name: 'Done', category: 'DONE', color: '#10b981' },
     sprintId: 'sp_dev_2',
     storyPoints: 3,
     order: 42,
     labels: ['Cursor', 'Docs', 'Tooling'],
     assignees: [{ id: 'usr_cursor', name: 'Cursor', avatarUrl: 'https://api.dicebear.com/7.x/bottts/svg?seed=cursor' }],
   },
+  {
+    id: 't_dev_43',
+    key: 'DEV-43',
+    projectId: 'proj_dev',
+    epicId: 't_epic_agents',
+    title: 'Bug: Kanban re-filters every column on each render (jank with 100+ tasks)',
+    description:
+      'Found in DEV-38 perf QA: getTasksForColumn filters+sorts the full list per column every render (including during drag). Precompute tasks-by-status once.',
+    issueType: 'BUG',
+    priority: 'HIGH',
+    statusId: 'st_done',
+    status: { id: 'st_done', name: 'Done', category: 'DONE', color: '#10b981' },
+    sprintId: 'sp_dev_2',
+    storyPoints: 2,
+    order: 45,
+    labels: ['Bug', 'Performance', 'Kanban', 'Cursor'],
+    assignees: [{ id: 'usr_cursor', name: 'Cursor', avatarUrl: 'https://api.dicebear.com/7.x/bottts/svg?seed=cursor' }],
+  },
+  {
+    id: 't_dev_44',
+    key: 'DEV-44',
+    projectId: 'proj_dev',
+    epicId: 't_epic_agents',
+    title: 'Bug: search filter updates store on every keystroke (board re-query jank)',
+    description:
+      'Found in DEV-38 perf QA: ViewTabs search calls setFilter on each key → useTasks queryKey changes → full list refilter. Debounce committing search to the store.',
+    issueType: 'BUG',
+    priority: 'HIGH',
+    statusId: 'st_done',
+    status: { id: 'st_done', name: 'Done', category: 'DONE', color: '#10b981' },
+    sprintId: 'sp_dev_2',
+    storyPoints: 2,
+    order: 46,
+    labels: ['Bug', 'Performance', 'Filters', 'Cursor'],
+    assignees: [{ id: 'usr_cursor', name: 'Cursor', avatarUrl: 'https://api.dicebear.com/7.x/bottts/svg?seed=cursor' }],
+  },
 ];
+
+// Synthetic load-test tasks (DEV-38) — 120 issues across statuses
+const LOAD_STATUSES = [
+  { id: 'st_todo', name: 'To Do', category: 'TODO', color: '#3b82f6' },
+  { id: 'st_inprogress', name: 'In Progress', category: 'IN_PROGRESS', color: '#8b5cf6' },
+  { id: 'st_review', name: 'In Review', category: 'IN_REVIEW', color: '#f59e0b' },
+  { id: 'st_done', name: 'Done', category: 'DONE', color: '#10b981' },
+];
+const LOAD_PRIORITIES = ['LOW', 'MEDIUM', 'HIGH', 'URGENT'] as const;
+for (let i = 1; i <= 120; i++) {
+  const st = LOAD_STATUSES[i % LOAD_STATUSES.length];
+  mockTasksSeed.push({
+    id: `t_load_${i}`,
+    key: `LOAD-${i}`,
+    projectId: 'proj_load',
+    title: `Load fixture task ${i} — auth search filter drag sample`,
+    description: `Synthetic task #${i} for performance QA.`,
+    issueType: i % 7 === 0 ? 'BUG' : 'TASK',
+    priority: LOAD_PRIORITIES[i % LOAD_PRIORITIES.length],
+    statusId: st.id,
+    status: st,
+    sprintId: i % 5 === 0 ? null : 'sp_load_1',
+    storyPoints: (i % 5) + 1,
+    order: i,
+    labels: i % 3 === 0 ? ['LoadTest'] : [],
+    assignees: [{ id: 'usr_cursor', name: 'Cursor', avatarUrl: 'https://api.dicebear.com/7.x/bottts/svg?seed=cursor' }],
+  });
+}
 
 // Offline/Vercel demo: persist mock task mutations across refresh (DEV-42)
 const MOCK_TASKS_KEY = 'kortex_mock_tasks';
 function loadPersistedMockTasks(): any[] {
+  const seed = mockTasksSeed.map((t) => ({ ...t }));
   try {
     const raw = localStorage.getItem(MOCK_TASKS_KEY);
-    if (!raw) return mockTasksSeed.map((t) => ({ ...t }));
+    if (!raw) return seed;
     const parsed = JSON.parse(raw);
-    if (Array.isArray(parsed) && parsed.length > 0) return parsed;
+    if (!Array.isArray(parsed) || parsed.length === 0) return seed;
+    // Merge: keep user mutations, add any new seed ids (e.g. LOAD-* from DEV-38)
+    const byId = new Map<string, any>(parsed.map((t: any) => [t.id, t]));
+    for (const t of seed) {
+      if (!byId.has(t.id)) byId.set(t.id, t);
+    }
+    return Array.from(byId.values());
   } catch {
     /* ignore */
   }
-  return mockTasksSeed.map((t) => ({ ...t }));
+  return seed;
 }
 let mockTasks: any[] = loadPersistedMockTasks();
 function persistMockTasks() {
@@ -1161,6 +1260,13 @@ Agent logins: \`cursor@kortex.dev\` · \`antigravity@kortex.dev\` (password \`pa
 - 🟢 **[DEV-41]** Bug: active project/view/filters lost on refresh — **Done** · **Cursor** · \`kortex_session_nav\` localStorage
 - 🟢 **[DEV-42]** Bug: offline demo task create/reorder lost on refresh — **Done** · **Cursor** · \`kortex_mock_tasks\` localStorage
 - 🟢 **[DEV-35]** QA audit: drag-and-drop — **Done** · **Cursor** · Fixed status object on Kanban drop + optimistic updates; Timeline/Gantt has no DnD (not rebuilt)
+- 🟢 **[DEV-36]** QA audit: CRUD edge cases — **Done** · **Cursor** · sanitizePlainText + max lengths; empty/HTML-only title reject; comment sanitize; break-words overflow
+- 🟢 **[DEV-37]** QA audit: keyboard & a11y — **Done** · **Cursor** · focus trap + Esc on Task Detail Drawer & Command Palette; ARIA dialog/listbox; Arrow/Enter navigation
+- 🟢 **[DEV-38]** QA audit: performance 100+ tasks — **Done** · **Cursor** · Seeded \`proj_load\` (LOAD-1…120). Findings → DEV-43 (Kanban regroup), DEV-44 (search debounce)
+- 🟢 **[DEV-43]** Bug: Kanban re-filters columns every render — **Done** · **Cursor** · \`tasksByStatus\` useMemo (single pass group+sort)
+- 🟢 **[DEV-44]** Bug: search updates store every keystroke — **Done** · **Cursor** · 200ms debounce on ViewTabs search before \`setFilter\`
+- 🟢 **[DEV-39]** URL-persisted filters (List/Kanban/Spreadsheet) — **Done** · **Cursor** · \`?view=&search=&priority=&type=&sprint=&sort=&my=1\` via \`useUrlFilterSync\`
+- 🟢 **[DEV-40]** Generate \`.cursorrules\` — **Done** · **Cursor** · Root rules: stack, folders, Tailwind/Zustand patterns, agent task/deploy/doc-sync workflow
 
 ---
 
@@ -1233,7 +1339,8 @@ Agent logins: \`cursor@kortex.dev\` · \`antigravity@kortex.dev\` (password \`pa
 3. **Docs in the same task:** update this Walkthrough + Platform Guide chapter + dated Changelog (with commit/deploy). Partial features marked \`🚧 Partial\`.
 4. **Ship isolation:** one task → one commit (\`DEV-N: …\`) → one Vercel deploy → confirm success before Done. Failed deploy = Blocked, not Done. Broken prod → rollback + Blocked.
 5. **Helpers:** \`frontend/src/lib/agentWorkflow.ts\` — overlap detection, commit/deploy tags, end-of-prompt summary formatter.
-6. **Reply format:**
+6. **Cursor rules:** root \`.cursorrules\` mirrors stack, folder conventions, Tailwind/Zustand patterns, and this workflow (keep in sync when conventions change).
+7. **Reply format:**
 \`\`\`
 Tasks: DEV-N (status) …
 Changed: …
@@ -1245,6 +1352,23 @@ Deploy: <url|failed> · commit <sha>
 - Appearance (theme/font/size), timer, and auth token persist in localStorage.
 - Active project, view, section, and filters persist in \`kortex_session_nav\` (survives refresh).
 - Offline demo task create/update/delete persists in \`kortex_mock_tasks\` (survives refresh on static/Vercel fallback).
+
+## CRUD text safety
+- Titles/descriptions/comments go through \`sanitizePlainText\` (strip tags/null bytes, max lengths). Never render user text as HTML.
+- Empty titles rejected; long titles use \`break-words\` / \`line-clamp\` on cards so layout does not overflow.
+
+## Accessibility (keyboard)
+- Task Detail Drawer and Command Palette: \`role="dialog"\` + \`aria-modal\`, Tab focus trap (\`useFocusTrap\`), Esc closes, backdrop click closes.
+- Command Palette: ArrowUp/Down + Enter; combobox + listbox/option ARIA.
+
+## Perf QA sandbox
+- Space **Operations & IT Support** → project \`Load Test (100+ tasks)\` (\`proj_load\`, keys \`LOAD-1\`…\`LOAD-120\`) for drag/search/filter checks.
+- Kanban groups tasks by status once per data change (\`tasksByStatus\` memo) — avoids O(columns×n) filter during drag.
+- Toolbar search commits to filters after 200ms debounce (avoids per-keystroke board re-query).
+
+## URL-persisted filters
+- On **List**, **Kanban**, and **Spreadsheet** views, active filters sync to the query string (\`?view=BOARD&search=auth&priority=HIGH&type=BUG&sprint=…&sort=priority&my=1\`).
+- Bookmark/share restores on load (URL wins over session storage for those fields). Helpers: \`frontend/src/lib/urlFilters.ts\`, \`useUrlFilterSync\`.
 
 ## Hierarchy
 Organization → Spaces → Folders → Projects/Lists → **ClickUp-style \`{List} Sprints\` dropdown** → Tasks
@@ -1298,6 +1422,7 @@ export function useProject(projectId: string | null) {
         return res.data;
       } catch (e) {
         if (projectId === 'proj_kor') return mockProjectKor;
+        if (projectId === 'proj_load') return mockProjectLoad;
         return mockProjectDev;
       }
     },

@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useMemo } from 'react';
 import { DragDropContext, Droppable, Draggable, DropResult } from '@hello-pangea/dnd';
 import { Task, Status } from '@kortex/shared';
 import { useAppStore } from '../../store/useAppStore';
@@ -89,20 +89,39 @@ export const KanbanView: React.FC<Props> = ({ tasks }) => {
     setQuickAddStatusId(null);
   };
 
-  const filteredTasks = tasks.filter((t) => {
-    if (selectedSprintId === 'all') return true;
-    if (selectedSprintId === 'backlog') return !t.sprintId;
-    return t.sprintId === selectedSprintId;
-  });
+  const filteredTasks = useMemo(() => {
+    return tasks.filter((t) => {
+      if (selectedSprintId === 'all') return true;
+      if (selectedSprintId === 'backlog') return !t.sprintId;
+      return t.sprintId === selectedSprintId;
+    });
+  }, [tasks, selectedSprintId]);
 
-  const getTasksForColumn = (statusId: string) => {
-    return filteredTasks.filter((t) => t.statusId === statusId).sort((a, b) => a.order - b.order);
-  };
+  // DEV-43: one pass group+sort instead of filter per column every render
+  const tasksByStatus = useMemo(() => {
+    const map = new Map<string, Task[]>();
+    for (const t of filteredTasks) {
+      const list = map.get(t.statusId) || [];
+      list.push(t);
+      map.set(t.statusId, list);
+    }
+    for (const list of map.values()) {
+      list.sort((a, b) => a.order - b.order);
+    }
+    return map;
+  }, [filteredTasks]);
+
+  const getTasksForColumn = (statusId: string) => tasksByStatus.get(statusId) || [];
+
+  const sprintNameById = useMemo(() => {
+    const m = new Map<string, string>();
+    for (const s of sprints) m.set(s.id, s.name);
+    return m;
+  }, [sprints]);
 
   const getSprintName = (sprintId?: string) => {
     if (!sprintId) return null;
-    const s = sprints.find((sp) => sp.id === sprintId);
-    return s?.name || sprintId;
+    return sprintNameById.get(sprintId) || sprintId;
   };
 
   return (
@@ -243,7 +262,7 @@ export const KanbanView: React.FC<Props> = ({ tasks }) => {
                                 </div>
 
                                 {/* Task Title */}
-                                <p className="text-xs font-semibold text-[var(--text-primary)] leading-snug hover:text-indigo-600 dark:hover:text-indigo-400 transition-colors line-clamp-2 mb-2">
+                                <p className="text-xs font-semibold text-[var(--text-primary)] leading-snug hover:text-indigo-600 dark:hover:text-indigo-400 transition-colors line-clamp-2 mb-2 break-words">
                                   {task.title}
                                 </p>
 

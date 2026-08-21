@@ -1,0 +1,97 @@
+# Kortex — Cursor / Antigravity rules
+
+Match existing Antigravity patterns. Prefer the smallest change that works. Do not invent new architecture without an explicit ask.
+
+## Tech stack
+
+Monorepo (`kortex-monorepo`):
+
+| Package | Stack |
+|---------|--------|
+| `frontend/` | React 18, Vite, TypeScript, Tailwind CSS, Zustand, TanStack Query, `@hello-pangea/dnd`, Lucide, date-fns, sonner |
+| `backend/` | Express, Prisma, Socket.io, TypeScript |
+| `shared/` | `@kortex/shared` — types, roles, status categories, socket events |
+
+Deploy: Vercel static frontend (offline demo falls back to mocks in `frontend/src/api/queries.ts` when API fails). Root `vercel.json` serves `frontend/dist`.
+
+## Folder layout
+
+```
+frontend/src/
+  api/           # client, queries (TanStack + mock fallbacks), socket
+  components/
+    layout/      # AppLayout, Sidebar, Header, ViewTabs
+    views/       # List, Kanban, Backlog, Gantt, Calendar, Workload, MindMap, Table, Overview
+    tasks/       # TaskDetailModal, TaskCreateModal, BulkActionBar
+    search/      # CommandPalette
+    common/      # Avatar, badges, ToastManager
+    docs/ agile/ automations/ dashboards/ settings/ time/ auth/
+  store/         # useAppStore, useAuthStore, usePresenceStore (Zustand)
+  lib/           # helpers (sanitizeText, useFocusTrap, urlFilters, agentWorkflow)
+  App.tsx
+
+backend/src/
+  routes/ controllers/ services/ middleware/ sockets/ db.ts server.ts
+
+shared/src/      # shared types & constants
+```
+
+## Component patterns
+
+- Functional components + TypeScript. Co-locate view-specific UI under `components/views/` or feature folders.
+- Data: TanStack Query hooks in `api/queries.ts` (`useTasks`, `useProject`, mutations). Always keep offline/mock fallbacks working.
+- UI state (project, view, filters, modals, theme, timer): Zustand `useAppStore`. Auth: `useAuthStore`.
+- Task text is plain text only — use `sanitizePlainText` from `lib/sanitizeText.ts` on titles/descriptions/comments. Never `dangerouslySetInnerHTML` for user content.
+- Modals/drawers: `role="dialog"`, `aria-modal`, Esc + focus trap via `useFocusTrap`.
+- DnD: `@hello-pangea/dnd` on Kanban; when updating status, write the full `status` object as well as `statusId` (optimistic cache).
+
+## Styling (Tailwind)
+
+- Prefer CSS variables already defined for theme tokens: `var(--bg-*)`, `var(--text-*)`, `var(--border-*)`. Do not hardcode slate/indigo dark hex in new code when a token exists.
+- Typography: rem root ~16px standard; avoid `text-[10px]` / `text-[11px]` — use `text-xs`+.
+- Layout: `select-none` on board chrome; `break-words` / `line-clamp` on long titles; `min-w-0` in flex rows that truncate.
+- Accent: indigo is the established product accent — stay consistent; do not introduce a new purple-gradient marketing look on app chrome.
+- Motion: light `animate-in` / transition utilities only; no decorative glow stacks.
+
+## State & URL
+
+- Session nav (project/view/section/filters) → `localStorage` key `kortex_session_nav`.
+- Offline mock task mutations → `kortex_mock_tasks` (merge new seed ids on load).
+- List / Kanban / Spreadsheet filters also sync to the URL (`useUrlFilterSync` + `lib/urlFilters.ts`):  
+  `?view=BOARD&search=auth&priority=HIGH&type=BUG&sprint=…&sort=priority&my=1`  
+  URL wins on first load for bookmark/share.
+- Sprint filter semantics: `filters.sprintId` — `undefined` = all, `null` = backlog, `string` = that sprint.
+- Appearance: `kortex_theme`, `kortex_font`, `kortex_size`, `kortex_sizepx`, etc.
+
+## Agent workflow (mandatory — Cursor & Antigravity)
+
+Users: `cursor@kortex.dev` / `antigravity@kortex.dev` (password `password123`).
+
+1. **Prompt → tasks first:** one DEV task per distinct ask, before code. Plain-language titles. Assign executor. Active sprint. Description cites originating request. Prefer linking an existing open/recent task (`findOverlappingAgentTask`) over duplicates.
+2. **Live statuses:** To Do → In Progress → In Review → Deploying → Done, or **Blocked**. Board columns include Deploying / Blocked.
+3. **No batching fixes:** one bug/feature = one task = one commit (`DEV-N: …`) = one deploy. Do not squash multiple fixes into one task.
+4. **Docs in the same task:** update mock Docs — **Kortex Platform Walkthrough** + dated **Kortex Changelog** (and Platform Guide chapter when relevant). Mark partial features `🚧 Partial`.
+5. **Helpers:** `frontend/src/lib/agentWorkflow.ts` (+ `*.check.ts` self-checks). Leave a minimal runnable check for non-trivial logic.
+6. **End-of-prompt summary:**
+   ```
+   Tasks: DEV-N (status) · …
+   Changed: …
+   Docs: Walkthrough §… · Changelog …
+   Deploy: <url|failed> · commit <sha>
+   ```
+7. Failed verify/deploy = Blocked, not Done. Broken prod → rollback + Blocked.
+
+## Do / Don't
+
+- **Do** fix bugs only when asked for QA — do not rebuild working features.
+- **Do** keep mock data + offline demo path green (Vercel static).
+- **Don't** start offline-first IndexedDB/Supabase sync without an explicit architectural decision.
+- **Don't** add dependencies if stdlib / existing packages cover it.
+- **Don't** create abstractions, new design systems, or drive-by refactors.
+- **Don't** invent Calendar timelines as DnD boards — Timeline/Gantt currently has no card DnD; do not rebuild unless tasked.
+
+## Commits & PRs
+
+- Branch prefix: `cursor/<descriptive-name>-…`
+- Commit message: `DEV-N: short imperative summary`
+- Prefer feature branch + PR; temporary Vercel deploy of `frontend/dist` when auth is unavailable (`npx vercel deploy frontend/dist --temporary --yes`).

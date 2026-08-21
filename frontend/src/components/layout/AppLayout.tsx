@@ -6,6 +6,8 @@ import { useTasks, useProject } from '../../api/queries';
 import { socketService } from '../../api/socket';
 import { SOCKET_EVENTS } from '@kortex/shared';
 import { useQueryClient } from '@tanstack/react-query';
+import { useUrlFilterSync } from '../../lib/useUrlFilterSync';
+import { sortTasksByParam } from '../../lib/urlFilters';
 
 import { Header } from './Header';
 import { Sidebar } from './Sidebar';
@@ -54,6 +56,8 @@ export const AppLayout: React.FC = () => {
   const { setOnlineUsers, setTyping } = usePresenceStore();
   const queryClient = useQueryClient();
 
+  useUrlFilterSync();
+
   useEffect(() => {
     checkAuth();
   }, [checkAuth]);
@@ -71,15 +75,18 @@ export const AppLayout: React.FC = () => {
   });
 
   // Filter tasks in client (My Tasks + backlog-only when sprintId === null)
-  const filteredTasks = rawTasks.filter((task) => {
-    if (filters.sprintId === null && task.sprintId) return false;
-    if (filters.onlyMyTasks && user) {
-      const isAssigned = task.assignees?.some((a) => a.id === user.id);
-      const isReporter = task.reporterId === user.id;
-      if (!isAssigned && !isReporter) return false;
-    }
-    return true;
-  });
+  const filteredTasks = sortTasksByParam(
+    rawTasks.filter((task) => {
+      if (filters.sprintId === null && task.sprintId) return false;
+      if (filters.onlyMyTasks && user) {
+        const isAssigned = task.assignees?.some((a) => a.id === user.id);
+        const isReporter = task.reporterId === user.id;
+        if (!isAssigned && !isReporter) return false;
+      }
+      return true;
+    }),
+    filters.sort
+  );
 
   // Setup WebSocket room and event listeners
   useEffect(() => {

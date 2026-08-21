@@ -3,6 +3,7 @@ import { useAppStore } from '../../store/useAppStore';
 import { useProject, useSprints, useCreateTaskMutation } from '../../api/queries';
 import { IssueType, Priority } from '@kortex/shared';
 import { X, Plus, Sparkles, AlertCircle } from 'lucide-react';
+import { sanitizePlainText, TITLE_MAX, DESC_MAX } from '../../lib/sanitizeText';
 
 export const TaskCreateModal: React.FC = () => {
   const {
@@ -36,7 +37,8 @@ export const TaskCreateModal: React.FC = () => {
     e.preventDefault();
     setErrorMessage('');
 
-    if (!title.trim()) {
+    const cleanTitle = sanitizePlainText(title, TITLE_MAX).trim();
+    if (!cleanTitle) {
       setErrorMessage('Please provide an issue title.');
       return;
     }
@@ -53,8 +55,8 @@ export const TaskCreateModal: React.FC = () => {
     try {
       const newTask = await createTaskMutation.mutateAsync({
         projectId: activeProjectId,
-        title: title.trim(),
-        description: description.trim(),
+        title: cleanTitle,
+        description: sanitizePlainText(description, DESC_MAX).trim(),
         issueType,
         priority,
         statusId: statusId || statuses[0]?.id,
@@ -147,9 +149,10 @@ export const TaskCreateModal: React.FC = () => {
               type="text"
               required
               autoFocus
+              maxLength={TITLE_MAX}
               placeholder="e.g. Implement WebSockets real-time sync"
               value={title}
-              onChange={(e) => setTitle(e.target.value)}
+              onChange={(e) => setTitle(sanitizePlainText(e.target.value, TITLE_MAX))}
               className="w-full bg-[var(--bg-input)] border border-[var(--border-default)] rounded-lg px-3 py-2 text-xs text-[var(--text-primary)] outline-none focus:border-indigo-500 font-medium"
             />
           </div>
@@ -159,10 +162,11 @@ export const TaskCreateModal: React.FC = () => {
             <label className="block text-xs font-bold text-[var(--text-muted)] uppercase tracking-wider mb-1">Description</label>
             <textarea
               rows={3}
+              maxLength={DESC_MAX}
               placeholder="Add details, reproduction steps, or acceptance criteria..."
               value={description}
-              onChange={(e) => setDescription(e.target.value)}
-              className="w-full bg-[var(--bg-input)] border border-[var(--border-default)] rounded-lg px-3 py-2 text-xs text-[var(--text-primary)] outline-none focus:border-indigo-500 font-sans resize-y"
+              onChange={(e) => setDescription(sanitizePlainText(e.target.value, DESC_MAX))}
+              className="w-full bg-[var(--bg-input)] border border-[var(--border-default)] rounded-lg px-3 py-2 text-xs text-[var(--text-primary)] outline-none focus:border-indigo-500 font-sans resize-y break-words"
             />
           </div>
 
