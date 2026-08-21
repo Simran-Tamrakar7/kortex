@@ -26,7 +26,18 @@ import {
 import { apiClient } from '../../api/client';
 
 export const Header: React.FC = () => {
-  const { user, organization, workspaces, activeWorkspaceId, logout } = useAuthStore();
+  const {
+    user,
+    organization,
+    workspaces,
+    activeWorkspaceId,
+    setActiveWorkspaceId,
+    renameOrganization,
+    createWorkspace,
+    renameWorkspace,
+    deleteWorkspace,
+    logout,
+  } = useAuthStore();
   const {
     activeProjectId,
     setCreateTaskOpen,
@@ -56,8 +67,14 @@ export const Header: React.FC = () => {
   const [isNotifsOpen, setIsNotifsOpen] = useState(false);
   const [isUserMenuOpen, setIsUserMenuOpen] = useState(false);
   const [isFontMenuOpen, setIsFontMenuOpen] = useState(false);
+  const [isWsMenuOpen, setIsWsMenuOpen] = useState(false);
+  const [editingOrg, setEditingOrg] = useState(false);
+  const [orgDraft, setOrgDraft] = useState('');
+  const [editingWsId, setEditingWsId] = useState<string | null>(null);
+  const [wsDraft, setWsDraft] = useState('');
 
   const fontMenuRef = useRef<HTMLDivElement>(null);
+  const wsMenuRef = useRef<HTMLDivElement>(null);
   const activeWorkspace = workspaces.find((w) => w.id === activeWorkspaceId);
 
   // Close menus on outside click
@@ -65,6 +82,10 @@ export const Header: React.FC = () => {
     const handleClickOutside = (e: MouseEvent) => {
       if (fontMenuRef.current && !fontMenuRef.current.contains(e.target as Node)) {
         setIsFontMenuOpen(false);
+      }
+      if (wsMenuRef.current && !wsMenuRef.current.contains(e.target as Node)) {
+        setIsWsMenuOpen(false);
+        setEditingWsId(null);
       }
     };
     document.addEventListener('mousedown', handleClickOutside);
@@ -107,22 +128,157 @@ export const Header: React.FC = () => {
 
   return (
     <header className="h-14 border-b border-[var(--border-subtle)] bg-[var(--bg-header)] px-4 flex items-center justify-between shrink-0 z-30 select-none transition-colors">
-      {/* Left: Breadcrumbs */}
-      <div className="flex items-center gap-2 text-xs font-medium">
-        <span className="font-bold text-[var(--text-primary)] flex items-center gap-1.5">
-          <Layers className="w-4 h-4 text-indigo-500" />
-          {organization?.name || 'Kortex'}
-        </span>
+      {/* Left: Breadcrumbs — org rename + workspace branches */}
+      <div className="flex items-center gap-2 text-xs font-medium min-w-0">
+        {editingOrg ? (
+          <form
+            className="flex items-center gap-1.5"
+            onSubmit={(e) => {
+              e.preventDefault();
+              renameOrganization(orgDraft);
+              setEditingOrg(false);
+            }}
+          >
+            <Layers className="w-4 h-4 text-indigo-500 shrink-0" />
+            <input
+              autoFocus
+              value={orgDraft}
+              onChange={(e) => setOrgDraft(e.target.value)}
+              onBlur={() => {
+                renameOrganization(orgDraft);
+                setEditingOrg(false);
+              }}
+              className="bg-[var(--bg-input)] border border-indigo-500 rounded px-2 py-0.5 text-xs font-bold text-[var(--text-primary)] outline-none max-w-[180px]"
+            />
+          </form>
+        ) : (
+          <button
+            type="button"
+            title="Click to rename organization"
+            onClick={() => {
+              setOrgDraft(organization?.name || '');
+              setEditingOrg(true);
+            }}
+            className="font-bold text-[var(--text-primary)] flex items-center gap-1.5 hover:text-indigo-600 dark:hover:text-indigo-400 truncate max-w-[160px]"
+          >
+            <Layers className="w-4 h-4 text-indigo-500 shrink-0" />
+            <span className="truncate">{organization?.name || 'Kortex'}</span>
+          </button>
+        )}
+
         {activeWorkspace && (
           <>
-            <ChevronRight className="w-3.5 h-3.5 text-[var(--text-muted)]" />
-            <span className="text-[var(--text-secondary)]">{activeWorkspace.name}</span>
+            <ChevronRight className="w-3.5 h-3.5 text-[var(--text-muted)] shrink-0" />
+            <div className="relative" ref={wsMenuRef}>
+              <button
+                type="button"
+                onClick={() => setIsWsMenuOpen((o) => !o)}
+                className="text-[var(--text-secondary)] hover:text-[var(--text-primary)] flex items-center gap-1 truncate max-w-[160px]"
+                title="Switch or manage branches"
+              >
+                <span className="truncate">{activeWorkspace.name}</span>
+                <ChevronRight className={`w-3 h-3 transition-transform ${isWsMenuOpen ? 'rotate-90' : 'rotate-90'}`} />
+              </button>
+              {isWsMenuOpen && (
+                <div className="absolute left-0 top-full mt-1 z-50 w-64 bg-[var(--bg-card)] border border-[var(--border-default)] rounded-xl shadow-2xl p-1.5 space-y-0.5">
+                  <div className="px-2 py-1 text-[10px] font-bold uppercase tracking-wider text-[var(--text-muted)]">
+                    Branches
+                  </div>
+                  {workspaces.map((w) => (
+                    <div
+                      key={w.id}
+                      className={`flex items-center gap-1 rounded-lg px-1.5 py-1 ${
+                        w.id === activeWorkspaceId ? 'bg-indigo-600/20' : 'hover:bg-[var(--bg-hover)]'
+                      }`}
+                    >
+                      {editingWsId === w.id ? (
+                        <form
+                          className="flex-1"
+                          onSubmit={(e) => {
+                            e.preventDefault();
+                            renameWorkspace(w.id, wsDraft);
+                            setEditingWsId(null);
+                          }}
+                        >
+                          <input
+                            autoFocus
+                            value={wsDraft}
+                            onChange={(e) => setWsDraft(e.target.value)}
+                            onBlur={() => {
+                              renameWorkspace(w.id, wsDraft);
+                              setEditingWsId(null);
+                            }}
+                            className="w-full bg-[var(--bg-input)] border border-indigo-500 rounded px-2 py-1 text-xs text-[var(--text-primary)] outline-none"
+                          />
+                        </form>
+                      ) : (
+                        <>
+                          <button
+                            type="button"
+                            className="flex-1 text-left text-xs font-semibold text-[var(--text-primary)] px-1 py-1 truncate"
+                            onClick={() => {
+                              setActiveWorkspaceId(w.id);
+                              setIsWsMenuOpen(false);
+                            }}
+                          >
+                            {w.id === activeWorkspaceId && <Check className="w-3 h-3 inline mr-1 text-indigo-500" />}
+                            {w.name}
+                          </button>
+                          <button
+                            type="button"
+                            title="Rename branch"
+                            className="p-1 text-[var(--text-muted)] hover:text-[var(--text-primary)]"
+                            onClick={() => {
+                              setEditingWsId(w.id);
+                              setWsDraft(w.name);
+                            }}
+                          >
+                            <Type className="w-3 h-3" />
+                          </button>
+                          <button
+                            type="button"
+                            title="Delete branch"
+                            className="p-1 text-[var(--text-muted)] hover:text-rose-500"
+                            onClick={() => {
+                              if (
+                                confirm(
+                                  `Are you sure you want to delete the branch "${w.name}"? This cannot be undone.`
+                                )
+                              ) {
+                                const res = deleteWorkspace(w.id);
+                                if (!res.ok) alert(res.error);
+                              }
+                            }}
+                          >
+                            <Minus className="w-3 h-3" />
+                          </button>
+                        </>
+                      )}
+                    </div>
+                  ))}
+                  <button
+                    type="button"
+                    className="w-full mt-1 flex items-center gap-1.5 px-2.5 py-1.5 rounded-lg text-xs font-bold text-indigo-600 dark:text-indigo-400 hover:bg-indigo-50 dark:hover:bg-indigo-950/40"
+                    onClick={() => {
+                      const name = prompt('New branch name', 'New Branch');
+                      if (name?.trim()) {
+                        createWorkspace(name.trim());
+                        setIsWsMenuOpen(false);
+                      }
+                    }}
+                  >
+                    <Plus className="w-3.5 h-3.5" />
+                    Add branch
+                  </button>
+                </div>
+              )}
+            </div>
           </>
         )}
         {project && (
           <>
-            <ChevronRight className="w-3.5 h-3.5 text-[var(--text-muted)]" />
-            <span className="font-semibold text-indigo-600 dark:text-indigo-400 bg-indigo-50 dark:bg-indigo-500/10 px-2 py-0.5 rounded border border-indigo-200 dark:border-indigo-500/20">
+            <ChevronRight className="w-3.5 h-3.5 text-[var(--text-muted)] shrink-0" />
+            <span className="font-semibold text-indigo-600 dark:text-indigo-400 bg-indigo-50 dark:bg-indigo-500/10 px-2 py-0.5 rounded border border-indigo-200 dark:border-indigo-500/20 truncate max-w-[140px]">
               {project.name}
             </span>
           </>

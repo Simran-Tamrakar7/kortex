@@ -16,6 +16,42 @@ interface AuthState {
   checkAuth: () => Promise<void>;
   setActiveWorkspaceId: (workspaceId: string) => void;
   updateUser: (data: Partial<User>) => void;
+  renameOrganization: (name: string) => void;
+  createWorkspace: (name: string) => Workspace;
+  renameWorkspace: (id: string, name: string) => void;
+  deleteWorkspace: (id: string) => { ok: boolean; error?: string };
+}
+
+const ORG_META_KEY = 'kortex_org_meta';
+
+function loadOrgMeta(): { organization?: Organization; workspaces?: Workspace[]; activeWorkspaceId?: string | null } | null {
+  try {
+    const raw = localStorage.getItem(ORG_META_KEY);
+    if (!raw) return null;
+    return JSON.parse(raw);
+  } catch {
+    return null;
+  }
+}
+
+function persistOrgMeta(partial: {
+  organization?: Organization | null;
+  workspaces?: Workspace[];
+  activeWorkspaceId?: string | null;
+}) {
+  try {
+    const prev = loadOrgMeta() || {};
+    localStorage.setItem(
+      ORG_META_KEY,
+      JSON.stringify({
+        organization: partial.organization ?? prev.organization,
+        workspaces: partial.workspaces ?? prev.workspaces,
+        activeWorkspaceId: partial.activeWorkspaceId ?? prev.activeWorkspaceId,
+      })
+    );
+  } catch {
+    /* ignore */
+  }
 }
 
 // Fallback demo users for instant offline/Vercel login
@@ -152,11 +188,13 @@ const fallbackWorkspaces: Workspace[] = [
   },
 ];
 
+const savedMeta = loadOrgMeta();
+
 export const useAuthStore = create<AuthState>((set, get) => ({
   user: demoUsersMap['alex@kortex.dev'].user,
-  organization: fallbackOrg,
-  workspaces: fallbackWorkspaces,
-  activeWorkspaceId: fallbackWorkspaces[0].id,
+  organization: savedMeta?.organization || fallbackOrg,
+  workspaces: savedMeta?.workspaces?.length ? savedMeta.workspaces : fallbackWorkspaces,
+  activeWorkspaceId: savedMeta?.activeWorkspaceId || fallbackWorkspaces[0].id,
   isAuthenticated: true,
   isLoading: false,
 
@@ -338,6 +376,7 @@ export const useAuthStore = create<AuthState>((set, get) => ({
     try {
       socketService.joinWorkspace(workspaceId);
     } catch (e) {}
+    persistOrgMeta({ activeWorkspaceId: workspaceId });
     set({ activeWorkspaceId: workspaceId });
   },
 
@@ -346,5 +385,59 @@ export const useAuthStore = create<AuthState>((set, get) => ({
     if (current) {
       set({ user: { ...current, ...data } });
     }
+  },
+
+  renameOrganization: (name: string) => {
+    const clean = name.trim();
+    if (!clean) return;
+    const org = get().organization;
+    if (!org) return;
+    const organization = { ...org, name: clean, updatedAt: new Date().toISOString() };
+    persistOrgMeta({ organization });
+    set({ organization });
+  },
+
+  createWorkspace: (name: string) => {
+    const clean = name.trim() || 'New Branch';
+    const ws: Workspace = {
+      id: `ws_${Date.now()}`,
+      orgId: get().organization?.id || 'org_acme',
+      name: clean,
+      slug: clean.toLowerCase().replace(/[^a-z0-9]+/g, '-').slice(0, 40),
+      description: '',
+      icon: 'Layers',
+      color: '#6366f1',
+      createdAt: new Date().toISOString(),
+      updatedAt: new Date().toISOString(),
+    };
+    const workspaces = [...get().workspaces, ws];
+    persistOrgMeta({ workspaces, activeWorkspaceId: ws.id });
+    set({ workspaces, activeWorkspaceId: ws.id });
+    return ws;
+  },
+
+  renameWorkspace: (id: string, name: string) => {
+    const clean = name.trim();
+    if (!clean) return;
+    const workspaces = get().workspaces.map((w) =>
+      w.id === id ? { ...w, name: clean, updatedAt: new Date().toISOString() } : w
+    );
+    persistOrgMeta({ workspaces });
+    set({ workspaces });
+  },
+
+  deleteWorkspace: (id: string) => {
+    const list = get().workspaces;
+    if (list.length <= 1) {
+      return { ok: false, error: 'You must keep at least one branch.' };
+    }
+    const workspaces = list.filter((w) => w.id !== id);
+    let activeWorkspaceId = get().activeWorkspaceId;
+    if (activeWorkspaceId === id) {
+      activeWorkspaceId = workspaces[0]?.id || null;
+    }
+    persistOrgMeta({ workspaces, activeWorkspaceId });
+    set({ workspaces, activeWorkspaceId });
+    return { ok: true };
   },
 }));

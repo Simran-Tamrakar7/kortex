@@ -23,6 +23,8 @@ import {
   CheckCheck,
   Circle,
   MoreHorizontal,
+  Trash2,
+  Pencil,
 } from 'lucide-react';
 import { apiClient } from '../../api/client';
 import { useQueryClient } from '@tanstack/react-query';
@@ -36,7 +38,15 @@ function sprintDateRange(sp: { startDate?: string | null; endDate?: string | nul
 }
 
 export const Sidebar: React.FC = () => {
-  const { organization, activeWorkspaceId, setActiveWorkspaceId } = useAuthStore();
+  const {
+    organization,
+    activeWorkspaceId,
+    setActiveWorkspaceId,
+    workspaces: authWorkspaces,
+    createWorkspace,
+    renameWorkspace,
+    deleteWorkspace,
+  } = useAuthStore();
   const {
     activeProjectId,
     setActiveProjectId,
@@ -45,6 +55,7 @@ export const Sidebar: React.FC = () => {
     setActiveView,
     filters,
     setFilter,
+    selectProjectSprint,
     setSprintModalOpen,
     setOrgSettingsOpen,
     setTimeModalOpen,
@@ -53,9 +64,19 @@ export const Sidebar: React.FC = () => {
   } = useAppStore();
 
   const queryClient = useQueryClient();
-  const { data: workspaces = [] } = useWorkspaceTree(organization?.id);
+  const { data: tree = [] } = useWorkspaceTree(organization?.id);
   const { data: sprints = [] } = useSprints(activeProjectId);
   const { data: allTasks = [] } = useTasks(activeProjectId);
+
+  // Merge auth branch names/new branches onto tree (folders/projects from mock/API)
+  const workspaces = React.useMemo(() => {
+    return authWorkspaces.map((aw) => {
+      const fromTree = tree.find((t: any) => t.id === aw.id);
+      return fromTree
+        ? { ...fromTree, name: aw.name }
+        : { ...aw, folders: [], projects: [] };
+    });
+  }, [authWorkspaces, tree]);
 
   const [isCollapsed, setIsCollapsed] = useState(false);
   const [openFolders, setOpenFolders] = useState<Record<string, boolean>>({ all: true });
@@ -156,14 +177,12 @@ export const Sidebar: React.FC = () => {
                   title={`${sp.name} ${dateLabel}`.trim()}
                   onClick={(e) => {
                     e.stopPropagation();
-                    setActiveProjectId(proj.id);
-                    setActiveMainSection('PROJECT');
-                    setActiveView('BOARD');
-                    setFilter('sprintId', sp.id);
+                    selectProjectSprint(proj.id, sp.id);
+                    setSprintFolderOpen(proj.id, true);
                   }}
                   className={`w-full flex items-center justify-between gap-1 px-2 py-1 rounded transition-colors group ${
                     isFilterActive
-                      ? 'bg-[var(--bg-hover)] text-[var(--text-primary)] font-semibold'
+                      ? 'bg-emerald-500/15 text-emerald-700 dark:text-emerald-300 font-semibold ring-1 ring-emerald-500/40'
                       : 'text-[var(--text-secondary)] hover:text-[var(--text-primary)] hover:bg-[var(--bg-hover)]'
                   }`}
                 >
@@ -204,10 +223,14 @@ export const Sidebar: React.FC = () => {
             <button
               onClick={(e) => {
                 e.stopPropagation();
+                selectProjectSprint(proj.id, null);
                 setActiveView('BACKLOG');
-                setFilter('sprintId', null);
               }}
-              className="w-full flex items-center justify-between px-2 py-1 rounded text-[var(--text-secondary)] hover:text-[var(--text-primary)] hover:bg-[var(--bg-hover)] transition-colors"
+              className={`w-full flex items-center justify-between px-2 py-1 rounded transition-colors ${
+                filters.sprintId === null
+                  ? 'bg-emerald-500/15 text-emerald-700 dark:text-emerald-300 font-semibold ring-1 ring-emerald-500/40'
+                  : 'text-[var(--text-secondary)] hover:text-[var(--text-primary)] hover:bg-[var(--bg-hover)]'
+              }`}
             >
               <div className="flex items-center gap-1.5 truncate">
                 <Layers className="w-3.5 h-3.5 text-[var(--text-muted)] shrink-0" />
@@ -337,30 +360,71 @@ export const Sidebar: React.FC = () => {
     <aside className="w-64 border-r border-[var(--border-subtle)] bg-[var(--bg-sidebar)] flex flex-col justify-between shrink-0 select-none z-20 text-xs transition-colors">
       <div className="flex flex-col flex-1 overflow-hidden">
         {/* Workspace Selector Dropdown */}
-        <div className="p-3 border-b border-[var(--border-subtle)] flex items-center justify-between">
-          <div className="flex items-center gap-2 overflow-hidden">
+        <div className="p-3 border-b border-[var(--border-subtle)] flex items-center justify-between gap-1">
+          <div className="flex items-center gap-2 overflow-hidden min-w-0 flex-1">
             <div className="w-6 h-6 rounded-md bg-indigo-600 flex items-center justify-center font-bold text-white text-xs shrink-0">
               {currentWorkspace?.name?.[0] || 'W'}
             </div>
             <select
               value={activeWorkspaceId || ''}
               onChange={(e) => setActiveWorkspaceId(e.target.value)}
-              className="bg-transparent text-[var(--text-primary)] font-bold text-xs border-none outline-none cursor-pointer truncate max-w-[140px]"
+              className="bg-transparent text-[var(--text-primary)] font-bold text-xs border-none outline-none cursor-pointer truncate max-w-[120px]"
+              title="Switch branch"
             >
-              {workspaces.map((w) => (
+              {workspaces.map((w: any) => (
                 <option key={w.id} value={w.id} className="bg-[var(--bg-card)] text-[var(--text-primary)]">
                   {w.name}
                 </option>
               ))}
             </select>
           </div>
-          <button
-            onClick={() => setIsCollapsed(true)}
-            className="p-1 text-[var(--text-muted)] hover:text-[var(--text-primary)] hover:bg-[var(--bg-hover)] rounded"
-            title="Collapse Sidebar"
-          >
-            <PanelLeftClose className="w-3.5 h-3.5" />
-          </button>
+          <div className="flex items-center shrink-0">
+            <button
+              onClick={() => {
+                const name = prompt('New branch name', 'New Branch');
+                if (name?.trim()) createWorkspace(name.trim());
+              }}
+              className="p-1 text-[var(--text-muted)] hover:text-indigo-500 hover:bg-[var(--bg-hover)] rounded"
+              title="Add branch"
+            >
+              <Plus className="w-3.5 h-3.5" />
+            </button>
+            <button
+              onClick={() => {
+                if (!currentWorkspace) return;
+                const name = prompt('Rename branch', currentWorkspace.name);
+                if (name?.trim()) renameWorkspace(currentWorkspace.id, name.trim());
+              }}
+              className="p-1 text-[var(--text-muted)] hover:text-[var(--text-primary)] hover:bg-[var(--bg-hover)] rounded"
+              title="Rename branch"
+            >
+              <Pencil className="w-3.5 h-3.5" />
+            </button>
+            <button
+              onClick={() => {
+                if (!currentWorkspace) return;
+                if (
+                  confirm(
+                    `Are you sure you want to delete the branch "${currentWorkspace.name}"? This cannot be undone.`
+                  )
+                ) {
+                  const res = deleteWorkspace(currentWorkspace.id);
+                  if (!res.ok) alert(res.error);
+                }
+              }}
+              className="p-1 text-[var(--text-muted)] hover:text-rose-500 hover:bg-[var(--bg-hover)] rounded"
+              title="Delete branch"
+            >
+              <Trash2 className="w-3.5 h-3.5" />
+            </button>
+            <button
+              onClick={() => setIsCollapsed(true)}
+              className="p-1 text-[var(--text-muted)] hover:text-[var(--text-primary)] hover:bg-[var(--bg-hover)] rounded"
+              title="Collapse Sidebar"
+            >
+              <PanelLeftClose className="w-3.5 h-3.5" />
+            </button>
+          </div>
         </div>
 
         {/* Navigation list */}

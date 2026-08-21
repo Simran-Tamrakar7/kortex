@@ -16,6 +16,8 @@ interface FilterState {
   issueTypes: IssueType[];
   sprintId?: string | null;
   onlyMyTasks: boolean;
+  /** URL-persisted sort key: priority | -priority | key | title | order */
+  sort: string;
 }
 
 interface ActiveTimer {
@@ -66,6 +68,8 @@ interface AppState {
   setActiveProjectId: (id: string | null) => void;
   setActiveView: (view: ViewType) => void;
   setActiveMainSection: (section: MainSection) => void;
+  /** Atomically open a project sprint on the board (sidebar / deep link). */
+  selectProjectSprint: (projectId: string, sprintId: string | null) => void;
   setActiveTaskId: (id: string | null) => void;
   setSelectedTaskIds: (ids: string[]) => void;
   toggleSelectTask: (id: string) => void;
@@ -109,6 +113,7 @@ const initialFilters: FilterState = {
   issueTypes: [],
   sprintId: undefined,
   onlyMyTasks: false,
+  sort: '',
 };
 
 function loadSessionNav() {
@@ -269,8 +274,13 @@ export const useAppStore = create<AppState>((set, get) => ({
   accentColor: initialAppearance.accentColor,
 
   setActiveProjectId: (id) => {
-    persistSessionNav({ activeProjectId: id, activeMainSection: 'PROJECT' });
-    set({ activeProjectId: id, activeMainSection: 'PROJECT' });
+    const prev = get().activeProjectId;
+    const filters =
+      prev && id && prev !== id
+        ? { ...get().filters, sprintId: undefined }
+        : get().filters;
+    persistSessionNav({ activeProjectId: id, activeMainSection: 'PROJECT', filters });
+    set({ activeProjectId: id, activeMainSection: 'PROJECT', filters });
   },
   setActiveView: (view) => {
     persistSessionNav({ activeView: view });
@@ -279,6 +289,21 @@ export const useAppStore = create<AppState>((set, get) => ({
   setActiveMainSection: (section) => {
     persistSessionNav({ activeMainSection: section });
     set({ activeMainSection: section });
+  },
+  selectProjectSprint: (projectId, sprintId) => {
+    const filters = { ...get().filters, sprintId };
+    persistSessionNav({
+      activeProjectId: projectId,
+      activeMainSection: 'PROJECT',
+      activeView: 'BOARD',
+      filters,
+    });
+    set({
+      activeProjectId: projectId,
+      activeMainSection: 'PROJECT',
+      activeView: 'BOARD',
+      filters,
+    });
   },
   setActiveTaskId: (id) => set({ activeTaskId: id }),
 
