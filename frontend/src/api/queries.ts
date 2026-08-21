@@ -247,7 +247,7 @@ const mockSprints: any[] = [
   },
 ];
 
-const mockTasks: any[] = [
+const mockTasksSeed: any[] = [
   // Epics
   {
     id: 't_epic_core',
@@ -994,8 +994,8 @@ const mockTasks: any[] = [
       'Found in DEV-34 QA: mockTasks mutations (create/update/delete) live only in memory on Vercel/static fallback — refresh restores seed data.',
     issueType: 'BUG',
     priority: 'HIGH',
-    statusId: 'st_todo',
-    status: { id: 'st_todo', name: 'To Do', category: 'TODO', color: '#3b82f6' },
+    statusId: 'st_done',
+    status: { id: 'st_done', name: 'Done', category: 'DONE', color: '#10b981' },
     sprintId: 'sp_dev_2',
     storyPoints: 3,
     order: 44,
@@ -1011,8 +1011,8 @@ const mockTasks: any[] = [
     description: 'Originating request: QA DnD — empty column drops, rapid reorder, tablet width. Fix bugs found only.',
     issueType: 'TASK',
     priority: 'HIGH',
-    statusId: 'st_todo',
-    status: { id: 'st_todo', name: 'To Do', category: 'TODO', color: '#3b82f6' },
+    statusId: 'st_inprogress',
+    status: { id: 'st_inprogress', name: 'In Progress', category: 'IN_PROGRESS', color: '#8b5cf6' },
     sprintId: 'sp_dev_2',
     storyPoints: 5,
     order: 37,
@@ -1108,6 +1108,28 @@ const mockTasks: any[] = [
   },
 ];
 
+// Offline/Vercel demo: persist mock task mutations across refresh (DEV-42)
+const MOCK_TASKS_KEY = 'kortex_mock_tasks';
+function loadPersistedMockTasks(): any[] {
+  try {
+    const raw = localStorage.getItem(MOCK_TASKS_KEY);
+    if (!raw) return mockTasksSeed.map((t) => ({ ...t }));
+    const parsed = JSON.parse(raw);
+    if (Array.isArray(parsed) && parsed.length > 0) return parsed;
+  } catch {
+    /* ignore */
+  }
+  return mockTasksSeed.map((t) => ({ ...t }));
+}
+let mockTasks: any[] = loadPersistedMockTasks();
+function persistMockTasks() {
+  try {
+    localStorage.setItem(MOCK_TASKS_KEY, JSON.stringify(mockTasks));
+  } catch {
+    /* quota */
+  }
+}
+
 const mockDocs: any[] = [
   {
     id: 'doc_changelog',
@@ -1136,8 +1158,8 @@ Agent logins: \`cursor@kortex.dev\` · \`antigravity@kortex.dev\` (password \`pa
 - 🟢 **[DEV-32]** Per-task deploy rules: one commit, verify, tag, changelog as deploy history — **Done** · **Cursor** · helpers in \`frontend/src/lib/agentWorkflow.ts\`
 - 🟢 **[DEV-33]** Fix all sprints showing the same tasks — **Done** · **Cursor** · Kanban syncs \`filters.sprintId\`; mock \`useTasks\` filters by project/sprint; sidebar counts are real task counts
 - 🟢 **[DEV-34]** QA audit: state persistence — **Done** · **Cursor** · Findings → DEV-41 (nav/filters), DEV-42 (offline mock tasks)
-- 🟣 **[DEV-41]** Bug: active project/view/filters lost on refresh — **In Progress** · **Cursor**
-- 🔵 **[DEV-42]** Bug: offline demo task create/reorder lost on refresh — **To Do** · **Cursor**
+- 🟢 **[DEV-41]** Bug: active project/view/filters lost on refresh — **Done** · **Cursor** · \`kortex_session_nav\` localStorage
+- 🟢 **[DEV-42]** Bug: offline demo task create/reorder lost on refresh — **Done** · **Cursor** · \`kortex_mock_tasks\` localStorage
 
 ---
 
@@ -1217,6 +1239,11 @@ Changed: …
 Docs: Walkthrough §… · Changelog …
 Deploy: <url|failed> · commit <sha>
 \`\`\`
+
+## Session persistence
+- Appearance (theme/font/size), timer, and auth token persist in localStorage.
+- Active project, view, section, and filters persist in \`kortex_session_nav\` (survives refresh).
+- Offline demo task create/update/delete persists in \`kortex_mock_tasks\` (survives refresh on static/Vercel fallback).
 
 ## Hierarchy
 Organization → Spaces → Folders → Projects/Lists → **ClickUp-style \`{List} Sprints\` dropdown** → Tasks
@@ -1357,6 +1384,7 @@ export function useCreateTaskMutation() {
           assignees: [{ id: 'usr_alex', name: 'Alex Rivera', avatarUrl: 'https://images.unsplash.com/photo-1534528741775-53994a69daeb?w=150&auto=format&fit=crop&q=80' }],
         };
         mockTasks.push(newTask);
+        persistMockTasks();
         return newTask;
       }
     },
@@ -1378,6 +1406,7 @@ export function useUpdateTaskMutation() {
         const idx = mockTasks.findIndex((t) => t.id === id);
         if (idx !== -1) {
           mockTasks[idx] = { ...mockTasks[idx], ...updates };
+          persistMockTasks();
           return mockTasks[idx];
         }
         return updates;
@@ -1400,7 +1429,10 @@ export function useDeleteTaskMutation() {
         return res.data;
       } catch (e) {
         const idx = mockTasks.findIndex((t) => t.id === id);
-        if (idx !== -1) mockTasks.splice(idx, 1);
+        if (idx !== -1) {
+          mockTasks.splice(idx, 1);
+          persistMockTasks();
+        }
         return { success: true };
       }
     },
