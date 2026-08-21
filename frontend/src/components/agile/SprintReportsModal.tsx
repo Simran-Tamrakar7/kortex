@@ -32,7 +32,7 @@ export const SprintReportsModal: React.FC = () => {
         {/* Header */}
         <div className="flex items-center justify-between pb-3 border-b border-slate-800 shrink-0">
           <div>
-            <span className="text-[10px] uppercase font-bold text-indigo-400 tracking-wider">
+            <span className="text-xs uppercase font-bold text-indigo-400 tracking-wider">
               Agile Analytics & Sprint Burndown
             </span>
             <h3 className="text-base font-bold text-slate-100">
@@ -52,28 +52,28 @@ export const SprintReportsModal: React.FC = () => {
           {/* KPI Summary Cards */}
           <div className="grid grid-cols-2 sm:grid-cols-4 gap-3">
             <div className="p-3 bg-[#131d31] rounded-xl border border-[#202e48]">
-              <span className="text-slate-400 text-[11px]">Sprint Goal</span>
+              <span className="text-slate-400 text-xs">Sprint Goal</span>
               <p className="font-semibold text-slate-200 mt-1 line-clamp-1">
                 {report?.sprint?.goal || 'No goal set'}
               </p>
             </div>
 
             <div className="p-3 bg-[#131d31] rounded-xl border border-[#202e48]">
-              <span className="text-slate-400 text-[11px]">Story Points Committed</span>
+              <span className="text-slate-400 text-xs">Story Points Committed</span>
               <p className="text-lg font-bold font-mono text-slate-100 mt-0.5">
                 {report?.summary?.totalPoints || 0} pts
               </p>
             </div>
 
             <div className="p-3 bg-[#131d31] rounded-xl border border-[#202e48]">
-              <span className="text-slate-400 text-[11px]">Points Completed</span>
+              <span className="text-slate-400 text-xs">Points Completed</span>
               <p className="text-lg font-bold font-mono text-emerald-400 mt-0.5">
                 {report?.summary?.completedPoints || 0} pts
               </p>
             </div>
 
             <div className="p-3 bg-[#131d31] rounded-xl border border-[#202e48]">
-              <span className="text-slate-400 text-[11px]">Completion Rate</span>
+              <span className="text-slate-400 text-xs">Completion Rate</span>
               <p className="text-lg font-bold font-mono text-indigo-400 mt-0.5">
                 {report?.summary?.completionRate || 0}%
               </p>
@@ -87,7 +87,7 @@ export const SprintReportsModal: React.FC = () => {
                 <TrendingDown className="w-4 h-4 text-indigo-400" />
                 <span>Sprint Burndown Chart (Remaining Story Points)</span>
               </h4>
-              <span className="text-[11px] text-slate-400">Ideal vs Actual trajectory</span>
+              <span className="text-xs text-slate-400">Ideal vs Actual trajectory</span>
             </div>
 
             <div className="h-64 w-full">
@@ -97,9 +97,9 @@ export const SprintReportsModal: React.FC = () => {
                   <XAxis dataKey="day" stroke="#64748b" fontSize={11} />
                   <YAxis stroke="#64748b" fontSize={11} />
                   <Tooltip
-                    contentStyle={{ backgroundColor: '#0f172a', borderColor: '#334155', borderRadius: '8px', fontSize: '11px' }}
+                    contentStyle={{ backgroundColor: '#0f172a', borderColor: '#334155', borderRadius: '8px', fontSize: '12px' }}
                   />
-                  <Legend wrapperStyle={{ fontSize: '11px' }} />
+                  <Legend wrapperStyle={{ fontSize: '12px' }} />
                   <Line
                     type="monotone"
                     dataKey="ideal"
@@ -135,12 +135,12 @@ export const SprintReportsModal: React.FC = () => {
                 <ResponsiveContainer width="100%" height="100%">
                   <BarChart data={report?.velocity || []} margin={{ top: 5, right: 10, left: -25, bottom: 5 }}>
                     <CartesianGrid strokeDasharray="3 3" stroke="#1e293b" />
-                    <XAxis dataKey="name" stroke="#64748b" fontSize={10} />
+                    <XAxis dataKey="name" stroke="#64748b" fontSize={12} />
                     <YAxis stroke="#64748b" fontSize={11} />
                     <Tooltip
-                      contentStyle={{ backgroundColor: '#0f172a', borderColor: '#334155', borderRadius: '8px', fontSize: '11px' }}
+                      contentStyle={{ backgroundColor: '#0f172a', borderColor: '#334155', borderRadius: '8px', fontSize: '12px' }}
                     />
-                    <Legend wrapperStyle={{ fontSize: '11px' }} />
+                    <Legend wrapperStyle={{ fontSize: '12px' }} />
                     <Bar dataKey="committed" name="Committed" fill="#475569" radius={[4, 4, 0, 0]} />
                     <Bar dataKey="completed" name="Completed" fill="#10b981" radius={[4, 4, 0, 0]} />
                   </BarChart>
@@ -173,7 +173,7 @@ export const SprintReportsModal: React.FC = () => {
                       ))}
                     </Pie>
                     <Tooltip
-                      contentStyle={{ backgroundColor: '#0f172a', borderColor: '#334155', borderRadius: '8px', fontSize: '11px' }}
+                      contentStyle={{ backgroundColor: '#0f172a', borderColor: '#334155', borderRadius: '8px', fontSize: '12px' }}
                     />
                   </PieChart>
                 </ResponsiveContainer>

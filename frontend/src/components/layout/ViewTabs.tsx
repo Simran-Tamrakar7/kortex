@@ -175,7 +175,7 @@ export const ViewTabs: React.FC<Props> = ({ totalTaskCount = 0 }) => {
                 <button
                   key={preset.id}
                   onClick={preset.apply}
-                  className={`flex items-center gap-1 px-2 py-1 rounded-md text-[11px] font-semibold border transition-all ${
+                  className={`flex items-center gap-1 px-2 py-1 rounded-md text-xs font-semibold border transition-all ${
                     isSelected
                       ? 'bg-indigo-600 text-white border-indigo-600 shadow-sm'
                       : 'bg-[var(--bg-input)] border-[var(--border-default)] text-[var(--text-secondary)] hover:text-[var(--text-primary)] hover:bg-[var(--bg-hover)]'
@@ -224,7 +224,7 @@ export const ViewTabs: React.FC<Props> = ({ totalTaskCount = 0 }) => {
           {hasActiveFilters && (
             <button
               onClick={handleClear}
-              className="flex items-center gap-1 text-[11px] text-rose-500 hover:text-rose-600 font-semibold px-2 py-1 hover:bg-rose-50 dark:hover:bg-rose-950/30 rounded"
+              className="flex items-center gap-1 text-xs text-rose-500 hover:text-rose-600 font-semibold px-2 py-1 hover:bg-rose-50 dark:hover:bg-rose-950/30 rounded"
               title="Reset all filters"
             >
               <RotateCcw className="w-3 h-3" />
@@ -234,7 +234,7 @@ export const ViewTabs: React.FC<Props> = ({ totalTaskCount = 0 }) => {
         </div>
 
         {/* Task Count indicator */}
-        <span className="text-[11px] text-[var(--text-muted)] font-mono font-medium">
+        <span className="text-xs text-[var(--text-muted)] font-mono font-medium">
           {totalTaskCount} items
         </span>
       </div>

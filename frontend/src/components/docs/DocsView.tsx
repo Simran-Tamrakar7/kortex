@@ -214,7 +214,7 @@ export const DocsView: React.FC = () => {
       }
       if (part.startsWith('`') && part.endsWith('`')) {
         return (
-          <code key={i} className="bg-[var(--bg-input)] text-indigo-600 dark:text-indigo-300 px-1 py-0.5 rounded font-mono text-[11px] border border-[var(--border-subtle)]">
+          <code key={i} className="bg-[var(--bg-input)] text-indigo-600 dark:text-indigo-300 px-1 py-0.5 rounded font-mono text-xs border border-[var(--border-subtle)]">
             {part.slice(1, -1)}
           </code>
         );
@@ -262,7 +262,7 @@ export const DocsView: React.FC = () => {
                   <FileText className="w-3.5 h-3.5 text-amber-500 shrink-0" />
                   <span className="truncate">{doc.title}</span>
                 </div>
-                <span className="text-[10px] text-[var(--text-muted)] font-mono shrink-0">
+                <span className="text-xs text-[var(--text-muted)] font-mono shrink-0">
                   {new Date(doc.updatedAt).toLocaleDateString([], { month: 'short', day: 'numeric' })}
                 </span>
               </button>

@@ -109,7 +109,7 @@ export const ToastManager: React.FC = () => {
               >
                 {t.title}
               </p>
-              <p className="text-[11px] text-[var(--text-secondary)] truncate">{t.message}</p>
+              <p className="text-xs text-[var(--text-secondary)] truncate">{t.message}</p>
             </div>
           </div>
 

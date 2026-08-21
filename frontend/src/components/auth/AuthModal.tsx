@@ -74,7 +74,7 @@ export const AuthModal: React.FC = () => {
 
           {/* Demo Login Quick Switcher */}
           <div className="pt-6 space-y-2">
-            <span className="text-[11px] font-semibold text-indigo-400 uppercase tracking-wider block">
+            <span className="text-xs font-semibold text-indigo-400 uppercase tracking-wider block">
               ⚡ Quick Demo Sign-In
             </span>
             <div className="space-y-1.5">
@@ -92,7 +92,7 @@ export const AuthModal: React.FC = () => {
                       <p className="text-xs font-semibold text-slate-200 group-hover:text-indigo-300">
                         {acc.name}
                       </p>
-                      <p className="text-[10px] text-slate-400">{acc.role}</p>
+                      <p className="text-xs text-slate-400">{acc.role}</p>
                     </div>
                   </div>
                   <ArrowRight className="w-3.5 h-3.5 text-slate-500 group-hover:text-indigo-400 transition-transform group-hover:translate-x-0.5" />

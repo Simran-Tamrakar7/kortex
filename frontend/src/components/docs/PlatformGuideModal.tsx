@@ -59,7 +59,7 @@ export const PlatformGuideModal: React.FC = () => {
             </div>
             <div>
               <h3 className="text-sm font-bold text-[var(--text-primary)]">Kortex Documentation & User Guide</h3>
-              <p className="text-[11px] text-[var(--text-secondary)]">Complete platform manual, shortcuts, and architecture guide</p>
+              <p className="text-xs text-[var(--text-secondary)]">Complete platform manual, shortcuts, and architecture guide</p>
             </div>
           </div>
 
@@ -113,7 +113,7 @@ export const PlatformGuideModal: React.FC = () => {
             {/* Quick action card */}
             <div className="p-3 rounded-xl bg-[var(--bg-elevated)] border border-[var(--border-subtle)] space-y-1.5 text-xs">
               <span className="font-bold text-[var(--text-primary)]">Need quick help?</span>
-              <p className="text-[11px] text-[var(--text-secondary)]">Press <kbd className="font-mono bg-[var(--bg-input)] px-1 rounded border border-[var(--border-default)]">⌘K</kbd> to search anywhere.</p>
+              <p className="text-xs text-[var(--text-secondary)]">Press <kbd className="font-mono bg-[var(--bg-input)] px-1 rounded border border-[var(--border-default)]">⌘K</kbd> to search anywhere.</p>
             </div>
           </div>
 
@@ -123,7 +123,7 @@ export const PlatformGuideModal: React.FC = () => {
             {activeTopic === 'overview' && (
               <div className="space-y-4">
                 <div className="space-y-1">
-                  <span className="text-[10px] font-bold uppercase tracking-wider text-indigo-500 font-mono">Chapter 1</span>
+                  <span className="text-xs font-bold uppercase tracking-wider text-indigo-500 font-mono">Chapter 1</span>
                   <h2 className="text-xl font-extrabold text-[var(--text-primary)]">Platform Overview & Hierarchy</h2>
                 </div>
 
@@ -159,7 +159,7 @@ export const PlatformGuideModal: React.FC = () => {
             {activeTopic === 'views' && (
               <div className="space-y-4">
                 <div className="space-y-1">
-                  <span className="text-[10px] font-bold uppercase tracking-wider text-blue-500 font-mono">Chapter 2</span>
+                  <span className="text-xs font-bold uppercase tracking-wider text-blue-500 font-mono">Chapter 2</span>
                   <h2 className="text-xl font-extrabold text-[var(--text-primary)]">The 8 Switchable Project Views</h2>
                 </div>
 
@@ -170,56 +170,56 @@ export const PlatformGuideModal: React.FC = () => {
                     <h5 className="font-bold text-[var(--text-primary)] flex items-center gap-1.5">
                       <List className="w-3.5 h-3.5 text-blue-500" /> List View
                     </h5>
-                    <p className="text-[11px]">Group by Status, Assignee, or Priority with fast inline task addition and bulk checkboxes.</p>
+                    <p className="text-xs">Group by Status, Assignee, or Priority with fast inline task addition and bulk checkboxes.</p>
                   </div>
 
                   <div className="p-3.5 rounded-xl bg-[var(--bg-elevated)] border border-[var(--border-default)] space-y-1">
                     <h5 className="font-bold text-[var(--text-primary)] flex items-center gap-1.5">
                       <Columns3 className="w-3.5 h-3.5 text-indigo-500" /> Kanban Board
                     </h5>
-                    <p className="text-[11px]">Drag-and-drop card columns with swimlanes (Assignee/Epic/Priority) and WIP limits.</p>
+                    <p className="text-xs">Drag-and-drop card columns with swimlanes (Assignee/Epic/Priority) and WIP limits.</p>
                   </div>
 
                   <div className="p-3.5 rounded-xl bg-[var(--bg-elevated)] border border-[var(--border-default)] space-y-1">
                     <h5 className="font-bold text-[var(--text-primary)] flex items-center gap-1.5">
                       <Zap className="w-3.5 h-3.5 text-amber-500" /> Sprint Backlog
                     </h5>
-                    <p className="text-[11px]">Jira-style grooming container with active sprint, planned sprints, story point rollups, and rollover.</p>
+                    <p className="text-xs">Jira-style grooming container with active sprint, planned sprints, story point rollups, and rollover.</p>
                   </div>
 
                   <div className="p-3.5 rounded-xl bg-[var(--bg-elevated)] border border-[var(--border-default)] space-y-1">
                     <h5 className="font-bold text-[var(--text-primary)] flex items-center gap-1.5">
                       <BarChart2 className="w-3.5 h-3.5 text-rose-500 rotate-90" /> Timeline / Gantt
                     </h5>
-                    <p className="text-[11px]">Interactive SVG timeline bars, drag-to-reschedule, dependency link bezier curves, and Critical Path.</p>
+                    <p className="text-xs">Interactive SVG timeline bars, drag-to-reschedule, dependency link bezier curves, and Critical Path.</p>
                   </div>
 
                   <div className="p-3.5 rounded-xl bg-[var(--bg-elevated)] border border-[var(--border-default)] space-y-1">
                     <h5 className="font-bold text-[var(--text-primary)] flex items-center gap-1.5">
                       <Calendar className="w-3.5 h-3.5 text-emerald-500" /> Calendar Schedule
                     </h5>
-                    <p className="text-[11px]">Month & Week scheduling grid with due date task mapping and quick-scheduling.</p>
+                    <p className="text-xs">Month & Week scheduling grid with due date task mapping and quick-scheduling.</p>
                   </div>
 
                   <div className="p-3.5 rounded-xl bg-[var(--bg-elevated)] border border-[var(--border-default)] space-y-1">
                     <h5 className="font-bold text-[var(--text-primary)] flex items-center gap-1.5">
                       <Users className="w-3.5 h-3.5 text-cyan-500" /> Workload Capacity
                     </h5>
-                    <p className="text-[11px]">Team capacity utilization matrix against a 40h standard baseline with over-allocation warnings.</p>
+                    <p className="text-xs">Team capacity utilization matrix against a 40h standard baseline with over-allocation warnings.</p>
                   </div>
 
                   <div className="p-3.5 rounded-xl bg-[var(--bg-elevated)] border border-[var(--border-default)] space-y-1">
                     <h5 className="font-bold text-[var(--text-primary)] flex items-center gap-1.5">
                       <GitFork className="w-3.5 h-3.5 text-purple-500" /> Mind Map Visualizer
                     </h5>
-                    <p className="text-[11px]">Radial/tree hierarchy node graph breaking down Project $\rightarrow$ Epics $\rightarrow$ Stories $\rightarrow$ Tasks.</p>
+                    <p className="text-xs">Radial/tree hierarchy node graph breaking down Project $\rightarrow$ Epics $\rightarrow$ Stories $\rightarrow$ Tasks.</p>
                   </div>
 
                   <div className="p-3.5 rounded-xl bg-[var(--bg-elevated)] border border-[var(--border-default)] space-y-1">
                     <h5 className="font-bold text-[var(--text-primary)] flex items-center gap-1.5">
                       <TableIcon className="w-3.5 h-3.5 text-teal-500" /> Spreadsheet Table
                     </h5>
-                    <p className="text-[11px]">Dense formula spreadsheet view with inline editing, days remaining calculation, and point rollups.</p>
+                    <p className="text-xs">Dense formula spreadsheet view with inline editing, days remaining calculation, and point rollups.</p>
                   </div>
                 </div>
               </div>
@@ -229,7 +229,7 @@ export const PlatformGuideModal: React.FC = () => {
             {activeTopic === 'scrum' && (
               <div className="space-y-4">
                 <div className="space-y-1">
-                  <span className="text-[10px] font-bold uppercase tracking-wider text-amber-500 font-mono">Chapter 3</span>
+                  <span className="text-xs font-bold uppercase tracking-wider text-amber-500 font-mono">Chapter 3</span>
                   <h2 className="text-xl font-extrabold text-[var(--text-primary)]">Agile, Scrum & Sprints</h2>
                 </div>
 
@@ -259,7 +259,7 @@ export const PlatformGuideModal: React.FC = () => {
             {activeTopic === 'sla' && (
               <div className="space-y-4">
                 <div className="space-y-1">
-                  <span className="text-[10px] font-bold uppercase tracking-wider text-rose-500 font-mono">Chapter 4</span>
+                  <span className="text-xs font-bold uppercase tracking-wider text-rose-500 font-mono">Chapter 4</span>
                   <h2 className="text-xl font-extrabold text-[var(--text-primary)]">IT Service Desk & SLA Engine</h2>
                 </div>
 
@@ -280,7 +280,7 @@ export const PlatformGuideModal: React.FC = () => {
             {activeTopic === 'automations' && (
               <div className="space-y-4">
                 <div className="space-y-1">
-                  <span className="text-[10px] font-bold uppercase tracking-wider text-purple-500 font-mono">Chapter 5</span>
+                  <span className="text-xs font-bold uppercase tracking-wider text-purple-500 font-mono">Chapter 5</span>
                   <h2 className="text-xl font-extrabold text-[var(--text-primary)]">Workflow Automation Engine</h2>
                 </div>
 
@@ -300,7 +300,7 @@ export const PlatformGuideModal: React.FC = () => {
             {activeTopic === 'realtime' && (
               <div className="space-y-4">
                 <div className="space-y-1">
-                  <span className="text-[10px] font-bold uppercase tracking-wider text-emerald-500 font-mono">Chapter 6</span>
+                  <span className="text-xs font-bold uppercase tracking-wider text-emerald-500 font-mono">Chapter 6</span>
                   <h2 className="text-xl font-extrabold text-[var(--text-primary)]">Live WebSockets & Presence</h2>
                 </div>
 
@@ -320,7 +320,7 @@ export const PlatformGuideModal: React.FC = () => {
             {activeTopic === 'timetracking' && (
               <div className="space-y-4">
                 <div className="space-y-1">
-                  <span className="text-[10px] font-bold uppercase tracking-wider text-cyan-500 font-mono">Chapter 7</span>
+                  <span className="text-xs font-bold uppercase tracking-wider text-cyan-500 font-mono">Chapter 7</span>
                   <h2 className="text-xl font-extrabold text-[var(--text-primary)]">Time Tracking & Timesheets</h2>
                 </div>
 
@@ -342,7 +342,7 @@ export const PlatformGuideModal: React.FC = () => {
             {activeTopic === 'shortcuts' && (
               <div className="space-y-4">
                 <div className="space-y-1">
-                  <span className="text-[10px] font-bold uppercase tracking-wider text-slate-400 font-mono">Chapter 8</span>
+                  <span className="text-xs font-bold uppercase tracking-wider text-slate-400 font-mono">Chapter 8</span>
                   <h2 className="text-xl font-extrabold text-[var(--text-primary)]">Command Palette & Keyboard Shortcuts</h2>
                 </div>
 
@@ -350,7 +350,7 @@ export const PlatformGuideModal: React.FC = () => {
                   <div className="p-3 rounded-xl bg-[var(--bg-elevated)] border border-[var(--border-default)] flex items-center justify-between">
                     <div>
                       <span className="font-bold text-[var(--text-primary)]">Open Command Palette & Global Search</span>
-                      <p className="text-[11px] text-[var(--text-secondary)]">Search tasks, docs, projects, or trigger quick actions</p>
+                      <p className="text-xs text-[var(--text-secondary)]">Search tasks, docs, projects, or trigger quick actions</p>
                     </div>
                     <kbd className="font-mono text-xs bg-[var(--bg-input)] px-2 py-1 rounded border border-[var(--border-default)] font-bold text-[var(--text-primary)]">
                       ⌘K / Ctrl+K
@@ -360,7 +360,7 @@ export const PlatformGuideModal: React.FC = () => {
                   <div className="p-3 rounded-xl bg-[var(--bg-elevated)] border border-[var(--border-default)] flex items-center justify-between">
                     <div>
                       <span className="font-bold text-[var(--text-primary)]">Quick Create Issue</span>
-                      <p className="text-[11px] text-[var(--text-secondary)]">Instant issue creation dialog</p>
+                      <p className="text-xs text-[var(--text-secondary)]">Instant issue creation dialog</p>
                     </div>
                     <kbd className="font-mono text-xs bg-[var(--bg-input)] px-2 py-1 rounded border border-[var(--border-default)] font-bold text-[var(--text-primary)]">
                       C
@@ -370,7 +370,7 @@ export const PlatformGuideModal: React.FC = () => {
                   <div className="p-3 rounded-xl bg-[var(--bg-elevated)] border border-[var(--border-default)] flex items-center justify-between">
                     <div>
                       <span className="font-bold text-[var(--text-primary)]">Close Open Modal / Drawer</span>
-                      <p className="text-[11px] text-[var(--text-secondary)]">Dismiss active dialog</p>
+                      <p className="text-xs text-[var(--text-secondary)]">Dismiss active dialog</p>
                     </div>
                     <kbd className="font-mono text-xs bg-[var(--bg-input)] px-2 py-1 rounded border border-[var(--border-default)] font-bold text-[var(--text-primary)]">
                       Esc
@@ -384,7 +384,7 @@ export const PlatformGuideModal: React.FC = () => {
             {activeTopic === 'typography' && (
               <div className="space-y-4">
                 <div className="space-y-1">
-                  <span className="text-[10px] font-bold uppercase tracking-wider text-indigo-400 font-mono">Chapter 9</span>
+                  <span className="text-xs font-bold uppercase tracking-wider text-indigo-400 font-mono">Chapter 9</span>
                   <h2 className="text-xl font-extrabold text-[var(--text-primary)]">Themes & Typography Customization</h2>
                 </div>
 
@@ -396,7 +396,7 @@ export const PlatformGuideModal: React.FC = () => {
                   <div className="p-4 rounded-xl bg-[var(--bg-elevated)] border border-[var(--border-default)] space-y-2">
                     <h4 className="font-bold text-[var(--text-primary)]">1. Instant Header Typography Flyout (`T` Icon)</h4>
                     <p className="text-xs">
-                      Click the <strong>`T`</strong> icon in the top navigation to instantly switch between 6 Google font families (Inter, Plus Jakarta Sans, Outfit, Roboto, JetBrains Mono, Fira Code) and adjust base pixel sizes (11px to 20px).
+                      Click the <strong>`T`</strong> icon in the top navigation to switch fonts (Inter default) and set base size to Compact (14), Standard (16), or Large (18).
                     </p>
                   </div>
 

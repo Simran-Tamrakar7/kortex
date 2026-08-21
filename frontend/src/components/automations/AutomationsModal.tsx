@@ -167,7 +167,7 @@ export const AutomationsModal: React.FC = () => {
             </div>
 
             <div>
-              <label className="block text-[11px] font-bold text-[var(--text-muted)] uppercase tracking-wider mb-1">Rule Name *</label>
+              <label className="block text-xs font-bold text-[var(--text-muted)] uppercase tracking-wider mb-1">Rule Name *</label>
               <input
                 type="text"
                 required
@@ -182,7 +182,7 @@ export const AutomationsModal: React.FC = () => {
             <div className="grid grid-cols-3 gap-3">
               {/* Trigger */}
               <div>
-                <label className="block text-[11px] font-bold text-[var(--text-muted)] uppercase tracking-wider mb-1">1. When (Trigger)</label>
+                <label className="block text-xs font-bold text-[var(--text-muted)] uppercase tracking-wider mb-1">1. When (Trigger)</label>
                 <select
                   value={triggerType}
                   onChange={(e) => setTriggerType(e.target.value)}
@@ -197,7 +197,7 @@ export const AutomationsModal: React.FC = () => {
 
               {/* Condition */}
               <div>
-                <label className="block text-[11px] font-bold text-[var(--text-muted)] uppercase tracking-wider mb-1">2. If (Condition)</label>
+                <label className="block text-xs font-bold text-[var(--text-muted)] uppercase tracking-wider mb-1">2. If (Condition)</label>
                 <select
                   value={conditionValue}
                   onChange={(e) => setConditionValue(e.target.value)}
@@ -212,7 +212,7 @@ export const AutomationsModal: React.FC = () => {
 
               {/* Action Type */}
               <div>
-                <label className="block text-[11px] font-bold text-[var(--text-muted)] uppercase tracking-wider mb-1">3. Then (Action)</label>
+                <label className="block text-xs font-bold text-[var(--text-muted)] uppercase tracking-wider mb-1">3. Then (Action)</label>
                 <select
                   value={actionType}
                   onChange={(e) => setActionType(e.target.value as any)}
@@ -229,7 +229,7 @@ export const AutomationsModal: React.FC = () => {
             {/* Action Param Inputs */}
             {actionType === 'SET_STATUS' && (
               <div>
-                <label className="block text-[11px] font-bold text-[var(--text-muted)] uppercase tracking-wider mb-1">Target Status</label>
+                <label className="block text-xs font-bold text-[var(--text-muted)] uppercase tracking-wider mb-1">Target Status</label>
                 <select
                   value={actionTargetStatusId}
                   onChange={(e) => setActionTargetStatusId(e.target.value)}
@@ -246,7 +246,7 @@ export const AutomationsModal: React.FC = () => {
 
             {actionType === 'SET_PRIORITY' && (
               <div>
-                <label className="block text-[11px] font-bold text-[var(--text-muted)] uppercase tracking-wider mb-1">Target Priority</label>
+                <label className="block text-xs font-bold text-[var(--text-muted)] uppercase tracking-wider mb-1">Target Priority</label>
                 <select
                   value={actionTargetPriority}
                   onChange={(e) => setActionTargetPriority(e.target.value)}
@@ -262,7 +262,7 @@ export const AutomationsModal: React.FC = () => {
 
             {(actionType === 'POST_COMMENT' || actionType === 'SEND_NOTIFICATION') && (
               <div>
-                <label className="block text-[11px] font-bold text-[var(--text-muted)] uppercase tracking-wider mb-1">Message</label>
+                <label className="block text-xs font-bold text-[var(--text-muted)] uppercase tracking-wider mb-1">Message</label>
                 <input
                   type="text"
                   value={actionMessage}
@@ -327,7 +327,7 @@ export const AutomationsModal: React.FC = () => {
                     <div className="flex items-center gap-2">
                       <button
                         onClick={() => handleTestRule(rule.id)}
-                        className="px-2.5 py-1 rounded-lg bg-[var(--bg-elevated)] hover:bg-[var(--bg-hover)] border border-[var(--border-subtle)] text-[11px] font-semibold text-[var(--text-secondary)] hover:text-indigo-600 dark:hover:text-indigo-400 flex items-center gap-1 transition-colors"
+                        className="px-2.5 py-1 rounded-lg bg-[var(--bg-elevated)] hover:bg-[var(--bg-hover)] border border-[var(--border-subtle)] text-xs font-semibold text-[var(--text-secondary)] hover:text-indigo-600 dark:hover:text-indigo-400 flex items-center gap-1 transition-colors"
                         title="Execute test run on a sample task"
                       >
                         <Play className="w-3 h-3 text-indigo-500 fill-current" />
@@ -359,7 +359,7 @@ export const AutomationsModal: React.FC = () => {
                   </div>
 
                   {/* Pipeline Visual Flow Chips */}
-                  <div className="flex items-center gap-2 flex-wrap text-[11px] pt-1">
+                  <div className="flex items-center gap-2 flex-wrap text-xs pt-1">
                     <span className="px-2 py-0.5 rounded-md bg-blue-50 dark:bg-blue-950/60 border border-blue-200 dark:border-blue-800 text-blue-700 dark:text-blue-300 font-semibold">
                       When: {trigger.type || 'STATUS_CHANGED'}
                     </span>
@@ -373,7 +373,7 @@ export const AutomationsModal: React.FC = () => {
                     </span>
                   </div>
 
-                  <div className="flex items-center justify-between text-[10px] text-[var(--text-muted)] mt-2 font-mono">
+                  <div className="flex items-center justify-between text-xs text-[var(--text-muted)] mt-2 font-mono">
                     <span>Executions: {rule.executionCount}</span>
                     <span>Last run: {rule.lastExecutedAt ? new Date(rule.lastExecutedAt).toLocaleTimeString() : 'Never'}</span>
                   </div>

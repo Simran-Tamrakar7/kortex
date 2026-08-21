@@ -55,7 +55,7 @@ export const GanttView: React.FC<Props> = ({ tasks }) => {
   return (
     <div className="flex-1 flex flex-col overflow-hidden bg-[var(--bg-canvas)] select-none text-xs transition-colors">
       {/* Mobile/Narrow Screen Helper Banner */}
-      <div className="md:hidden px-4 py-1.5 bg-indigo-50 dark:bg-indigo-950/40 border-b border-indigo-200 dark:border-indigo-800 text-[11px] text-indigo-700 dark:text-indigo-300 font-medium flex items-center justify-between">
+      <div className="md:hidden px-4 py-1.5 bg-indigo-50 dark:bg-indigo-950/40 border-b border-indigo-200 dark:border-indigo-800 text-xs text-indigo-700 dark:text-indigo-300 font-medium flex items-center justify-between">
         <span>💡 Swipe horizontally to scroll timeline bars & dependencies</span>
       </div>
 
@@ -132,7 +132,7 @@ export const GanttView: React.FC<Props> = ({ tasks }) => {
       <div className="flex-1 flex overflow-hidden">
         {/* Left Task Labels Column */}
         <div className="w-64 border-r border-[var(--border-subtle)] bg-[var(--bg-card)] flex flex-col shrink-0">
-          <div className="h-10 px-3 bg-[var(--bg-elevated)] border-b border-[var(--border-subtle)] flex items-center font-bold text-[var(--text-secondary)] text-[10px] uppercase tracking-wider">
+          <div className="h-10 px-3 bg-[var(--bg-elevated)] border-b border-[var(--border-subtle)] flex items-center font-bold text-[var(--text-secondary)] text-xs uppercase tracking-wider">
             Task Name ({tasks.length})
           </div>
           <div className="flex-1 overflow-y-auto divide-y divide-[var(--border-subtle)]">
@@ -144,7 +144,7 @@ export const GanttView: React.FC<Props> = ({ tasks }) => {
               >
                 <div className="flex items-center gap-2 truncate">
                   <IssueTypeBadge type={task.issueType} showLabel={false} />
-                  <span className="font-mono text-[10px] text-indigo-600 dark:text-indigo-400 font-bold">{task.key}</span>
+                  <span className="font-mono text-xs text-indigo-600 dark:text-indigo-400 font-bold">{task.key}</span>
                   <span className="truncate text-xs font-medium text-[var(--text-primary)]">{task.title}</span>
                 </div>
               </div>
@@ -165,7 +165,7 @@ export const GanttView: React.FC<Props> = ({ tasks }) => {
                   <div
                     key={idx}
                     style={{ width: `${dayWidth}px` }}
-                    className={`h-full border-r border-[var(--border-subtle)] flex flex-col items-center justify-center text-[10px] shrink-0 ${
+                    className={`h-full border-r border-[var(--border-subtle)] flex flex-col items-center justify-center text-xs shrink-0 ${
                       isToday
                         ? 'bg-indigo-50/80 dark:bg-indigo-950/40 text-indigo-600 dark:text-indigo-400 font-bold'
                         : isWeekend
@@ -207,7 +207,7 @@ export const GanttView: React.FC<Props> = ({ tasks }) => {
                     <div
                       onClick={() => setActiveTaskId(task.id)}
                       style={{ transform: `translateX(${x}px)`, width: `${width}px` }}
-                      className={`absolute h-6 rounded-lg px-2 flex items-center justify-between text-[11px] font-semibold cursor-pointer shadow-sm hover:shadow-md transition-all z-0 ${
+                      className={`absolute h-6 rounded-lg px-2 flex items-center justify-between text-xs font-semibold cursor-pointer shadow-sm hover:shadow-md transition-all z-0 ${
                         isDone
                           ? 'bg-emerald-500/90 text-white'
                           : isUrgent && showCriticalPath

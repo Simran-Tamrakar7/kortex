@@ -77,9 +77,9 @@ export const OrgSettingsModal: React.FC = () => {
   ];
 
   const sizeOptions: { id: FontSize; label: string; desc: string }[] = [
-    { id: 'compact', label: 'Compact', desc: 'Dense 12px base (maximum data visibility)' },
-    { id: 'standard', label: 'Standard', desc: 'Comfortable 13.5px base (recommended)' },
-    { id: 'large', label: 'Large', desc: 'Spacious 15px base (enhanced legibility)' },
+    { id: 'compact', label: 'Compact', desc: '14px base — denser UI, still readable' },
+    { id: 'standard', label: 'Standard', desc: '16px base — default browser size (recommended)' },
+    { id: 'large', label: 'Large', desc: '18px base — roomier, high-legibility' },
   ];
 
   const accentOptions: { id: AccentColor; label: string; hex: string }[] = [
@@ -156,7 +156,7 @@ export const OrgSettingsModal: React.FC = () => {
         {/* Header */}
         <div className="flex items-center justify-between pb-3 border-b border-[var(--border-subtle)] shrink-0">
           <div>
-            <span className="text-[10px] uppercase font-bold text-indigo-500 tracking-wider">
+            <span className="text-xs uppercase font-bold text-indigo-500 tracking-wider">
               {organization.name}
             </span>
             <h3 className="text-base font-bold text-[var(--text-primary)]">Preferences & Settings</h3>
@@ -256,7 +256,7 @@ export const OrgSettingsModal: React.FC = () => {
                     </div>
                     <div>
                       <p className="font-bold text-[var(--text-primary)]">Light Mode</p>
-                      <p className="text-[11px] text-[var(--text-secondary)]">Clean, high-contrast daytime interface</p>
+                      <p className="text-xs text-[var(--text-secondary)]">Clean, high-contrast daytime interface</p>
                     </div>
                   </div>
                   {theme === 'light' && <CheckCircle2 className="w-4 h-4 text-indigo-600" />}
@@ -277,7 +277,7 @@ export const OrgSettingsModal: React.FC = () => {
                     </div>
                     <div>
                       <p className="font-bold text-[var(--text-primary)]">Dark Mode (Linear Theme)</p>
-                      <p className="text-[11px] text-[var(--text-secondary)]">Sleek midnight dark aesthetic</p>
+                      <p className="text-xs text-[var(--text-secondary)]">Sleek midnight dark aesthetic</p>
                     </div>
                   </div>
                   {theme === 'dark' && <CheckCircle2 className="w-4 h-4 text-indigo-500" />}
@@ -308,8 +308,8 @@ export const OrgSettingsModal: React.FC = () => {
                         <span className="font-bold text-sm text-[var(--text-primary)]">{f.label}</span>
                         {isSelected && <Check className="w-4 h-4 text-indigo-600 dark:text-indigo-400" />}
                       </div>
-                      <p className="text-[11px] text-[var(--text-secondary)]">{f.preview}</p>
-                      <div className="mt-2 pt-2 border-t border-[var(--border-subtle)] text-[10px] text-[var(--text-muted)] font-mono">
+                      <p className="text-xs text-[var(--text-secondary)]">{f.preview}</p>
+                      <div className="mt-2 pt-2 border-t border-[var(--border-subtle)] text-xs text-[var(--text-muted)] font-mono">
                         ABCDEFGHIJK 12345
                       </div>
                     </button>
@@ -341,7 +341,7 @@ export const OrgSettingsModal: React.FC = () => {
                         <span className="font-bold text-xs text-[var(--text-primary)]">{s.label}</span>
                         {isSelected && <Check className="w-3.5 h-3.5 text-indigo-600 dark:text-indigo-400" />}
                       </div>
-                      <p className="text-[11px] text-[var(--text-secondary)]">{s.desc}</p>
+                      <p className="text-xs text-[var(--text-secondary)]">{s.desc}</p>
                     </button>
                   );
                 })}
@@ -438,7 +438,7 @@ export const OrgSettingsModal: React.FC = () => {
                     <Avatar name={m.user?.name} avatarUrl={m.user?.avatarUrl} size="sm" />
                     <div>
                       <p className="font-semibold text-[var(--text-primary)]">{m.user?.name}</p>
-                      <p className="text-[11px] text-[var(--text-secondary)]">{m.user?.email || m.invitedEmail}</p>
+                      <p className="text-xs text-[var(--text-secondary)]">{m.user?.email || m.invitedEmail}</p>
                     </div>
                   </div>
 
@@ -475,7 +475,7 @@ export const OrgSettingsModal: React.FC = () => {
           <div className="flex-1 overflow-y-auto space-y-4 text-xs">
             <div className="p-4 bg-[var(--bg-elevated)] rounded-xl border border-indigo-500/30 flex items-center justify-between">
               <div>
-                <span className="text-[10px] text-indigo-500 font-bold uppercase">Current Tier</span>
+                <span className="text-xs text-indigo-500 font-bold uppercase">Current Tier</span>
                 <h4 className="text-base font-bold text-[var(--text-primary)] mt-0.5">{organization.plan} Plan</h4>
                 <p className="text-[var(--text-secondary)] text-xs">Includes unlimited projects, sprints, automation rules, and webhooks.</p>
               </div>
@@ -495,7 +495,7 @@ export const OrgSettingsModal: React.FC = () => {
                   }`}
                 >
                   <h5 className="font-bold text-[var(--text-primary)]">{plan}</h5>
-                  <p className="text-[var(--text-secondary)] text-[11px] mt-1">
+                  <p className="text-[var(--text-secondary)] text-xs mt-1">
                     {plan === 'ENTERPRISE'
                       ? 'Custom SLA, SSO SAML 2.0, Audit logs'
                       : 'Unlimited automations and agile charts'}
@@ -541,7 +541,7 @@ export const OrgSettingsModal: React.FC = () => {
                 >
                   <div>
                     <p className="font-semibold text-[var(--text-primary)]">{k.name}</p>
-                    <p className="font-mono text-[11px] text-[var(--text-muted)]">{k.key.slice(0, 12)}...</p>
+                    <p className="font-mono text-xs text-[var(--text-muted)]">{k.key.slice(0, 12)}...</p>
                   </div>
                   <button
                     onClick={() => handleDeleteApiKey(k.id)}
@@ -563,7 +563,7 @@ export const OrgSettingsModal: React.FC = () => {
                 <Github className="w-5 h-5 text-[var(--text-primary)]" />
                 <div>
                   <h4 className="font-semibold text-[var(--text-primary)]">GitHub / GitLab Webhook Simulator</h4>
-                  <p className="text-[var(--text-secondary)] text-[11px]">
+                  <p className="text-[var(--text-secondary)] text-xs">
                     Auto-transition issues when PRs are merged or commits reference task keys (e.g. #KOR-10).
                   </p>
                 </div>

@@ -89,7 +89,7 @@ export const ProjectSettingsModal: React.FC = () => {
         {/* Header */}
         <div className="flex items-center justify-between pb-3 border-b border-slate-800 shrink-0">
           <div>
-            <span className="text-[10px] uppercase font-bold text-indigo-400 tracking-wider">
+            <span className="text-xs uppercase font-bold text-indigo-400 tracking-wider">
               {project.key} Project Settings
             </span>
             <h3 className="text-sm font-bold text-slate-100">{project.name}</h3>
@@ -187,13 +187,13 @@ export const ProjectSettingsModal: React.FC = () => {
                   <div className="flex items-center gap-2.5">
                     <span className="w-3 h-3 rounded-full" style={{ backgroundColor: s.color }} />
                     <span className="font-semibold text-slate-200">{s.name}</span>
-                    <span className="px-2 py-0.5 rounded text-[10px] bg-slate-800 text-slate-400 font-mono">
+                    <span className="px-2 py-0.5 rounded text-xs bg-slate-800 text-slate-400 font-mono">
                       {s.category}
                     </span>
                   </div>
 
                   <div className="flex items-center gap-2">
-                    <span className="text-slate-400 text-[11px]">WIP Limit:</span>
+                    <span className="text-slate-400 text-xs">WIP Limit:</span>
                     <input
                       type="number"
                       placeholder="None"
@@ -261,7 +261,7 @@ export const ProjectSettingsModal: React.FC = () => {
                 >
                   <div>
                     <p className="font-semibold text-slate-200">{cf.name}</p>
-                    <p className="text-[10px] font-mono text-indigo-400">{cf.type}</p>
+                    <p className="text-xs font-mono text-indigo-400">{cf.type}</p>
                   </div>
                 </div>
               ))}

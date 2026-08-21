@@ -111,7 +111,7 @@ export const TaskCreateModal: React.FC = () => {
           {/* Issue Type & Priority */}
           <div className="grid grid-cols-2 gap-3">
             <div>
-              <label className="block text-[11px] font-bold text-[var(--text-muted)] uppercase tracking-wider mb-1">Issue Type</label>
+              <label className="block text-xs font-bold text-[var(--text-muted)] uppercase tracking-wider mb-1">Issue Type</label>
               <select
                 value={issueType}
                 onChange={(e) => setIssueType(e.target.value as IssueType)}
@@ -126,7 +126,7 @@ export const TaskCreateModal: React.FC = () => {
             </div>
 
             <div>
-              <label className="block text-[11px] font-bold text-[var(--text-muted)] uppercase tracking-wider mb-1">Priority</label>
+              <label className="block text-xs font-bold text-[var(--text-muted)] uppercase tracking-wider mb-1">Priority</label>
               <select
                 value={priority}
                 onChange={(e) => setPriority(e.target.value as Priority)}
@@ -142,7 +142,7 @@ export const TaskCreateModal: React.FC = () => {
 
           {/* Title */}
           <div>
-            <label className="block text-[11px] font-bold text-[var(--text-muted)] uppercase tracking-wider mb-1">Title *</label>
+            <label className="block text-xs font-bold text-[var(--text-muted)] uppercase tracking-wider mb-1">Title *</label>
             <input
               type="text"
               required
@@ -156,7 +156,7 @@ export const TaskCreateModal: React.FC = () => {
 
           {/* Description */}
           <div>
-            <label className="block text-[11px] font-bold text-[var(--text-muted)] uppercase tracking-wider mb-1">Description</label>
+            <label className="block text-xs font-bold text-[var(--text-muted)] uppercase tracking-wider mb-1">Description</label>
             <textarea
               rows={3}
               placeholder="Add details, reproduction steps, or acceptance criteria..."
@@ -169,7 +169,7 @@ export const TaskCreateModal: React.FC = () => {
           {/* Status & Sprint */}
           <div className="grid grid-cols-2 gap-3">
             <div>
-              <label className="block text-[11px] font-bold text-[var(--text-muted)] uppercase tracking-wider mb-1">Status</label>
+              <label className="block text-xs font-bold text-[var(--text-muted)] uppercase tracking-wider mb-1">Status</label>
               <select
                 value={statusId}
                 onChange={(e) => setStatusId(e.target.value)}
@@ -184,7 +184,7 @@ export const TaskCreateModal: React.FC = () => {
             </div>
 
             <div>
-              <label className="block text-[11px] font-bold text-[var(--text-muted)] uppercase tracking-wider mb-1">Sprint</label>
+              <label className="block text-xs font-bold text-[var(--text-muted)] uppercase tracking-wider mb-1">Sprint</label>
               <select
                 value={sprintId}
                 onChange={(e) => setSprintId(e.target.value)}
@@ -203,7 +203,7 @@ export const TaskCreateModal: React.FC = () => {
           {/* Story Points & Dates */}
           <div className="grid grid-cols-3 gap-3">
             <div>
-              <label className="block text-[11px] font-bold text-[var(--text-muted)] uppercase tracking-wider mb-1">Story Pts</label>
+              <label className="block text-xs font-bold text-[var(--text-muted)] uppercase tracking-wider mb-1">Story Pts</label>
               <input
                 type="number"
                 min={0}
@@ -215,7 +215,7 @@ export const TaskCreateModal: React.FC = () => {
             </div>
 
             <div>
-              <label className="block text-[11px] font-bold text-[var(--text-muted)] uppercase tracking-wider mb-1">Start Date</label>
+              <label className="block text-xs font-bold text-[var(--text-muted)] uppercase tracking-wider mb-1">Start Date</label>
               <input
                 type="date"
                 value={startDate}
@@ -225,7 +225,7 @@ export const TaskCreateModal: React.FC = () => {
             </div>
 
             <div>
-              <label className="block text-[11px] font-bold text-[var(--text-muted)] uppercase tracking-wider mb-1">Due Date</label>
+              <label className="block text-xs font-bold text-[var(--text-muted)] uppercase tracking-wider mb-1">Due Date</label>
               <input
                 type="date"
                 value={dueDate}

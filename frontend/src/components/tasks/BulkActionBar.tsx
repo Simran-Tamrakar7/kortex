@@ -72,7 +72,7 @@ export const BulkActionBar: React.FC = () => {
 
       {/* Bulk Status Select */}
       <div className="flex items-center gap-1.5">
-        <span className="text-[11px] text-[var(--text-secondary)] font-semibold">Status:</span>
+        <span className="text-xs text-[var(--text-secondary)] font-semibold">Status:</span>
         <select
           onChange={(e) => handleBulkStatus(e.target.value)}
           defaultValue=""
@@ -91,7 +91,7 @@ export const BulkActionBar: React.FC = () => {
 
       {/* Bulk Priority Select */}
       <div className="flex items-center gap-1.5">
-        <span className="text-[11px] text-[var(--text-secondary)] font-semibold">Priority:</span>
+        <span className="text-xs text-[var(--text-secondary)] font-semibold">Priority:</span>
         <select
           onChange={(e) => handleBulkPriority(e.target.value)}
           defaultValue=""
@@ -110,7 +110,7 @@ export const BulkActionBar: React.FC = () => {
       {/* Bulk Sprint Select */}
       {sprints.length > 0 && (
         <div className="flex items-center gap-1.5">
-          <span className="text-[11px] text-[var(--text-secondary)] font-semibold">Sprint:</span>
+          <span className="text-xs text-[var(--text-secondary)] font-semibold">Sprint:</span>
           <select
             onChange={(e) => handleBulkSprint(e.target.value)}
             defaultValue=""

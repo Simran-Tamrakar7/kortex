@@ -94,18 +94,18 @@ export const TimeTrackingModal: React.FC = () => {
         {/* Summary KPIs */}
         <div className="grid grid-cols-3 gap-3">
           <div className="p-3 bg-[#131d31] rounded-xl border border-[#202e48]">
-            <span className="text-[11px] text-slate-400">Total Hours Logged</span>
+            <span className="text-xs text-slate-400">Total Hours Logged</span>
             <p className="text-xl font-bold font-mono text-slate-100 mt-0.5">{summary.totalHours} hrs</p>
           </div>
 
           <div className="p-3 bg-[#131d31] rounded-xl border border-[#202e48]">
-            <span className="text-[11px] text-slate-400">Billable Hours</span>
+            <span className="text-xs text-slate-400">Billable Hours</span>
             <p className="text-xl font-bold font-mono text-emerald-400 mt-0.5">{summary.billableHours} hrs</p>
           </div>
 
           <div className="p-3 bg-[#131d31] rounded-xl border border-[#202e48] flex items-center justify-between">
             <div>
-              <span className="text-[11px] text-slate-400">Log Action</span>
+              <span className="text-xs text-slate-400">Log Action</span>
               <p className="text-xs text-slate-300 mt-0.5">Add work effort</p>
             </div>
             <button
@@ -198,7 +198,7 @@ export const TimeTrackingModal: React.FC = () => {
         {/* Entries Table */}
         <div className="flex-1 overflow-y-auto border border-[#202e48] rounded-xl overflow-hidden text-xs">
           <table className="w-full text-left">
-            <thead className="bg-[#131d31] text-slate-400 font-semibold uppercase text-[10px] tracking-wider border-b border-[#202e48]">
+            <thead className="bg-[#131d31] text-slate-400 font-semibold uppercase text-xs tracking-wider border-b border-[#202e48]">
               <tr>
                 <th className="p-2.5">User</th>
                 <th className="p-2.5">Task</th>
@@ -229,17 +229,17 @@ export const TimeTrackingModal: React.FC = () => {
                   </td>
                   <td className="p-2.5">
                     {entry.billable ? (
-                      <span className="px-2 py-0.5 rounded bg-emerald-500/20 text-emerald-300 font-semibold text-[10px]">
+                      <span className="px-2 py-0.5 rounded bg-emerald-500/20 text-emerald-300 font-semibold text-xs">
                         Billable
                       </span>
                     ) : (
-                      <span className="px-2 py-0.5 rounded bg-slate-800 text-slate-400 text-[10px]">
+                      <span className="px-2 py-0.5 rounded bg-slate-800 text-slate-400 text-xs">
                         Non-billable
                       </span>
                     )}
                   </td>
                   <td className="p-2.5 text-slate-400 truncate max-w-[200px]">{entry.description || '-'}</td>
-                  <td className="p-2.5 text-slate-500 text-[10px]">
+                  <td className="p-2.5 text-slate-500 text-xs">
                     {new Date(entry.date).toLocaleDateString([], { month: 'short', day: 'numeric' })}
                   </td>
                   <td className="p-2.5 text-right">

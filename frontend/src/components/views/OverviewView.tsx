@@ -111,7 +111,7 @@ export const OverviewView: React.FC<Props> = ({ tasks }) => {
           </div>
           <h2 className="text-lg font-bold text-[var(--text-primary)] flex items-center gap-2">
             <span>{project?.name || 'Kortex Platform'} Hub & Sprints Overview</span>
-            <span className="text-[10px] px-2 py-0.5 rounded-full bg-indigo-50 dark:bg-indigo-950/60 text-indigo-600 dark:text-indigo-300 font-bold border border-indigo-200 dark:border-indigo-800">
+            <span className="text-xs px-2 py-0.5 rounded-full bg-indigo-50 dark:bg-indigo-950/60 text-indigo-600 dark:text-indigo-300 font-bold border border-indigo-200 dark:border-indigo-800">
               ClickUp 3.0 + Jira Engine
             </span>
           </h2>
@@ -146,7 +146,7 @@ export const OverviewView: React.FC<Props> = ({ tasks }) => {
             </span>
             <button
               onClick={() => setActiveView('BACKLOG')}
-              className="text-[11px] text-indigo-600 dark:text-indigo-400 hover:underline font-semibold flex items-center gap-0.5"
+              className="text-xs text-indigo-600 dark:text-indigo-400 hover:underline font-semibold flex items-center gap-0.5"
             >
               <span>View Backlog</span>
               <ArrowRight className="w-3 h-3" />
@@ -166,11 +166,11 @@ export const OverviewView: React.FC<Props> = ({ tasks }) => {
                     <p className="font-bold text-xs text-[var(--text-primary)] truncate group-hover:text-indigo-600 dark:group-hover:text-indigo-400">
                       {s.name}
                     </p>
-                    <p className="text-[10px] text-[var(--text-muted)] truncate">{s.goal || 'No goal set'}</p>
+                    <p className="text-xs text-[var(--text-muted)] truncate">{s.goal || 'No goal set'}</p>
                   </div>
                 </div>
                 <span
-                  className={`text-[10px] font-bold px-2 py-0.5 rounded-full shrink-0 uppercase tracking-wider ${
+                  className={`text-xs font-bold px-2 py-0.5 rounded-full shrink-0 uppercase tracking-wider ${
                     s.status === 'ACTIVE'
                       ? 'bg-emerald-50 dark:bg-emerald-950/80 text-emerald-600 dark:text-emerald-300 border border-emerald-300 dark:border-emerald-800'
                       : s.status === 'COMPLETED'
@@ -194,7 +194,7 @@ export const OverviewView: React.FC<Props> = ({ tasks }) => {
             </span>
             <button
               onClick={() => setActiveMainSection('DOCS')}
-              className="text-[11px] text-indigo-600 dark:text-indigo-400 hover:underline font-semibold flex items-center gap-0.5"
+              className="text-xs text-indigo-600 dark:text-indigo-400 hover:underline font-semibold flex items-center gap-0.5"
             >
               <span>Open Docs</span>
               <ArrowRight className="w-3 h-3" />
@@ -214,7 +214,7 @@ export const OverviewView: React.FC<Props> = ({ tasks }) => {
                     <p className="font-bold text-xs text-[var(--text-primary)] truncate group-hover:text-amber-500">
                       {doc.title}
                     </p>
-                    <span className="text-[10px] text-[var(--text-muted)] font-mono">
+                    <span className="text-xs text-[var(--text-muted)] font-mono">
                       Updated {new Date(doc.updatedAt).toLocaleDateString([], { month: 'short', day: 'numeric' })}
                     </span>
                   </div>
@@ -263,13 +263,13 @@ export const OverviewView: React.FC<Props> = ({ tasks }) => {
                 <button
                   type="button"
                   onClick={() => setIsAddingBookmark(false)}
-                  className="px-2 py-0.5 text-[11px] text-[var(--text-secondary)]"
+                  className="px-2 py-0.5 text-xs text-[var(--text-secondary)]"
                 >
                   Cancel
                 </button>
                 <button
                   type="submit"
-                  className="px-3 py-0.5 bg-indigo-600 hover:bg-indigo-500 text-white rounded-lg text-[11px] font-bold"
+                  className="px-3 py-0.5 bg-indigo-600 hover:bg-indigo-500 text-white rounded-lg text-xs font-bold"
                 >
                   Add
                 </button>
@@ -315,7 +315,7 @@ export const OverviewView: React.FC<Props> = ({ tasks }) => {
 
         <div className="overflow-x-auto text-xs">
           <table className="w-full text-left">
-            <thead className="bg-[var(--bg-elevated)] text-[var(--text-muted)] font-bold uppercase text-[10px] tracking-wider border-b border-[var(--border-subtle)]">
+            <thead className="bg-[var(--bg-elevated)] text-[var(--text-muted)] font-bold uppercase text-xs tracking-wider border-b border-[var(--border-subtle)]">
               <tr>
                 <th className="p-3.5">Sprint Name</th>
                 <th className="p-3.5">Status</th>
@@ -337,7 +337,7 @@ export const OverviewView: React.FC<Props> = ({ tasks }) => {
                         <span className="hover:text-indigo-600 dark:hover:text-indigo-400 cursor-pointer" onClick={() => setActiveView('BACKLOG')}>
                           {sprint.name}
                         </span>
-                        {sprint.goal && <p className="text-[10px] text-[var(--text-muted)] font-normal truncate max-w-xs">{sprint.goal}</p>}
+                        {sprint.goal && <p className="text-xs text-[var(--text-muted)] font-normal truncate max-w-xs">{sprint.goal}</p>}
                       </div>
                     </div>
                   </td>
@@ -345,7 +345,7 @@ export const OverviewView: React.FC<Props> = ({ tasks }) => {
                   {/* Status Badge */}
                   <td className="p-3.5">
                     <span
-                      className={`text-[10px] font-bold px-2.5 py-0.5 rounded-full uppercase tracking-wider ${
+                      className={`text-xs font-bold px-2.5 py-0.5 rounded-full uppercase tracking-wider ${
                         sprint.status === 'ACTIVE'
                           ? 'bg-emerald-50 dark:bg-emerald-950/80 text-emerald-600 dark:text-emerald-300 border border-emerald-300 dark:border-emerald-700'
                           : sprint.status === 'COMPLETED'
@@ -360,11 +360,11 @@ export const OverviewView: React.FC<Props> = ({ tasks }) => {
                   {/* Animated Progress Bar */}
                   <td className="p-3.5">
                     <div className="space-y-1">
-                      <div className="flex items-center justify-between text-[11px]">
+                      <div className="flex items-center justify-between text-xs">
                         <span className="font-mono font-bold text-[var(--text-primary)]">
                           {completedCount}/{taskCount} tasks ({percent}%)
                         </span>
-                        <span className="text-[10px] text-[var(--text-muted)] font-mono">
+                        <span className="text-xs text-[var(--text-muted)] font-mono">
                           {completedPoints}/{totalPoints} pts
                         </span>
                       </div>
@@ -389,10 +389,10 @@ export const OverviewView: React.FC<Props> = ({ tasks }) => {
                   </td>
 
                   {/* Dates */}
-                  <td className="p-3.5 text-[var(--text-secondary)] font-mono text-[11px]">
+                  <td className="p-3.5 text-[var(--text-secondary)] font-mono text-xs">
                     {sprint.startDate ? new Date(sprint.startDate).toLocaleDateString([], { month: 'short', day: 'numeric' }) : '-'}
                   </td>
-                  <td className="p-3.5 text-[var(--text-secondary)] font-mono text-[11px]">
+                  <td className="p-3.5 text-[var(--text-secondary)] font-mono text-xs">
                     {sprint.endDate ? new Date(sprint.endDate).toLocaleDateString([], { month: 'short', day: 'numeric' }) : 'Active'}
                   </td>
 
@@ -400,7 +400,7 @@ export const OverviewView: React.FC<Props> = ({ tasks }) => {
                   <td className="p-3.5 text-right">
                     <button
                       onClick={() => setActiveView('BACKLOG')}
-                      className="px-2.5 py-1 rounded-lg bg-[var(--bg-elevated)] hover:bg-[var(--bg-hover)] border border-[var(--border-subtle)] text-[11px] font-semibold text-[var(--text-secondary)] hover:text-indigo-600 dark:hover:text-indigo-400 transition-colors"
+                      className="px-2.5 py-1 rounded-lg bg-[var(--bg-elevated)] hover:bg-[var(--bg-hover)] border border-[var(--border-subtle)] text-xs font-semibold text-[var(--text-secondary)] hover:text-indigo-600 dark:hover:text-indigo-400 transition-colors"
                     >
                       Groom Sprint
                     </button>
@@ -423,10 +423,10 @@ export const OverviewView: React.FC<Props> = ({ tasks }) => {
                 <h4 className="font-bold text-xs text-[var(--text-primary)]">
                   Live Sprint Burndown ({activeSprint?.name})
                 </h4>
-                <p className="text-[10px] text-[var(--text-muted)]">Ideal Story Point Burndown vs Actual Remaining</p>
+                <p className="text-xs text-[var(--text-muted)]">Ideal Story Point Burndown vs Actual Remaining</p>
               </div>
             </div>
-            <span className="text-[10px] font-mono font-bold px-2 py-0.5 rounded bg-emerald-50 dark:bg-emerald-950/60 text-emerald-600 dark:text-emerald-300 border border-emerald-300 dark:border-emerald-800">
+            <span className="text-xs font-mono font-bold px-2 py-0.5 rounded bg-emerald-50 dark:bg-emerald-950/60 text-emerald-600 dark:text-emerald-300 border border-emerald-300 dark:border-emerald-800">
               Sprint On Track
             </span>
           </div>
@@ -435,15 +435,15 @@ export const OverviewView: React.FC<Props> = ({ tasks }) => {
             <ResponsiveContainer width="100%" height="100%">
               <LineChart data={reportData?.burndown || []}>
                 <CartesianGrid strokeDasharray="3 3" stroke="rgba(100, 116, 139, 0.2)" />
-                <XAxis dataKey="day" stroke="var(--text-muted)" fontSize={10} tickLine={false} />
-                <YAxis stroke="var(--text-muted)" fontSize={10} tickLine={false} />
+                <XAxis dataKey="day" stroke="var(--text-muted)" fontSize={12} tickLine={false} />
+                <YAxis stroke="var(--text-muted)" fontSize={12} tickLine={false} />
                 <Tooltip
                   contentStyle={{
                     backgroundColor: 'var(--bg-card)',
                     borderColor: 'var(--border-default)',
                     color: 'var(--text-primary)',
                     borderRadius: '12px',
-                    fontSize: '11px',
+                    fontSize: '12px',
                   }}
                 />
                 <Line
@@ -475,12 +475,12 @@ export const OverviewView: React.FC<Props> = ({ tasks }) => {
               <ShieldCheck className="w-4 h-4 text-emerald-500" />
               <div>
                 <h4 className="font-bold text-xs text-[var(--text-primary)]">Team Capacity & Allocation</h4>
-                <p className="text-[10px] text-[var(--text-muted)]">Workload balance across product engineers</p>
+                <p className="text-xs text-[var(--text-muted)]">Workload balance across product engineers</p>
               </div>
             </div>
             <button
               onClick={() => setActiveView('WORKLOAD')}
-              className="text-[11px] text-indigo-600 dark:text-indigo-400 hover:underline font-semibold flex items-center gap-0.5"
+              className="text-xs text-indigo-600 dark:text-indigo-400 hover:underline font-semibold flex items-center gap-0.5"
             >
               <span>Workload Matrix</span>
               <ArrowRight className="w-3 h-3" />
@@ -499,16 +499,16 @@ export const OverviewView: React.FC<Props> = ({ tasks }) => {
                   <Avatar name={member.name} avatarUrl={member.avatar} size="sm" />
                   <div>
                     <p className="font-bold text-[var(--text-primary)]">{member.name}</p>
-                    <p className="text-[10px] text-[var(--text-muted)]">{member.role}</p>
+                    <p className="text-xs text-[var(--text-muted)]">{member.role}</p>
                   </div>
                 </div>
 
                 <div className="flex items-center gap-3">
                   <div className="text-right">
                     <span className="font-mono font-bold text-indigo-600 dark:text-indigo-400">{member.points} pts</span>
-                    <p className="text-[10px] text-[var(--text-muted)]">{member.tasks} issues</p>
+                    <p className="text-xs text-[var(--text-muted)]">{member.tasks} issues</p>
                   </div>
-                  <span className="text-[10px] font-semibold px-2 py-0.5 rounded bg-[var(--bg-input)] text-[var(--text-secondary)] border border-[var(--border-subtle)]">
+                  <span className="text-xs font-semibold px-2 py-0.5 rounded bg-[var(--bg-input)] text-[var(--text-secondary)] border border-[var(--border-subtle)]">
                     {member.load}
                   </span>
                 </div>

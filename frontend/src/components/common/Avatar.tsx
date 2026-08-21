@@ -18,7 +18,7 @@ export const Avatar: React.FC<Props> = ({
   showTooltip = true,
 }) => {
   const sizeMap = {
-    xs: 'w-5 h-5 text-[10px]',
+    xs: 'w-5 h-5 text-xs',
     sm: 'w-6 h-6 text-xs',
     md: 'w-7 h-7 text-xs',
     lg: 'w-9 h-9 text-sm',

@@ -89,19 +89,19 @@ export const WorkloadView: React.FC<Props> = ({ tasks }) => {
                   <Avatar name={user.name} avatarUrl={user.avatarUrl} size="lg" />
                   <div>
                     <h4 className="font-semibold text-sm text-slate-100">{user.name}</h4>
-                    <p className="text-slate-400 text-[11px]">{user.email || 'Developer'}</p>
+                    <p className="text-slate-400 text-xs">{user.email || 'Developer'}</p>
                   </div>
                 </div>
 
                 {/* Metrics */}
                 <div className="flex items-center gap-4">
                   <div className="text-right font-mono">
-                    <span className="text-slate-400 text-[11px]">Story Points: </span>
+                    <span className="text-slate-400 text-xs">Story Points: </span>
                     <span className="font-bold text-slate-200">{totalPoints} pts</span>
                   </div>
 
                   <div className="text-right font-mono">
-                    <span className="text-slate-400 text-[11px]">Assigned Hours: </span>
+                    <span className="text-slate-400 text-xs">Assigned Hours: </span>
                     <span className={`font-bold ${isOverloaded ? 'text-rose-400' : 'text-slate-200'}`}>
                       {Math.round(totalEstimatedHours * 10) / 10}h / {weeklyCapacity}h
                     </span>

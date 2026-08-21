@@ -115,7 +115,7 @@ export const BacklogView: React.FC<Props> = ({ tasks }) => {
                     <div className="flex items-center gap-2">
                       <span className="font-bold text-xs text-[var(--text-primary)]">{sprint.name}</span>
                       <span
-                        className={`text-[10px] font-bold px-2 py-0.5 rounded-full uppercase tracking-wider ${
+                        className={`text-xs font-bold px-2 py-0.5 rounded-full uppercase tracking-wider ${
                           sprint.status === 'ACTIVE'
                             ? 'bg-emerald-500/20 text-emerald-600 dark:text-emerald-400 border border-emerald-500/30'
                             : sprint.status === 'COMPLETED'
@@ -126,7 +126,7 @@ export const BacklogView: React.FC<Props> = ({ tasks }) => {
                         {sprint.status}
                       </span>
                     </div>
-                    {sprint.goal && <p className="text-[11px] text-[var(--text-secondary)] mt-0.5">Goal: {sprint.goal}</p>}
+                    {sprint.goal && <p className="text-xs text-[var(--text-secondary)] mt-0.5">Goal: {sprint.goal}</p>}
                   </div>
                 </div>
 
@@ -206,7 +206,7 @@ export const BacklogView: React.FC<Props> = ({ tasks }) => {
                                 <span className="font-mono text-[var(--text-muted)] font-bold">{task.key}</span>
                                 <span className="font-semibold text-[var(--text-primary)] truncate">{task.title}</span>
                                 {task.epic && (
-                                  <span className="shrink-0 px-2 py-0.5 rounded text-[10px] font-bold bg-purple-50 dark:bg-purple-500/15 text-purple-600 dark:text-purple-300 border border-purple-200 dark:border-purple-500/30">
+                                  <span className="shrink-0 px-2 py-0.5 rounded text-xs font-bold bg-purple-50 dark:bg-purple-500/15 text-purple-600 dark:text-purple-300 border border-purple-200 dark:border-purple-500/30">
                                     {task.epic.key}
                                   </span>
                                 )}
@@ -216,7 +216,7 @@ export const BacklogView: React.FC<Props> = ({ tasks }) => {
                                 <StatusBadge status={task.status} />
                                 <PriorityBadge priority={task.priority} showLabel={false} />
                                 {task.storyPoints !== null && (
-                                  <span className="px-1.5 py-0.5 rounded bg-[var(--bg-elevated)] text-[var(--text-secondary)] font-mono text-[11px] font-bold border border-[var(--border-subtle)]">
+                                  <span className="px-1.5 py-0.5 rounded bg-[var(--bg-elevated)] text-[var(--text-secondary)] font-mono text-xs font-bold border border-[var(--border-subtle)]">
                                     {task.storyPoints} pts
                                   </span>
                                 )}
@@ -314,7 +314,7 @@ export const BacklogView: React.FC<Props> = ({ tasks }) => {
                           <span className="font-mono text-[var(--text-muted)] font-bold">{task.key}</span>
                           <span className="font-semibold text-[var(--text-primary)] truncate">{task.title}</span>
                           {task.epic && (
-                            <span className="shrink-0 px-2 py-0.5 rounded text-[10px] font-bold bg-purple-50 dark:bg-purple-500/15 text-purple-600 dark:text-purple-300 border border-purple-200 dark:border-purple-500/30">
+                            <span className="shrink-0 px-2 py-0.5 rounded text-xs font-bold bg-purple-50 dark:bg-purple-500/15 text-purple-600 dark:text-purple-300 border border-purple-200 dark:border-purple-500/30">
                               {task.epic.key}
                             </span>
                           )}
@@ -324,7 +324,7 @@ export const BacklogView: React.FC<Props> = ({ tasks }) => {
                           <StatusBadge status={task.status} />
                           <PriorityBadge priority={task.priority} showLabel={false} />
                           {task.storyPoints !== null && (
-                            <span className="px-1.5 py-0.5 rounded bg-[var(--bg-elevated)] text-[var(--text-secondary)] font-mono text-[11px] font-bold border border-[var(--border-subtle)]">
+                            <span className="px-1.5 py-0.5 rounded bg-[var(--bg-elevated)] text-[var(--text-secondary)] font-mono text-xs font-bold border border-[var(--border-subtle)]">
                               {task.storyPoints} pts
                             </span>
                           )}

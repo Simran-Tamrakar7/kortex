@@ -86,7 +86,7 @@ export const CalendarView: React.FC<Props> = ({ tasks }) => {
       </div>
 
       {/* Weekday headers */}
-      <div className="grid grid-cols-7 border-b border-[var(--border-subtle)] bg-[var(--bg-elevated)] text-[var(--text-secondary)] font-bold text-[10px] uppercase text-center py-2">
+      <div className="grid grid-cols-7 border-b border-[var(--border-subtle)] bg-[var(--bg-elevated)] text-[var(--text-secondary)] font-bold text-xs uppercase text-center py-2">
         <span>Sun</span>
         <span>Mon</span>
         <span>Tue</span>
@@ -133,7 +133,7 @@ export const CalendarView: React.FC<Props> = ({ tasks }) => {
                 </span>
 
                 {isCurrentMonth && (
-                  <span className="text-[10px] text-[var(--text-muted)] font-mono">
+                  <span className="text-xs text-[var(--text-muted)] font-mono">
                     {dayTasks.length > 0 ? `${dayTasks.length} tasks` : ''}
                   </span>
                 )}
@@ -145,9 +145,9 @@ export const CalendarView: React.FC<Props> = ({ tasks }) => {
                   <div
                     key={t.id}
                     onClick={() => setActiveTaskId(t.id)}
-                    className="p-1 rounded bg-[var(--bg-card)] border border-[var(--border-subtle)] hover:border-indigo-400 cursor-pointer text-[11px] truncate flex items-center gap-1 shadow-sm"
+                    className="p-1 rounded bg-[var(--bg-card)] border border-[var(--border-subtle)] hover:border-indigo-400 cursor-pointer text-xs truncate flex items-center gap-1 shadow-sm"
                   >
-                    <span className="font-mono text-[10px] text-indigo-600 dark:text-indigo-400 font-bold">{t.key}</span>
+                    <span className="font-mono text-xs text-indigo-600 dark:text-indigo-400 font-bold">{t.key}</span>
                     <span className="truncate font-medium text-[var(--text-primary)]">{t.title}</span>
                   </div>
                 ))}

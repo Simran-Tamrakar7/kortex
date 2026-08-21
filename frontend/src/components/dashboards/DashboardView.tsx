@@ -69,38 +69,38 @@ export const DashboardView: React.FC = () => {
       <div className="grid grid-cols-2 sm:grid-cols-4 gap-3.5">
         <div className="p-4 bg-[var(--bg-card)] rounded-xl border border-[var(--border-subtle)] shadow-sm">
           <div className="flex items-center justify-between text-[var(--text-secondary)] mb-1">
-            <span className="text-[11px] font-semibold">Total Work Items</span>
+            <span className="text-xs font-semibold">Total Work Items</span>
             <Layers className="w-4 h-4 text-indigo-500" />
           </div>
           <p className="text-2xl font-bold font-mono text-[var(--text-primary)]">{summary.totalTasks}</p>
-          <span className="text-[10px] text-[var(--text-muted)] font-medium">{summary.completedTasks} completed</span>
+          <span className="text-xs text-[var(--text-muted)] font-medium">{summary.completedTasks} completed</span>
         </div>
 
         <div className="p-4 bg-[var(--bg-card)] rounded-xl border border-[var(--border-subtle)] shadow-sm">
           <div className="flex items-center justify-between text-[var(--text-secondary)] mb-1">
-            <span className="text-[11px] font-semibold">In Progress Velocity</span>
+            <span className="text-xs font-semibold">In Progress Velocity</span>
             <TrendingUp className="w-4 h-4 text-amber-500" />
           </div>
           <p className="text-2xl font-bold font-mono text-amber-600 dark:text-amber-400">{summary.inProgressTasks}</p>
-          <span className="text-[10px] text-[var(--text-muted)] font-medium">Active development</span>
+          <span className="text-xs text-[var(--text-muted)] font-medium">Active development</span>
         </div>
 
         <div className="p-4 bg-[var(--bg-card)] rounded-xl border border-[var(--border-subtle)] shadow-sm">
           <div className="flex items-center justify-between text-[var(--text-secondary)] mb-1">
-            <span className="text-[11px] font-semibold">Overdue Deadlines</span>
+            <span className="text-xs font-semibold">Overdue Deadlines</span>
             <AlertTriangle className="w-4 h-4 text-rose-500" />
           </div>
           <p className="text-2xl font-bold font-mono text-rose-600 dark:text-rose-400">{summary.overdueCount}</p>
-          <span className="text-[10px] text-[var(--text-muted)] font-medium">Requires attention</span>
+          <span className="text-xs text-[var(--text-muted)] font-medium">Requires attention</span>
         </div>
 
         <div className="p-4 bg-[var(--bg-card)] rounded-xl border border-[var(--border-subtle)] shadow-sm">
           <div className="flex items-center justify-between text-[var(--text-secondary)] mb-1">
-            <span className="text-[11px] font-semibold">Logged Work Hours</span>
+            <span className="text-xs font-semibold">Logged Work Hours</span>
             <Clock className="w-4 h-4 text-emerald-500" />
           </div>
           <p className="text-2xl font-bold font-mono text-emerald-600 dark:text-emerald-400">{summary.totalHoursLogged}h</p>
-          <span className="text-[10px] text-[var(--text-muted)] font-medium">{summary.billableHoursLogged}h billable</span>
+          <span className="text-xs text-[var(--text-muted)] font-medium">{summary.billableHoursLogged}h billable</span>
         </div>
       </div>
 
@@ -136,7 +136,7 @@ export const DashboardView: React.FC = () => {
                     backgroundColor: tooltipBg,
                     borderColor: tooltipBorder,
                     borderRadius: '8px',
-                    fontSize: '11px',
+                    fontSize: '12px',
                     color: tooltipText,
                   }}
                 />
@@ -163,7 +163,7 @@ export const DashboardView: React.FC = () => {
                     backgroundColor: tooltipBg,
                     borderColor: tooltipBorder,
                     borderRadius: '8px',
-                    fontSize: '11px',
+                    fontSize: '12px',
                     color: tooltipText,
                   }}
                 />
@@ -187,7 +187,7 @@ export const DashboardView: React.FC = () => {
               <AlertTriangle className="w-4 h-4 text-rose-500" />
               <span>Overdue Tasks</span>
             </span>
-            <span className="font-mono text-rose-500 text-[11px] font-bold">{overdueTasks.length} total</span>
+            <span className="font-mono text-rose-500 text-xs font-bold">{overdueTasks.length} total</span>
           </h3>
 
           <div className="space-y-2 max-h-56 overflow-y-auto">
@@ -199,10 +199,10 @@ export const DashboardView: React.FC = () => {
                   className="p-2.5 rounded-lg bg-[var(--bg-elevated)] border border-rose-500/20 hover:border-rose-500 cursor-pointer flex items-center justify-between transition-colors"
                 >
                   <div className="flex items-center gap-2 truncate pr-2">
-                    <span className="font-mono text-rose-500 font-bold text-[10px]">{t.key}</span>
+                    <span className="font-mono text-rose-500 font-bold text-xs">{t.key}</span>
                     <span className="text-[var(--text-primary)] font-medium truncate">{t.title}</span>
                   </div>
-                  <span className="text-[10px] text-rose-500 font-mono shrink-0">
+                  <span className="text-xs text-rose-500 font-mono shrink-0">
                     {new Date(t.dueDate).toLocaleDateString([], { month: 'short', day: 'numeric' })}
                   </span>
                 </div>
@@ -236,7 +236,7 @@ export const DashboardView: React.FC = () => {
                     </span>
                   )}
                 </div>
-                <span className="text-[10px] text-[var(--text-muted)] shrink-0 font-mono">
+                <span className="text-xs text-[var(--text-muted)] shrink-0 font-mono">
                   {new Date(log.createdAt).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })}
                 </span>
               </div>

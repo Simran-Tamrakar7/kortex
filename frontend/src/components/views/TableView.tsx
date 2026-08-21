@@ -66,14 +66,14 @@ export const TableView: React.FC<Props> = ({ tasks }) => {
   return (
     <div className="flex-1 flex flex-col overflow-hidden bg-[var(--bg-canvas)] select-none text-xs transition-colors">
       {/* Mobile/Narrow Screen Helper Banner */}
-      <div className="md:hidden px-4 py-1.5 bg-indigo-50 dark:bg-indigo-950/40 border-b border-indigo-200 dark:border-indigo-800 text-[11px] text-indigo-700 dark:text-indigo-300 font-medium flex items-center justify-between">
+      <div className="md:hidden px-4 py-1.5 bg-indigo-50 dark:bg-indigo-950/40 border-b border-indigo-200 dark:border-indigo-800 text-xs text-indigo-700 dark:text-indigo-300 font-medium flex items-center justify-between">
         <span>💡 Swipe horizontally to view formula columns & edit cells</span>
       </div>
 
       <div className="flex-1 overflow-auto">
         <table className="w-full border-collapse text-left">
           {/* Table Header */}
-          <thead className="bg-[var(--bg-elevated)] border-b border-[var(--border-subtle)] sticky top-0 z-10 text-[var(--text-secondary)] font-semibold uppercase tracking-wider text-[10px]">
+          <thead className="bg-[var(--bg-elevated)] border-b border-[var(--border-subtle)] sticky top-0 z-10 text-[var(--text-secondary)] font-semibold uppercase tracking-wider text-xs">
             <tr>
               <th className="py-2.5 px-3 border-r border-[var(--border-subtle)] w-20">Key</th>
               <th className="py-2.5 px-3 border-r border-[var(--border-subtle)] min-w-[220px]">Task Title</th>
@@ -105,7 +105,7 @@ export const TableView: React.FC<Props> = ({ tasks }) => {
                   className="hover:bg-[var(--bg-hover)] transition-colors group text-[var(--text-primary)]"
                 >
                   {/* Key */}
-                  <td className="py-2 px-3 border-r border-[var(--border-subtle)] font-mono text-[11px] text-indigo-600 dark:text-indigo-400 font-bold">
+                  <td className="py-2 px-3 border-r border-[var(--border-subtle)] font-mono text-xs text-indigo-600 dark:text-indigo-400 font-bold">
                     <button
                       onClick={() => setActiveTaskId(task.id)}
                       className="hover:underline"
@@ -197,7 +197,7 @@ export const TableView: React.FC<Props> = ({ tasks }) => {
                   {/* Calculated Formula: Days Remaining */}
                   <td className="py-2 px-3 border-r border-[var(--border-subtle)] font-mono font-bold">
                     <span
-                      className={`px-1.5 py-0.5 rounded text-[11px] ${
+                      className={`px-1.5 py-0.5 rounded text-xs ${
                         calculateDaysRemaining(task.dueDate).includes('overdue')
                           ? 'text-rose-600 dark:text-rose-400 bg-rose-50 dark:bg-rose-950/40 border border-rose-200 dark:border-rose-800'
                           : 'text-[var(--text-secondary)]'
@@ -231,7 +231,7 @@ export const TableView: React.FC<Props> = ({ tasks }) => {
           </tbody>
 
           {/* Table Summary Footer */}
-          <tfoot className="bg-[var(--bg-elevated)] border-t-2 border-[var(--border-default)] font-bold text-[11px] sticky bottom-0 text-[var(--text-primary)]">
+          <tfoot className="bg-[var(--bg-elevated)] border-t-2 border-[var(--border-default)] font-bold text-xs sticky bottom-0 text-[var(--text-primary)]">
             <tr>
               <td className="py-2.5 px-3 border-r border-[var(--border-subtle)] font-mono">Total ({tasks.length})</td>
               <td className="py-2.5 px-3 border-r border-[var(--border-subtle)]">-</td>

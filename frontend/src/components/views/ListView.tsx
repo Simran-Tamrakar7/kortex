@@ -137,7 +137,7 @@ export const ListView: React.FC<Props> = ({ tasks }) => {
                             className="rounded border-[var(--border-default)] bg-[var(--bg-input)] text-indigo-600 focus:ring-0 cursor-pointer"
                           />
                           <IssueTypeBadge type={task.issueType} showLabel={false} />
-                          <span className="font-mono text-[11px] text-[var(--text-muted)] shrink-0 font-bold">
+                          <span className="font-mono text-xs text-[var(--text-muted)] shrink-0 font-bold">
                             {task.key}
                           </span>
                           <span className="font-semibold text-[var(--text-primary)] truncate hover:text-indigo-600 dark:hover:text-indigo-400">
@@ -146,7 +146,7 @@ export const ListView: React.FC<Props> = ({ tasks }) => {
 
                           {/* Epic Tag if attached */}
                           {task.epic && (
-                            <span className="shrink-0 px-2 py-0.5 rounded text-[10px] font-semibold bg-purple-50 dark:bg-purple-500/10 text-purple-600 dark:text-purple-400 border border-purple-200 dark:border-purple-500/20">
+                            <span className="shrink-0 px-2 py-0.5 rounded text-xs font-semibold bg-purple-50 dark:bg-purple-500/10 text-purple-600 dark:text-purple-400 border border-purple-200 dark:border-purple-500/20">
                               {task.epic.key}
                             </span>
                           )}
@@ -155,7 +155,7 @@ export const ListView: React.FC<Props> = ({ tasks }) => {
                           {task.labels?.map((label) => (
                             <span
                               key={label}
-                              className="hidden sm:inline-block shrink-0 px-1.5 py-0.2 text-[10px] rounded bg-[var(--bg-elevated)] text-[var(--text-secondary)] border border-[var(--border-subtle)]"
+                              className="hidden sm:inline-block shrink-0 px-1.5 py-0.2 text-xs rounded bg-[var(--bg-elevated)] text-[var(--text-secondary)] border border-[var(--border-subtle)]"
                             >
                               {label}
                             </span>
@@ -166,7 +166,7 @@ export const ListView: React.FC<Props> = ({ tasks }) => {
                         <div className="flex items-center gap-3 shrink-0">
                           {/* SLA Breach Pill */}
                           {task.slaBreached && (
-                            <span className="flex items-center gap-1 px-1.5 py-0.5 rounded bg-rose-500/15 text-rose-500 text-[10px] font-bold border border-rose-500/30 animate-pulse">
+                            <span className="flex items-center gap-1 px-1.5 py-0.5 rounded bg-rose-500/15 text-rose-500 text-xs font-bold border border-rose-500/30 animate-pulse">
                               <AlertCircle className="w-3 h-3" />
                               <span>SLA Breached</span>
                             </span>
@@ -174,14 +174,14 @@ export const ListView: React.FC<Props> = ({ tasks }) => {
 
                           {/* Story Points badge */}
                           {task.storyPoints !== undefined && task.storyPoints !== null && (
-                            <span className="px-1.5 py-0.5 bg-[var(--bg-elevated)] text-[var(--text-secondary)] rounded font-mono text-[11px] font-bold border border-[var(--border-subtle)]">
+                            <span className="px-1.5 py-0.5 bg-[var(--bg-elevated)] text-[var(--text-secondary)] rounded font-mono text-xs font-bold border border-[var(--border-subtle)]">
                               {task.storyPoints} pts
                             </span>
                           )}
 
                           {/* Due Date */}
                           {task.dueDate && (
-                            <span className="flex items-center gap-1 text-[var(--text-secondary)] text-[11px] font-medium">
+                            <span className="flex items-center gap-1 text-[var(--text-secondary)] text-xs font-medium">
                               <Calendar className="w-3 h-3 text-[var(--text-muted)]" />
                               <span>{new Date(task.dueDate).toLocaleDateString([], { month: 'short', day: 'numeric' })}</span>
                             </span>
@@ -189,7 +189,7 @@ export const ListView: React.FC<Props> = ({ tasks }) => {
 
                           {/* Comments count */}
                           {(task.commentsCount || 0) > 0 && (
-                            <span className="flex items-center gap-1 text-[var(--text-secondary)] text-[11px]">
+                            <span className="flex items-center gap-1 text-[var(--text-secondary)] text-xs">
                               <MessageSquare className="w-3 h-3 text-[var(--text-muted)]" />
                               <span>{task.commentsCount}</span>
                             </span>
@@ -205,7 +205,7 @@ export const ListView: React.FC<Props> = ({ tasks }) => {
                                 <Avatar key={u.id} name={u.name} avatarUrl={u.avatarUrl} size="xs" />
                               ))
                             ) : (
-                              <span className="w-5 h-5 rounded-full border border-dashed border-[var(--border-default)] flex items-center justify-center text-[var(--text-muted)] text-[10px]">
+                              <span className="w-5 h-5 rounded-full border border-dashed border-[var(--border-default)] flex items-center justify-center text-[var(--text-muted)] text-xs">
                                 -
                               </span>
                             )}

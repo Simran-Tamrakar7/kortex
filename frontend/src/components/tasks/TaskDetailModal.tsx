@@ -241,14 +241,14 @@ export const TaskDetailModal: React.FC = () => {
             <IssueTypeBadge type={task.issueType} />
             <span className="font-mono text-sm font-bold text-indigo-600 dark:text-indigo-400">{task.key}</span>
             {task.epic && (
-              <span className="px-2 py-0.5 rounded text-[11px] font-bold bg-purple-50 dark:bg-purple-500/15 text-purple-600 dark:text-purple-300 border border-purple-200 dark:border-purple-500/30">
+              <span className="px-2 py-0.5 rounded text-xs font-bold bg-purple-50 dark:bg-purple-500/15 text-purple-600 dark:text-purple-300 border border-purple-200 dark:border-purple-500/30">
                 ⚡ {task.epic.key}: {task.epic.title}
               </span>
             )}
             {task.parent && (
               <button
                 onClick={() => task.parent?.id && setActiveTaskId(task.parent.id)}
-                className="px-2 py-0.5 rounded text-[11px] font-semibold bg-[var(--bg-input)] hover:bg-[var(--bg-hover)] text-[var(--text-secondary)] border border-[var(--border-default)]"
+                className="px-2 py-0.5 rounded text-xs font-semibold bg-[var(--bg-input)] hover:bg-[var(--bg-hover)] text-[var(--text-secondary)] border border-[var(--border-default)]"
               >
                 Subtask of {task.parent.key}
               </button>
@@ -294,7 +294,7 @@ export const TaskDetailModal: React.FC = () => {
                   <Shield className="w-4 h-4 text-rose-500" />
                   <span className="font-bold">Incident SLA Target Breached!</span>
                 </div>
-                <span className="text-[10px] font-mono uppercase px-2 py-0.5 bg-rose-200 dark:bg-rose-900 rounded font-bold">
+                <span className="text-xs font-mono uppercase px-2 py-0.5 bg-rose-200 dark:bg-rose-900 rounded font-bold">
                   Immediate Action Required
                 </span>
               </div>
@@ -342,7 +342,7 @@ export const TaskDetailModal: React.FC = () => {
 
             {/* Description */}
             <div className="space-y-2">
-              <label className="block text-[11px] font-bold text-[var(--text-muted)] uppercase tracking-wider">
+              <label className="block text-xs font-bold text-[var(--text-muted)] uppercase tracking-wider">
                 Description
               </label>
               {isEditingDesc ? (
@@ -418,7 +418,7 @@ export const TaskDetailModal: React.FC = () => {
                       >
                         <div className="flex items-center gap-2 min-w-0">
                           <IssueTypeBadge type={st.issueType || 'SUBTASK'} showLabel={false} />
-                          <span className="font-mono text-[11px] font-bold text-indigo-500">{st.key}</span>
+                          <span className="font-mono text-xs font-bold text-indigo-500">{st.key}</span>
                           <span className={`truncate font-medium ${isDone ? 'line-through text-[var(--text-muted)]' : 'text-[var(--text-primary)]'}`}>
                             {st.title}
                           </span>
@@ -464,7 +464,7 @@ export const TaskDetailModal: React.FC = () => {
                   </span>
                 </div>
                 {totalChecklistCount > 0 && (
-                  <span className="text-[11px] font-mono font-bold text-emerald-600 dark:text-emerald-400">
+                  <span className="text-xs font-mono font-bold text-emerald-600 dark:text-emerald-400">
                     {checklistProgress}%
                   </span>
                 )}
@@ -556,7 +556,7 @@ export const TaskDetailModal: React.FC = () => {
                     className="flex items-center justify-between p-2 bg-[var(--bg-elevated)] border border-[var(--border-subtle)] rounded-xl"
                   >
                     <div className="flex items-center gap-2">
-                      <span className="text-[10px] font-bold uppercase px-1.5 py-0.2 rounded bg-purple-50 dark:bg-purple-950 text-purple-600 dark:text-purple-300 border border-purple-200 dark:border-purple-800">
+                      <span className="text-xs font-bold uppercase px-1.5 py-0.2 rounded bg-purple-50 dark:bg-purple-950 text-purple-600 dark:text-purple-300 border border-purple-200 dark:border-purple-800">
                         {dep.type}
                       </span>
                       <button
@@ -578,7 +578,7 @@ export const TaskDetailModal: React.FC = () => {
                     className="flex items-center justify-between p-2 bg-[var(--bg-elevated)] border border-[var(--border-subtle)] rounded-xl"
                   >
                     <div className="flex items-center gap-2">
-                      <span className="text-[10px] font-bold uppercase px-1.5 py-0.2 rounded bg-blue-50 dark:bg-blue-950 text-blue-600 dark:text-blue-300 border border-blue-200 dark:border-blue-800">
+                      <span className="text-xs font-bold uppercase px-1.5 py-0.2 rounded bg-blue-50 dark:bg-blue-950 text-blue-600 dark:text-blue-300 border border-blue-200 dark:border-blue-800">
                         IS BLOCKED BY
                       </span>
                       <button
@@ -746,7 +746,7 @@ export const TaskDetailModal: React.FC = () => {
                                   {comm.author?.name || comm.user?.name || 'Teammate'}
                                 </span>
                               </div>
-                              <span className="text-[10px] text-[var(--text-muted)]">
+                              <span className="text-xs text-[var(--text-muted)]">
                                 {new Date(comm.createdAt).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })}
                               </span>
                             </div>
@@ -758,10 +758,10 @@ export const TaskDetailModal: React.FC = () => {
                                 <button
                                   key={rIdx}
                                   onClick={() => handleAddReaction(comm.id, r.emoji)}
-                                  className="px-2 py-0.5 rounded-full bg-[var(--bg-surface)] hover:bg-[var(--bg-hover)] border border-[var(--border-subtle)] text-[11px] flex items-center gap-1"
+                                  className="px-2 py-0.5 rounded-full bg-[var(--bg-surface)] hover:bg-[var(--bg-hover)] border border-[var(--border-subtle)] text-xs flex items-center gap-1"
                                 >
                                   <span>{r.emoji}</span>
-                                  <span className="font-bold text-[10px] text-[var(--text-secondary)]">
+                                  <span className="font-bold text-xs text-[var(--text-secondary)]">
                                     {r.userIds?.length || 1}
                                   </span>
                                 </button>
@@ -773,7 +773,7 @@ export const TaskDetailModal: React.FC = () => {
                                   <button
                                     key={emo}
                                     onClick={() => handleAddReaction(comm.id, emo)}
-                                    className="p-1 hover:bg-[var(--bg-hover)] rounded text-[10px]"
+                                    className="p-1 hover:bg-[var(--bg-hover)] rounded text-xs"
                                   >
                                     {emo}
                                   </button>
@@ -793,7 +793,7 @@ export const TaskDetailModal: React.FC = () => {
                     {/* Mention suggest dropdown */}
                     {mentionQuery !== null && (
                       <div className="absolute bottom-full mb-1 left-0 w-60 bg-[var(--bg-card)] border border-[var(--border-default)] rounded-xl shadow-2xl p-1.5 z-50 space-y-1">
-                        <div className="px-2 py-1 text-[10px] font-bold uppercase tracking-wider text-[var(--text-muted)]">
+                        <div className="px-2 py-1 text-xs font-bold uppercase tracking-wider text-[var(--text-muted)]">
                           Mention Teammate
                         </div>
                         {teamMembers
@@ -805,7 +805,7 @@ export const TaskDetailModal: React.FC = () => {
                               className="w-full px-2 py-1.5 text-left rounded-lg hover:bg-[var(--bg-hover)] flex items-center justify-between text-xs"
                             >
                               <span className="font-bold text-[var(--text-primary)]">{m.name}</span>
-                              <span className="text-[10px] text-[var(--text-muted)]">{m.role}</span>
+                              <span className="text-xs text-[var(--text-muted)]">{m.role}</span>
                             </button>
                           ))}
                       </div>
@@ -843,9 +843,9 @@ export const TaskDetailModal: React.FC = () => {
                     >
                       <div className="space-y-0.5">
                         <p className="font-semibold text-[var(--text-primary)]">{log.action}</p>
-                        <p className="text-[10px] text-[var(--text-muted)]">by {log.user?.name || 'System'}</p>
+                        <p className="text-xs text-[var(--text-muted)]">by {log.user?.name || 'System'}</p>
                       </div>
-                      <span className="text-[10px] text-[var(--text-muted)]">
+                      <span className="text-xs text-[var(--text-muted)]">
                         {new Date(log.createdAt).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })}
                       </span>
                     </div>
@@ -859,7 +859,7 @@ export const TaskDetailModal: React.FC = () => {
           <div className="w-72 bg-[var(--bg-sidebar)] p-5 space-y-4 overflow-y-auto shrink-0">
             {/* Status Select */}
             <div className="space-y-1">
-              <label className="block text-[10px] font-bold text-[var(--text-muted)] uppercase tracking-wider">
+              <label className="block text-xs font-bold text-[var(--text-muted)] uppercase tracking-wider">
                 Status
               </label>
               <select
@@ -877,7 +877,7 @@ export const TaskDetailModal: React.FC = () => {
 
             {/* Priority Select */}
             <div className="space-y-1">
-              <label className="block text-[10px] font-bold text-[var(--text-muted)] uppercase tracking-wider">
+              <label className="block text-xs font-bold text-[var(--text-muted)] uppercase tracking-wider">
                 Priority
               </label>
               <select
@@ -894,7 +894,7 @@ export const TaskDetailModal: React.FC = () => {
 
             {/* Issue Type Select */}
             <div className="space-y-1">
-              <label className="block text-[10px] font-bold text-[var(--text-muted)] uppercase tracking-wider">
+              <label className="block text-xs font-bold text-[var(--text-muted)] uppercase tracking-wider">
                 Issue Type
               </label>
               <select
@@ -912,7 +912,7 @@ export const TaskDetailModal: React.FC = () => {
 
             {/* Story Points */}
             <div className="space-y-1">
-              <label className="block text-[10px] font-bold text-[var(--text-muted)] uppercase tracking-wider">
+              <label className="block text-xs font-bold text-[var(--text-muted)] uppercase tracking-wider">
                 Story Points (Fibonacci)
               </label>
               <input
@@ -928,7 +928,7 @@ export const TaskDetailModal: React.FC = () => {
             {/* Sprint Selector */}
             {sprints.length > 0 && (
               <div className="space-y-1">
-                <label className="block text-[10px] font-bold text-[var(--text-muted)] uppercase tracking-wider">
+                <label className="block text-xs font-bold text-[var(--text-muted)] uppercase tracking-wider">
                   Sprint
                 </label>
                 <select
@@ -949,7 +949,7 @@ export const TaskDetailModal: React.FC = () => {
             {/* Dates: Start Date & Due Date */}
             <div className="grid grid-cols-2 gap-2 pt-2 border-t border-[var(--border-subtle)]">
               <div className="space-y-1">
-                <label className="block text-[10px] font-bold text-[var(--text-muted)] uppercase tracking-wider">
+                <label className="block text-xs font-bold text-[var(--text-muted)] uppercase tracking-wider">
                   Start Date
                 </label>
                 <input
@@ -961,7 +961,7 @@ export const TaskDetailModal: React.FC = () => {
               </div>
 
               <div className="space-y-1">
-                <label className="block text-[10px] font-bold text-[var(--text-muted)] uppercase tracking-wider">
+                <label className="block text-xs font-bold text-[var(--text-muted)] uppercase tracking-wider">
                   Due Date
                 </label>
                 <input
@@ -976,7 +976,7 @@ export const TaskDetailModal: React.FC = () => {
             {/* Time Tracking Progress */}
             <div className="space-y-1.5 pt-2 border-t border-[var(--border-subtle)]">
               <div className="flex items-center justify-between text-xs">
-                <span className="font-bold text-[var(--text-muted)] uppercase text-[10px]">Logged Time</span>
+                <span className="font-bold text-[var(--text-muted)] uppercase text-xs">Logged Time</span>
                 <span className="font-mono text-[var(--text-primary)] font-bold">
                   {Math.round((task.timeSpentMinutes || 0) / 60)}h / {Math.round((task.timeEstimateMinutes || 240) / 60)}h
                 </span>

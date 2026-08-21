@@ -103,7 +103,7 @@ export const Header: React.FC = () => {
     { id: 'fira', label: 'Fira Code', preview: 'Tech monospace' },
   ];
 
-  const sizePresets = [11, 12, 13, 14, 15, 16, 18];
+  const sizePresets = [14, 15, 16, 17, 18];
 
   return (
     <header className="h-14 border-b border-[var(--border-subtle)] bg-[var(--bg-header)] px-4 flex items-center justify-between shrink-0 z-30 select-none transition-colors">
@@ -138,7 +138,7 @@ export const Header: React.FC = () => {
           <Search className="w-3.5 h-3.5 text-[var(--text-muted)] group-hover:text-indigo-500 transition-colors" />
           <span>Quick search or command...</span>
         </span>
-        <kbd className="bg-[var(--bg-input)] text-[var(--text-muted)] text-[10px] px-1.5 py-0.5 rounded font-mono border border-[var(--border-subtle)]">
+        <kbd className="bg-[var(--bg-input)] text-[var(--text-muted)] text-xs px-1.5 py-0.5 rounded font-mono border border-[var(--border-subtle)]">
           ⌘K
         </kbd>
       </button>
@@ -194,7 +194,7 @@ export const Header: React.FC = () => {
               />
             ))}
             {onlineUsers.length > 4 && (
-              <span className="w-6 h-6 rounded-full bg-[var(--bg-elevated)] border border-[var(--border-default)] text-[10px] text-[var(--text-secondary)] font-semibold flex items-center justify-center">
+              <span className="w-6 h-6 rounded-full bg-[var(--bg-elevated)] border border-[var(--border-default)] text-xs text-[var(--text-secondary)] font-semibold flex items-center justify-center">
                 +{onlineUsers.length - 4}
               </span>
             )}
@@ -255,14 +255,14 @@ export const Header: React.FC = () => {
                   <Type className="w-3.5 h-3.5 text-indigo-500" />
                   <span>Typography & Scale</span>
                 </span>
-                <span className="text-[10px] font-mono text-indigo-600 dark:text-indigo-400 font-bold bg-indigo-50 dark:bg-indigo-950/40 px-1.5 py-0.5 rounded border border-indigo-200 dark:border-indigo-500/30">
+                <span className="text-xs font-mono text-indigo-600 dark:text-indigo-400 font-bold bg-indigo-50 dark:bg-indigo-950/40 px-1.5 py-0.5 rounded border border-indigo-200 dark:border-indigo-500/30">
                   {fontSizePx}px base
                 </span>
               </div>
 
               {/* 1. Quick Font Family Buttons */}
               <div className="space-y-1.5">
-                <label className="block text-[10px] font-bold uppercase tracking-wider text-[var(--text-muted)]">
+                <label className="block text-xs font-bold uppercase tracking-wider text-[var(--text-muted)]">
                   Font Family
                 </label>
                 <div className="grid grid-cols-2 gap-1.5">
@@ -289,19 +289,19 @@ export const Header: React.FC = () => {
               {/* 2. Quick Font Size Scaling */}
               <div className="space-y-1.5">
                 <div className="flex items-center justify-between">
-                  <label className="block text-[10px] font-bold uppercase tracking-wider text-[var(--text-muted)]">
+                  <label className="block text-xs font-bold uppercase tracking-wider text-[var(--text-muted)]">
                     Base Size Scaling
                   </label>
                   <div className="flex items-center gap-1">
                     <button
-                      onClick={() => setFontSizePx(Math.max(10, fontSizePx - 1))}
+                      onClick={() => setFontSizePx(Math.max(14, fontSizePx - 1))}
                       className="w-5 h-5 rounded bg-[var(--bg-elevated)] hover:bg-[var(--bg-hover)] flex items-center justify-center text-[var(--text-primary)] border border-[var(--border-default)] text-xs"
                       title="Decrease font size"
                     >
                       <Minus className="w-3 h-3" />
                     </button>
                     <button
-                      onClick={() => setFontSizePx(Math.min(22, fontSizePx + 1))}
+                      onClick={() => setFontSizePx(Math.min(18, fontSizePx + 1))}
                       className="w-5 h-5 rounded bg-[var(--bg-elevated)] hover:bg-[var(--bg-hover)] flex items-center justify-center text-[var(--text-primary)] border border-[var(--border-default)] text-xs"
                       title="Increase font size"
                     >
@@ -317,7 +317,7 @@ export const Header: React.FC = () => {
                       <button
                         key={px}
                         onClick={() => setFontSizePx(px)}
-                        className={`flex-1 py-1 rounded-lg text-[11px] font-mono font-bold transition-all border ${
+                        className={`flex-1 py-1 rounded-lg text-xs font-mono font-bold transition-all border ${
                           isSelected
                             ? 'border-indigo-500 bg-indigo-600 text-white shadow-sm'
                             : 'border-[var(--border-default)] bg-[var(--bg-elevated)] text-[var(--text-secondary)] hover:text-[var(--text-primary)]'
@@ -337,7 +337,7 @@ export const Header: React.FC = () => {
                     setIsFontMenuOpen(false);
                     setOrgSettingsOpen(true);
                   }}
-                  className="text-[11px] text-indigo-600 dark:text-indigo-400 hover:underline font-semibold flex items-center gap-1"
+                  className="text-xs text-indigo-600 dark:text-indigo-400 hover:underline font-semibold flex items-center gap-1"
                 >
                   <Sliders className="w-3 h-3" />
                   <span>More Appearance Options</span>
@@ -377,7 +377,7 @@ export const Header: React.FC = () => {
                       {unreadCount > 0 ? (
                         <button
                           onClick={handleMarkAllRead}
-                          className="text-[11px] text-indigo-500 hover:underline"
+                          className="text-xs text-indigo-500 hover:underline"
                         >
                           Mark all read
                         </button>
@@ -396,11 +396,11 @@ export const Header: React.FC = () => {
                           >
                             <div className="font-semibold text-[var(--text-primary)] flex items-center justify-between">
                               <span>{n.title}</span>
-                              <span className="text-[10px] text-[var(--text-muted)]">
+                              <span className="text-xs text-[var(--text-muted)]">
                                 {new Date(n.createdAt).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })}
                               </span>
                             </div>
-                            <p className="text-[11px] text-[var(--text-secondary)] mt-0.5">{n.message}</p>
+                            <p className="text-xs text-[var(--text-secondary)] mt-0.5">{n.message}</p>
                           </div>
                         ))
                       ) : (
@@ -427,7 +427,7 @@ export const Header: React.FC = () => {
             <div className="absolute right-0 mt-2 w-56 bg-[var(--bg-card)] border border-[var(--border-default)] rounded-xl shadow-2xl p-2 z-50">
               <div className="px-3 py-2 border-b border-[var(--border-subtle)]">
                 <p className="font-bold text-xs text-[var(--text-primary)]">{user?.name}</p>
-                <p className="text-[11px] text-[var(--text-secondary)] truncate">{user?.email}</p>
+                <p className="text-xs text-[var(--text-secondary)] truncate">{user?.email}</p>
               </div>
               <div className="py-1">
                 <button

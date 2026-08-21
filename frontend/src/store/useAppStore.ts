@@ -120,18 +120,33 @@ const fontMap: Record<FontFamily, string> = {
   fira: "'Fira Code', monospace",
 };
 
+// ponytail: rem root = Tailwind scale; 16px standard so text-xs≈12 / text-sm≈14 — not tiny, not large
 const sizePxMap: Record<FontSize, number> = {
-  compact: 12,
-  standard: 14,
-  large: 16,
+  compact: 14,
+  standard: 16,
+  large: 18,
   xlarge: 18,
+};
+
+const MIN_FONT_PX = 14;
+const MAX_FONT_PX = 18;
+
+const clampFontPx = (px: number) => Math.min(MAX_FONT_PX, Math.max(MIN_FONT_PX, px));
+
+const nearestFontSize = (px: number): FontSize => {
+  if (px <= 14) return 'compact';
+  if (px >= 18) return 'large';
+  return 'standard';
 };
 
 const getStoredAppearance = () => {
   const theme = (localStorage.getItem('kortex_theme') as ThemeMode) || 'light';
   const fontFamily = (localStorage.getItem('kortex_font') as FontFamily) || 'inter';
   const fontSize = (localStorage.getItem('kortex_size') as FontSize) || 'standard';
-  const fontSizePx = Number(localStorage.getItem('kortex_sizepx')) || sizePxMap[fontSize] || 14;
+  const rawPx = Number(localStorage.getItem('kortex_sizepx'));
+  const fontSizePx = clampFontPx(
+    Number.isFinite(rawPx) && rawPx > 0 ? rawPx : sizePxMap[fontSize] || 16
+  );
   const density = (localStorage.getItem('kortex_density') as DensityMode) || 'comfortable';
   const accentColor = (localStorage.getItem('kortex_accent') as AccentColor) || 'indigo';
   return { theme, fontFamily, fontSize, fontSizePx, density, accentColor };
@@ -154,7 +169,7 @@ const applyAppearance = (theme: ThemeMode, font: FontFamily, size: FontSize, siz
   root.style.setProperty('--font-family-base', fontCss);
 
   // 3. Set Font Size CSS variable
-  const actualPx = sizePx || sizePxMap[size] || 14;
+  const actualPx = clampFontPx(sizePx || sizePxMap[size] || 16);
   root.style.setProperty('--font-size-base', `${actualPx}px`);
 
   // Classes for helper hooks
@@ -329,7 +344,7 @@ export const useAppStore = create<AppState>((set, get) => ({
   },
 
   setFontSize: (fontSize) => {
-    const px = sizePxMap[fontSize] || 14;
+    const px = sizePxMap[fontSize] || 16;
     localStorage.setItem('kortex_size', fontSize);
     localStorage.setItem('kortex_sizepx', String(px));
     applyAppearance(get().theme, get().fontFamily, fontSize, px);
@@ -337,9 +352,12 @@ export const useAppStore = create<AppState>((set, get) => ({
   },
 
   setFontSizePx: (fontSizePx) => {
-    localStorage.setItem('kortex_sizepx', String(fontSizePx));
-    applyAppearance(get().theme, get().fontFamily, get().fontSize, fontSizePx);
-    set({ fontSizePx });
+    const px = clampFontPx(fontSizePx);
+    const fontSize = nearestFontSize(px);
+    localStorage.setItem('kortex_size', fontSize);
+    localStorage.setItem('kortex_sizepx', String(px));
+    applyAppearance(get().theme, get().fontFamily, fontSize, px);
+    set({ fontSize, fontSizePx: px });
   },
 
   setDensity: (density) => {

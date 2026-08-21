@@ -237,7 +237,7 @@ export const Sidebar: React.FC = () => {
 
           {/* Projects Hierarchy */}
           <div>
-            <div className="flex items-center justify-between px-2.5 py-1 text-[var(--text-muted)] font-bold tracking-wider text-[10px] uppercase">
+            <div className="flex items-center justify-between px-2.5 py-1 text-[var(--text-muted)] font-bold tracking-wider text-xs uppercase">
               <span>Spaces & Projects</span>
               <button
                 onClick={() => setIsNewProjectModalOpen(true)}
@@ -288,19 +288,19 @@ export const Sidebar: React.FC = () => {
                                   )}
                                   <span className="truncate">{proj.name}</span>
                                 </div>
-                                <span className="text-[10px] text-[var(--text-muted)] font-mono ml-1">{proj.key}</span>
+                                <span className="text-xs text-[var(--text-muted)] font-mono ml-1">{proj.key}</span>
                               </button>
 
                               {/* ClickUp 3.0 Exact Sprint Folder Hierarchy */}
                               {isSelected && (
                                 <div className="pl-3 space-y-1 pt-1 ml-1.5 border-l border-slate-700/50">
                                   {/* Sprints Folder Header */}
-                                  <div className="flex items-center justify-between px-2 py-1 rounded-md bg-[var(--bg-elevated)] border border-[var(--border-subtle)] text-[11px] font-bold text-[var(--text-primary)]">
+                                  <div className="flex items-center justify-between px-2 py-1 rounded-md bg-[var(--bg-elevated)] border border-[var(--border-subtle)] text-xs font-bold text-[var(--text-primary)]">
                                     <div className="flex items-center gap-1.5 truncate">
                                       <Layers className="w-3.5 h-3.5 text-indigo-500 shrink-0" />
                                       <span className="truncate">{proj.name} Sprints</span>
                                     </div>
-                                    <span className="text-[10px] text-[var(--text-muted)] font-mono">
+                                    <span className="text-xs text-[var(--text-muted)] font-mono">
                                       {sprints.length}
                                     </span>
                                   </div>
@@ -337,7 +337,7 @@ export const Sidebar: React.FC = () => {
                                               <span className="w-2.5 h-2.5 rounded-full border-2 border-slate-400 shrink-0" />
                                             )}
                                             <span className="truncate group-hover:text-emerald-500">
-                                              {sp.name.split(' — ')[0]} <span className="text-[10px] text-[var(--text-muted)] font-mono">{dateLabel}</span>
+                                              {sp.name.split(' — ')[0]} <span className="text-xs text-[var(--text-muted)] font-mono">{dateLabel}</span>
                                             </span>
                                           </div>
 
@@ -347,7 +347,7 @@ export const Sidebar: React.FC = () => {
                                                 {sprintTasks.filter((t) => t.priority === 'URGENT' || t.priority === 'HIGH').length || 1}
                                               </span>
                                             )}
-                                            <span className="text-[10px] font-mono text-[var(--text-muted)] group-hover:text-[var(--text-primary)] min-w-[14px] text-right">
+                                            <span className="text-xs font-mono text-[var(--text-muted)] group-hover:text-[var(--text-primary)] min-w-[14px] text-right">
                                               {sprintTasks.length || sp.totalPoints || 0}
                                             </span>
                                           </div>
@@ -368,7 +368,7 @@ export const Sidebar: React.FC = () => {
                                         <Layers className="w-3 h-3 text-slate-400 shrink-0" />
                                         <span className="truncate group-hover:text-indigo-500 font-medium">Product Backlog</span>
                                       </div>
-                                      <span className="text-[10px] font-mono text-[var(--text-muted)]">
+                                      <span className="text-xs font-mono text-[var(--text-muted)]">
                                         {allTasks.filter((t) => !t.sprintId).length}
                                       </span>
                                     </button>
@@ -420,18 +420,18 @@ export const Sidebar: React.FC = () => {
                         )}
                         <span className="truncate">{proj.name}</span>
                       </div>
-                      <span className="text-[10px] text-[var(--text-muted)] font-mono ml-1">{proj.key}</span>
+                      <span className="text-xs text-[var(--text-muted)] font-mono ml-1">{proj.key}</span>
                     </button>
 
                     {/* Sprints Folder for Direct Project */}
                     {isSelected && (
                       <div className="pl-3 space-y-1 pt-1 ml-1.5 border-l border-slate-700/50">
-                        <div className="flex items-center justify-between px-2 py-1 rounded-md bg-[var(--bg-elevated)] border border-[var(--border-subtle)] text-[11px] font-bold text-[var(--text-primary)]">
+                        <div className="flex items-center justify-between px-2 py-1 rounded-md bg-[var(--bg-elevated)] border border-[var(--border-subtle)] text-xs font-bold text-[var(--text-primary)]">
                           <div className="flex items-center gap-1.5 truncate">
                             <Layers className="w-3.5 h-3.5 text-indigo-500 shrink-0" />
                             <span className="truncate">{proj.name} Sprints</span>
                           </div>
-                          <span className="text-[10px] text-[var(--text-muted)] font-mono">{sprints.length}</span>
+                          <span className="text-xs text-[var(--text-muted)] font-mono">{sprints.length}</span>
                         </div>
 
                         <div className="pl-2 space-y-0.5">
@@ -465,7 +465,7 @@ export const Sidebar: React.FC = () => {
                                     <span className="w-2.5 h-2.5 rounded-full border-2 border-slate-400 shrink-0" />
                                   )}
                                   <span className="truncate group-hover:text-emerald-500">
-                                    {sp.name.split(' — ')[0]} <span className="text-[10px] text-[var(--text-muted)] font-mono">{dateLabel}</span>
+                                    {sp.name.split(' — ')[0]} <span className="text-xs text-[var(--text-muted)] font-mono">{dateLabel}</span>
                                   </span>
                                 </div>
 
@@ -475,7 +475,7 @@ export const Sidebar: React.FC = () => {
                                       {sprintTasks.filter((t) => t.priority === 'URGENT' || t.priority === 'HIGH').length || 1}
                                     </span>
                                   )}
-                                  <span className="text-[10px] font-mono text-[var(--text-muted)] group-hover:text-[var(--text-primary)] min-w-[14px] text-right">
+                                  <span className="text-xs font-mono text-[var(--text-muted)] group-hover:text-[var(--text-primary)] min-w-[14px] text-right">
                                     {sprintTasks.length || sp.totalPoints || 0}
                                   </span>
                                 </div>
@@ -495,7 +495,7 @@ export const Sidebar: React.FC = () => {
                               <Layers className="w-3 h-3 text-slate-400 shrink-0" />
                               <span className="truncate group-hover:text-indigo-500 font-medium">Product Backlog</span>
                             </div>
-                            <span className="text-[10px] font-mono text-[var(--text-muted)]">
+                            <span className="text-xs font-mono text-[var(--text-muted)]">
                               {allTasks.filter((t) => !t.sprintId).length}
                             </span>
                           </button>
@@ -550,7 +550,7 @@ export const Sidebar: React.FC = () => {
 
             <form onSubmit={handleCreateProject} className="space-y-3">
               <div>
-                <label className="block text-[11px] font-semibold text-[var(--text-secondary)] mb-1">Project Name</label>
+                <label className="block text-xs font-semibold text-[var(--text-secondary)] mb-1">Project Name</label>
                 <input
                   type="text"
                   required
@@ -574,7 +574,7 @@ export const Sidebar: React.FC = () => {
               </div>
 
               <div>
-                <label className="block text-[11px] font-semibold text-[var(--text-secondary)] mb-1">Project Key</label>
+                <label className="block text-xs font-semibold text-[var(--text-secondary)] mb-1">Project Key</label>
                 <input
                   type="text"
                   required
@@ -587,7 +587,7 @@ export const Sidebar: React.FC = () => {
               </div>
 
               <div>
-                <label className="block text-[11px] font-semibold text-[var(--text-secondary)] mb-1">Project Type</label>
+                <label className="block text-xs font-semibold text-[var(--text-secondary)] mb-1">Project Type</label>
                 <select
                   value={newProjectType}
                   onChange={(e) => setNewProjectType(e.target.value)}

@@ -93,7 +93,7 @@ export const SprintModal: React.FC = () => {
           {mode !== 'complete' ? (
             <>
               <div>
-                <label className="block text-[11px] font-medium text-slate-300 mb-1">Sprint Name *</label>
+                <label className="block text-xs font-medium text-slate-300 mb-1">Sprint Name *</label>
                 <input
                   type="text"
                   required
@@ -104,7 +104,7 @@ export const SprintModal: React.FC = () => {
               </div>
 
               <div>
-                <label className="block text-[11px] font-medium text-slate-300 mb-1">Sprint Goal</label>
+                <label className="block text-xs font-medium text-slate-300 mb-1">Sprint Goal</label>
                 <textarea
                   rows={2}
                   placeholder="What is the team committing to deliver in this sprint?"
@@ -116,7 +116,7 @@ export const SprintModal: React.FC = () => {
 
               <div className="grid grid-cols-2 gap-3">
                 <div>
-                  <label className="block text-[10px] font-medium text-slate-300 mb-1">Start Date</label>
+                  <label className="block text-xs font-medium text-slate-300 mb-1">Start Date</label>
                   <input
                     type="date"
                     required
@@ -127,7 +127,7 @@ export const SprintModal: React.FC = () => {
                 </div>
 
                 <div>
-                  <label className="block text-[10px] font-medium text-slate-300 mb-1">End Date (Duration)</label>
+                  <label className="block text-xs font-medium text-slate-300 mb-1">End Date (Duration)</label>
                   <input
                     type="date"
                     required
@@ -148,7 +148,7 @@ export const SprintModal: React.FC = () => {
               </div>
 
               <div>
-                <label className="block text-[11px] font-medium text-slate-300 mb-1">
+                <label className="block text-xs font-medium text-slate-300 mb-1">
                   Move Incomplete Issues To:
                 </label>
                 <select

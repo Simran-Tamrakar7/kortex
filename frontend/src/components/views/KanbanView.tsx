@@ -89,7 +89,7 @@ export const KanbanView: React.FC<Props> = ({ tasks }) => {
         <div className="flex items-center gap-3">
           {/* Sprint Filter */}
           <div className="flex items-center gap-1.5">
-            <span className="text-[var(--text-secondary)] font-bold text-[11px] uppercase tracking-wider">Sprint:</span>
+            <span className="text-[var(--text-secondary)] font-bold text-xs uppercase tracking-wider">Sprint:</span>
             <select
               value={selectedSprintId}
               onChange={(e) => setSelectedSprintId(e.target.value)}
@@ -110,7 +110,7 @@ export const KanbanView: React.FC<Props> = ({ tasks }) => {
 
           {/* Swimlanes */}
           <div className="flex items-center gap-1.5">
-            <span className="text-[var(--text-secondary)] font-semibold text-[11px]">Swimlanes:</span>
+            <span className="text-[var(--text-secondary)] font-semibold text-xs">Swimlanes:</span>
             <select
               value={swimlaneBy}
               onChange={(e) => setSwimlaneBy(e.target.value as any)}
@@ -125,7 +125,7 @@ export const KanbanView: React.FC<Props> = ({ tasks }) => {
         </div>
 
         <div className="flex items-center gap-2">
-          <span className="text-[11px] text-[var(--text-muted)] font-mono">
+          <span className="text-xs text-[var(--text-muted)] font-mono">
             Showing {filteredTasks.length} of {tasks.length} total issues
           </span>
         </div>
@@ -155,7 +155,7 @@ export const KanbanView: React.FC<Props> = ({ tasks }) => {
                       style={{ backgroundColor: status.color || '#64748b' }}
                     />
                     <span className="font-bold text-xs text-[var(--text-primary)]">{status.name}</span>
-                    <span className="font-mono text-[11px] text-[var(--text-muted)] font-semibold px-1.5 py-0.2 rounded bg-[var(--bg-input)]">
+                    <span className="font-mono text-xs text-[var(--text-muted)] font-semibold px-1.5 py-0.2 rounded bg-[var(--bg-input)]">
                       {columnTasks.length}
                       {status.wipLimit ? ` / ${status.wipLimit}` : ''}
                     </span>
@@ -172,7 +172,7 @@ export const KanbanView: React.FC<Props> = ({ tasks }) => {
 
                 {/* WIP Limit Alert Banner */}
                 {isWipExceeded && (
-                  <div className="px-3 py-1.5 bg-rose-50 dark:bg-rose-950/80 border-b border-rose-200 dark:border-rose-800/60 text-rose-700 dark:text-rose-300 text-[10px] font-bold flex items-center gap-1.5 shrink-0 animate-in fade-in">
+                  <div className="px-3 py-1.5 bg-rose-50 dark:bg-rose-950/80 border-b border-rose-200 dark:border-rose-800/60 text-rose-700 dark:text-rose-300 text-xs font-bold flex items-center gap-1.5 shrink-0 animate-in fade-in">
                     <AlertCircle className="w-3 h-3 shrink-0" />
                     <span>WIP Limit Exceeded (+{columnTasks.length - status.wipLimit!} items)</span>
                   </div>
@@ -208,7 +208,7 @@ export const KanbanView: React.FC<Props> = ({ tasks }) => {
                                 {/* Sprint & Epic badges if present */}
                                 <div className="flex items-center gap-1.5 flex-wrap mb-1.5">
                                   {task.epic && (
-                                    <span className="px-1.5 py-0.2 rounded text-[10px] font-bold bg-purple-50 dark:bg-purple-500/15 text-purple-600 dark:text-purple-300 border border-purple-200 dark:border-purple-500/30">
+                                    <span className="px-1.5 py-0.2 rounded text-xs font-bold bg-purple-50 dark:bg-purple-500/15 text-purple-600 dark:text-purple-300 border border-purple-200 dark:border-purple-500/30">
                                       ⚡ {task.epic.key}: {task.epic.title}
                                     </span>
                                   )}
@@ -230,7 +230,7 @@ export const KanbanView: React.FC<Props> = ({ tasks }) => {
                                     {task.labels.map((l) => (
                                       <span
                                         key={l}
-                                        className={`px-1.5 py-0.2 rounded text-[10px] font-medium border ${
+                                        className={`px-1.5 py-0.2 rounded text-xs font-medium border ${
                                           l === 'AI' || l === 'LLM'
                                             ? 'bg-purple-50 dark:bg-purple-950/60 text-purple-600 dark:text-purple-300 border-purple-200 dark:border-purple-800'
                                             : l === 'Bug' || l === 'Stability'
@@ -247,17 +247,17 @@ export const KanbanView: React.FC<Props> = ({ tasks }) => {
                                 )}
 
                                 {/* Card Footer: Key, Type, Priority, Points, Assignees */}
-                                <div className="flex items-center justify-between pt-1.5 border-t border-[var(--border-subtle)] text-[11px]">
+                                <div className="flex items-center justify-between pt-1.5 border-t border-[var(--border-subtle)] text-xs">
                                   <div className="flex items-center gap-1.5">
                                     <IssueTypeBadge type={task.issueType} showLabel={false} />
-                                    <span className="font-mono text-[var(--text-muted)] font-bold text-[10px]">
+                                    <span className="font-mono text-[var(--text-muted)] font-bold text-xs">
                                       {task.key}
                                     </span>
                                   </div>
 
                                   <div className="flex items-center gap-2">
                                     {task.storyPoints !== null && task.storyPoints !== undefined && (
-                                      <span className="px-1.5 py-0.2 rounded bg-[var(--bg-elevated)] text-[var(--text-secondary)] font-mono text-[10px] font-bold border border-[var(--border-subtle)]">
+                                      <span className="px-1.5 py-0.2 rounded bg-[var(--bg-elevated)] text-[var(--text-secondary)] font-mono text-xs font-bold border border-[var(--border-subtle)]">
                                         {task.storyPoints}
                                       </span>
                                     )}
@@ -296,13 +296,13 @@ export const KanbanView: React.FC<Props> = ({ tasks }) => {
                             <div className="flex items-center justify-end gap-1.5 mt-2">
                               <button
                                 onClick={() => setQuickAddStatusId(null)}
-                                className="px-2 py-1 text-[11px] text-[var(--text-secondary)] hover:text-[var(--text-primary)]"
+                                className="px-2 py-1 text-xs text-[var(--text-secondary)] hover:text-[var(--text-primary)]"
                               >
                                 Cancel
                               </button>
                               <button
                                 onClick={() => handleQuickAdd(status.id)}
-                                className="px-3 py-1 bg-indigo-600 hover:bg-indigo-500 text-white rounded-lg text-[11px] font-bold shadow-sm"
+                                className="px-3 py-1 bg-indigo-600 hover:bg-indigo-500 text-white rounded-lg text-xs font-bold shadow-sm"
                               >
                                 Add Task
                               </button>

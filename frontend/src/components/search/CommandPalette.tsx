@@ -100,7 +100,7 @@ export const CommandPalette: React.FC = () => {
             onChange={(e) => setQuery(e.target.value)}
             className="flex-1 bg-transparent text-sm text-[var(--text-primary)] placeholder-[var(--text-muted)] outline-none font-sans"
           />
-          <kbd className="bg-[var(--bg-input)] text-[var(--text-muted)] text-[10px] px-1.5 py-0.5 rounded font-mono border border-[var(--border-default)]">
+          <kbd className="bg-[var(--bg-input)] text-[var(--text-muted)] text-xs px-1.5 py-0.5 rounded font-mono border border-[var(--border-default)]">
             ESC
           </kbd>
         </div>
@@ -110,7 +110,7 @@ export const CommandPalette: React.FC = () => {
           {/* Quick Actions */}
           {!query && (
             <div className="space-y-1">
-              <div className="px-2 py-1 text-[10px] font-bold text-[var(--text-muted)] uppercase tracking-wider">
+              <div className="px-2 py-1 text-xs font-bold text-[var(--text-muted)] uppercase tracking-wider">
                 Quick Actions & Views
               </div>
               <button
@@ -124,7 +124,7 @@ export const CommandPalette: React.FC = () => {
                   <Plus className="w-3.5 h-3.5 text-indigo-500" />
                   <span className="font-semibold">Create New Issue</span>
                 </div>
-                <kbd className="text-[10px] font-mono text-[var(--text-muted)]">C</kbd>
+                <kbd className="text-xs font-mono text-[var(--text-muted)]">C</kbd>
               </button>
 
               <button
@@ -187,7 +187,7 @@ export const CommandPalette: React.FC = () => {
           {/* Search Results */}
           {results.tasks.length > 0 && (
             <div className="space-y-1">
-              <div className="px-2 py-1 text-[10px] font-bold text-[var(--text-muted)] uppercase tracking-wider">
+              <div className="px-2 py-1 text-xs font-bold text-[var(--text-muted)] uppercase tracking-wider">
                 Tasks ({results.tasks.length})
               </div>
               {results.tasks.map((task) => (
@@ -204,7 +204,7 @@ export const CommandPalette: React.FC = () => {
                     <span className="font-mono text-indigo-600 dark:text-indigo-400 font-bold">{task.key}</span>
                     <span className="truncate text-[var(--text-primary)] font-medium">{task.title}</span>
                   </div>
-                  <span className="text-[10px] font-semibold text-[var(--text-muted)]">{task.project?.name}</span>
+                  <span className="text-xs font-semibold text-[var(--text-muted)]">{task.project?.name}</span>
                 </button>
               ))}
             </div>
@@ -212,7 +212,7 @@ export const CommandPalette: React.FC = () => {
 
           {results.docs.length > 0 && (
             <div className="space-y-1">
-              <div className="px-2 py-1 text-[10px] font-bold text-[var(--text-muted)] uppercase tracking-wider">
+              <div className="px-2 py-1 text-xs font-bold text-[var(--text-muted)] uppercase tracking-wider">
                 Docs ({results.docs.length})
               </div>
               {results.docs.map((doc) => (
