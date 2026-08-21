@@ -958,12 +958,48 @@ const mockTasks: any[] = [
     description: 'Originating request: QA audit — create/reorder/switch views, refresh, confirm nothing lost; no races on rapid actions. Fix bugs found only.',
     issueType: 'TASK',
     priority: 'HIGH',
-    statusId: 'st_todo',
-    status: { id: 'st_todo', name: 'To Do', category: 'TODO', color: '#3b82f6' },
+    statusId: 'st_done',
+    status: { id: 'st_done', name: 'Done', category: 'DONE', color: '#10b981' },
     sprintId: 'sp_dev_2',
     storyPoints: 5,
     order: 36,
     labels: ['QA', 'Persistence', 'Cursor'],
+    assignees: [{ id: 'usr_cursor', name: 'Cursor', avatarUrl: 'https://api.dicebear.com/7.x/bottts/svg?seed=cursor' }],
+  },
+  {
+    id: 't_dev_41',
+    key: 'DEV-41',
+    projectId: 'proj_dev',
+    epicId: 't_epic_agents',
+    title: 'Bug: active project/view/filters lost on page refresh',
+    description:
+      'Found in DEV-34 QA: activeProjectId, activeView, activeMainSection, and filters are in-memory only — refresh resets board context.',
+    issueType: 'BUG',
+    priority: 'HIGH',
+    statusId: 'st_done',
+    status: { id: 'st_done', name: 'Done', category: 'DONE', color: '#10b981' },
+    sprintId: 'sp_dev_2',
+    storyPoints: 3,
+    order: 43,
+    labels: ['Bug', 'Persistence', 'Cursor'],
+    assignees: [{ id: 'usr_cursor', name: 'Cursor', avatarUrl: 'https://api.dicebear.com/7.x/bottts/svg?seed=cursor' }],
+  },
+  {
+    id: 't_dev_42',
+    key: 'DEV-42',
+    projectId: 'proj_dev',
+    epicId: 't_epic_agents',
+    title: 'Bug: offline demo task create/reorder lost on refresh',
+    description:
+      'Found in DEV-34 QA: mockTasks mutations (create/update/delete) live only in memory on Vercel/static fallback — refresh restores seed data.',
+    issueType: 'BUG',
+    priority: 'HIGH',
+    statusId: 'st_todo',
+    status: { id: 'st_todo', name: 'To Do', category: 'TODO', color: '#3b82f6' },
+    sprintId: 'sp_dev_2',
+    storyPoints: 3,
+    order: 44,
+    labels: ['Bug', 'Persistence', 'OfflineDemo', 'Cursor'],
     assignees: [{ id: 'usr_cursor', name: 'Cursor', avatarUrl: 'https://api.dicebear.com/7.x/bottts/svg?seed=cursor' }],
   },
   {
@@ -1099,6 +1135,9 @@ Agent logins: \`cursor@kortex.dev\` · \`antigravity@kortex.dev\` (password \`pa
 - 🟢 **[DEV-31]** Document agent workflow in Kortex Platform Walkthrough — **Done** · **Cursor**
 - 🟢 **[DEV-32]** Per-task deploy rules: one commit, verify, tag, changelog as deploy history — **Done** · **Cursor** · helpers in \`frontend/src/lib/agentWorkflow.ts\`
 - 🟢 **[DEV-33]** Fix all sprints showing the same tasks — **Done** · **Cursor** · Kanban syncs \`filters.sprintId\`; mock \`useTasks\` filters by project/sprint; sidebar counts are real task counts
+- 🟢 **[DEV-34]** QA audit: state persistence — **Done** · **Cursor** · Findings → DEV-41 (nav/filters), DEV-42 (offline mock tasks)
+- 🟣 **[DEV-41]** Bug: active project/view/filters lost on refresh — **In Progress** · **Cursor**
+- 🔵 **[DEV-42]** Bug: offline demo task create/reorder lost on refresh — **To Do** · **Cursor**
 
 ---
 

@@ -111,6 +111,37 @@ const initialFilters: FilterState = {
   onlyMyTasks: false,
 };
 
+function loadSessionNav() {
+  try {
+    const raw = localStorage.getItem('kortex_session_nav');
+    if (!raw) return null;
+    return JSON.parse(raw) as {
+      activeProjectId?: string | null;
+      activeView?: ViewType;
+      activeMainSection?: MainSection;
+      filters?: FilterState;
+    };
+  } catch {
+    return null;
+  }
+}
+
+function persistSessionNav(partial: {
+  activeProjectId?: string | null;
+  activeView?: ViewType;
+  activeMainSection?: MainSection;
+  filters?: FilterState;
+}) {
+  try {
+    const prev = loadSessionNav() || {};
+    localStorage.setItem('kortex_session_nav', JSON.stringify({ ...prev, ...partial }));
+  } catch {
+    /* ignore quota */
+  }
+}
+
+const sessionNav = loadSessionNav();
+
 const fontMap: Record<FontFamily, string> = {
   inter: "'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif",
   jakarta: "'Plus Jakarta Sans', sans-serif",
@@ -208,9 +239,9 @@ const getStoredTimer = (): ActiveTimer | null => {
 const initialTimer = getStoredTimer();
 
 export const useAppStore = create<AppState>((set, get) => ({
-  activeProjectId: 'proj_dev',
-  activeView: 'BOARD',
-  activeMainSection: 'PROJECT',
+  activeProjectId: sessionNav?.activeProjectId ?? 'proj_dev',
+  activeView: sessionNav?.activeView ?? 'BOARD',
+  activeMainSection: sessionNav?.activeMainSection ?? 'PROJECT',
   activeTaskId: null,
   selectedTaskIds: [],
 
@@ -227,7 +258,7 @@ export const useAppStore = create<AppState>((set, get) => ({
   isAutomationsOpen: false,
   isGuideOpen: false,
 
-  filters: initialFilters,
+  filters: { ...initialFilters, ...(sessionNav?.filters || {}) },
   timer: initialTimer,
 
   theme: initialAppearance.theme,
@@ -237,9 +268,18 @@ export const useAppStore = create<AppState>((set, get) => ({
   density: initialAppearance.density,
   accentColor: initialAppearance.accentColor,
 
-  setActiveProjectId: (id) => set({ activeProjectId: id, activeMainSection: 'PROJECT' }),
-  setActiveView: (view) => set({ activeView: view }),
-  setActiveMainSection: (section) => set({ activeMainSection: section }),
+  setActiveProjectId: (id) => {
+    persistSessionNav({ activeProjectId: id, activeMainSection: 'PROJECT' });
+    set({ activeProjectId: id, activeMainSection: 'PROJECT' });
+  },
+  setActiveView: (view) => {
+    persistSessionNav({ activeView: view });
+    set({ activeView: view });
+  },
+  setActiveMainSection: (section) => {
+    persistSessionNav({ activeMainSection: section });
+    set({ activeMainSection: section });
+  },
   setActiveTaskId: (id) => set({ activeTaskId: id }),
 
   setSelectedTaskIds: (ids) => set({ selectedTaskIds: ids }),
@@ -264,14 +304,16 @@ export const useAppStore = create<AppState>((set, get) => ({
   setGuideOpen: (open) => set({ isGuideOpen: open }),
 
   setFilter: (key, value) => {
-    set((state) => ({
-      filters: {
-        ...state.filters,
-        [key]: value,
-      },
-    }));
+    set((state) => {
+      const filters = { ...state.filters, [key]: value };
+      persistSessionNav({ filters });
+      return { filters };
+    });
   },
-  resetFilters: () => set({ filters: initialFilters }),
+  resetFilters: () => {
+    persistSessionNav({ filters: initialFilters });
+    set({ filters: initialFilters });
+  },
 
   startTimer: (task) => {
     const newTimer: ActiveTimer = {
