@@ -148,7 +148,7 @@ export const Sidebar: React.FC = () => {
               ).length;
               const isFilterActive = filters.sprintId === sp.id;
               const dateLabel = sprintDateRange(sp);
-              const count = sprintTasks.length || sp.totalPoints || 0;
+              const count = sprintTasks.length;
 
               return (
                 <button
@@ -205,7 +205,7 @@ export const Sidebar: React.FC = () => {
               onClick={(e) => {
                 e.stopPropagation();
                 setActiveView('BACKLOG');
-                setFilter('sprintId', undefined);
+                setFilter('sprintId', null);
               }}
               className="w-full flex items-center justify-between px-2 py-1 rounded text-[var(--text-secondary)] hover:text-[var(--text-primary)] hover:bg-[var(--bg-hover)] transition-colors"
             >

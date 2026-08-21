@@ -24,13 +24,22 @@ interface Props {
 }
 
 export const KanbanView: React.FC<Props> = ({ tasks }) => {
-  const { activeProjectId, setActiveTaskId } = useAppStore();
+  const { activeProjectId, setActiveTaskId, filters, setFilter } = useAppStore();
   const { data: project } = useProject(activeProjectId);
   const { data: sprints = [] } = useSprints(activeProjectId);
   const updateTaskMutation = useUpdateTaskMutation();
   const createTaskMutation = useCreateTaskMutation();
 
-  const [selectedSprintId, setSelectedSprintId] = useState<string>('all');
+  // Sync with sidebar: undefined=all, null=backlog, string=sprint id
+  const selectedSprintId =
+    filters.sprintId === undefined ? 'all' : filters.sprintId === null ? 'backlog' : filters.sprintId;
+
+  const setSelectedSprintId = (id: string) => {
+    if (id === 'all') setFilter('sprintId', undefined);
+    else if (id === 'backlog') setFilter('sprintId', null);
+    else setFilter('sprintId', id);
+  };
+
   const [swimlaneBy, setSwimlaneBy] = useState<'none' | 'assignee' | 'epic' | 'priority'>('none');
   const [quickAddStatusId, setQuickAddStatusId] = useState<string | null>(null);
   const [quickAddTitle, setQuickAddTitle] = useState('');
@@ -53,10 +62,14 @@ export const KanbanView: React.FC<Props> = ({ tasks }) => {
   const handleQuickAdd = async (statusId: string) => {
     if (!quickAddTitle.trim() || !activeProjectId) return;
     const activeSprint = sprints.find((s) => s.status === 'ACTIVE');
+    const sprintForCreate =
+      selectedSprintId !== 'all' && selectedSprintId !== 'backlog'
+        ? selectedSprintId
+        : activeSprint?.id;
     await createTaskMutation.mutateAsync({
       projectId: activeProjectId,
       statusId,
-      sprintId: selectedSprintId !== 'all' ? selectedSprintId : activeSprint?.id,
+      sprintId: sprintForCreate,
       title: quickAddTitle.trim(),
       issueType: 'TASK',
       priority: 'MEDIUM',
@@ -65,7 +78,6 @@ export const KanbanView: React.FC<Props> = ({ tasks }) => {
     setQuickAddStatusId(null);
   };
 
-  // Filter tasks by selected sprint if set
   const filteredTasks = tasks.filter((t) => {
     if (selectedSprintId === 'all') return true;
     if (selectedSprintId === 'backlog') return !t.sprintId;

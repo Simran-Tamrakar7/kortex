@@ -248,7 +248,8 @@ export const PlatformGuideModal: React.FC = () => {
                     <p className="text-xs">
                       Under <strong>Spaces &amp; Projects</strong>, every Scrum list shows a collapsible <strong>{'{List}'} Sprints</strong> folder
                       (same pattern as ClickUp). Expand it to see <code>Sprint N (MM/DD - MM/DD)</code> rows with green play/check icons,
-                      task counts, and red urgency badges. Click a sprint to filter the board; use <strong>Create Sprint</strong> to add another.
+                      task counts, and red urgency badges. Click a sprint to filter the board to <strong>that sprint&apos;s tasks only</strong>
+                      (Kanban sprint dropdown stays in sync with the sidebar). Use <strong>Create Sprint</strong> to add another.
                     </p>
                   </div>
 

@@ -867,6 +867,209 @@ const mockTasks: any[] = [
     labels: ['Deploy', 'Vercel', 'Agents', 'Cursor'],
     assignees: [{ id: 'usr_cursor', name: 'Cursor', avatarUrl: 'https://api.dicebear.com/7.x/bottts/svg?seed=cursor' }],
   },
+  {
+    id: 't_kor_1',
+    key: 'KOR-1',
+    projectId: 'proj_kor',
+    title: 'CI pipeline hardening for release channels',
+    description: 'Stabilize GitHub Actions matrix for staging and production deploys.',
+    issueType: 'TASK',
+    priority: 'HIGH',
+    statusId: 'st_done',
+    status: { id: 'st_done', name: 'Done', category: 'DONE', color: '#10b981' },
+    sprintId: 'sp_kor_1',
+    storyPoints: 5,
+    order: 1,
+    labels: ['CI', 'Infra'],
+    assignees: [{ id: 'usr_devon', name: 'Devon Vance', avatarUrl: 'https://images.unsplash.com/photo-1500648767791-00dcc994a43e?w=150&auto=format&fit=crop&q=80' }],
+  },
+  {
+    id: 't_kor_2',
+    key: 'KOR-2',
+    projectId: 'proj_kor',
+    title: 'Realtime sync cache invalidation',
+    description: 'Fix stale presence rooms after project switch.',
+    issueType: 'BUG',
+    priority: 'URGENT',
+    statusId: 'st_inprogress',
+    status: { id: 'st_inprogress', name: 'In Progress', category: 'IN_PROGRESS', color: '#8b5cf6' },
+    sprintId: 'sp_kor_2',
+    storyPoints: 3,
+    order: 2,
+    labels: ['Realtime', 'Cache'],
+    assignees: [{ id: 'usr_maya', name: 'Maya Lin', avatarUrl: 'https://images.unsplash.com/photo-1517841905240-472988babdf9?w=150&auto=format&fit=crop&q=80' }],
+  },
+  {
+    id: 't_kor_3',
+    key: 'KOR-3',
+    projectId: 'proj_kor',
+    title: 'Prometheus alert rules for API p99',
+    description: 'Add burn-rate alerts for /api/tasks latency.',
+    issueType: 'STORY',
+    priority: 'HIGH',
+    statusId: 'st_todo',
+    status: { id: 'st_todo', name: 'To Do', category: 'TODO', color: '#3b82f6' },
+    sprintId: 'sp_kor_3',
+    storyPoints: 5,
+    order: 3,
+    labels: ['Observability'],
+    assignees: [{ id: 'usr_devon', name: 'Devon Vance', avatarUrl: 'https://images.unsplash.com/photo-1500648767791-00dcc994a43e?w=150&auto=format&fit=crop&q=80' }],
+  },
+  {
+    id: 't_kor_4',
+    key: 'KOR-4',
+    projectId: 'proj_kor',
+    title: 'Multi-region failover dry-run checklist',
+    description: 'Document and execute DR tabletop for us-east failover.',
+    issueType: 'TASK',
+    priority: 'MEDIUM',
+    statusId: 'st_todo',
+    status: { id: 'st_todo', name: 'To Do', category: 'TODO', color: '#3b82f6' },
+    sprintId: 'sp_kor_4',
+    storyPoints: 2,
+    order: 4,
+    labels: ['DR'],
+    assignees: [{ id: 'usr_alex', name: 'Alex Rivera', avatarUrl: 'https://images.unsplash.com/photo-1534528741775-53994a69daeb?w=150&auto=format&fit=crop&q=80' }],
+  },
+  {
+    id: 't_dev_33',
+    key: 'DEV-33',
+    projectId: 'proj_dev',
+    epicId: 't_epic_agents',
+    title: 'Fix all sprints showing the same tasks',
+    description:
+      'Originating request: all sprints show same tasks — change that. Root: Kanban local sprint select ignores sidebar filters.sprintId; useTasks mock ignores projectId/sprintId params; sidebar count fell back to totalPoints.',
+    issueType: 'BUG',
+    priority: 'HIGH',
+    statusId: 'st_done',
+    status: { id: 'st_done', name: 'Done', category: 'DONE', color: '#10b981' },
+    sprintId: 'sp_dev_2',
+    storyPoints: 3,
+    order: 35,
+    labels: ['Bug', 'Sprints', 'Kanban', 'Cursor'],
+    assignees: [{ id: 'usr_cursor', name: 'Cursor', avatarUrl: 'https://api.dicebear.com/7.x/bottts/svg?seed=cursor' }],
+  },
+  {
+    id: 't_dev_34',
+    key: 'DEV-34',
+    projectId: 'proj_dev',
+    epicId: 't_epic_agents',
+    title: 'QA audit: state persistence across refresh and rapid actions',
+    description: 'Originating request: QA audit — create/reorder/switch views, refresh, confirm nothing lost; no races on rapid actions. Fix bugs found only.',
+    issueType: 'TASK',
+    priority: 'HIGH',
+    statusId: 'st_todo',
+    status: { id: 'st_todo', name: 'To Do', category: 'TODO', color: '#3b82f6' },
+    sprintId: 'sp_dev_2',
+    storyPoints: 5,
+    order: 36,
+    labels: ['QA', 'Persistence', 'Cursor'],
+    assignees: [{ id: 'usr_cursor', name: 'Cursor', avatarUrl: 'https://api.dicebear.com/7.x/bottts/svg?seed=cursor' }],
+  },
+  {
+    id: 't_dev_35',
+    key: 'DEV-35',
+    projectId: 'proj_dev',
+    epicId: 't_epic_agents',
+    title: 'QA audit: drag-and-drop across Kanban, Backlog, Timeline',
+    description: 'Originating request: QA DnD — empty column drops, rapid reorder, tablet width. Fix bugs found only.',
+    issueType: 'TASK',
+    priority: 'HIGH',
+    statusId: 'st_todo',
+    status: { id: 'st_todo', name: 'To Do', category: 'TODO', color: '#3b82f6' },
+    sprintId: 'sp_dev_2',
+    storyPoints: 5,
+    order: 37,
+    labels: ['QA', 'DnD', 'Cursor'],
+    assignees: [{ id: 'usr_cursor', name: 'Cursor', avatarUrl: 'https://api.dicebear.com/7.x/bottts/svg?seed=cursor' }],
+  },
+  {
+    id: 't_dev_36',
+    key: 'DEV-36',
+    projectId: 'proj_dev',
+    epicId: 't_epic_agents',
+    title: 'QA audit: CRUD edge cases (empty/long titles, HTML paste, special chars)',
+    description: 'Originating request: QA CRUD edge cases — empty titles, long text overflow, pasted HTML/markdown injection, special characters.',
+    issueType: 'TASK',
+    priority: 'HIGH',
+    statusId: 'st_todo',
+    status: { id: 'st_todo', name: 'To Do', category: 'TODO', color: '#3b82f6' },
+    sprintId: 'sp_dev_2',
+    storyPoints: 5,
+    order: 38,
+    labels: ['QA', 'CRUD', 'Security', 'Cursor'],
+    assignees: [{ id: 'usr_cursor', name: 'Cursor', avatarUrl: 'https://api.dicebear.com/7.x/bottts/svg?seed=cursor' }],
+  },
+  {
+    id: 't_dev_37',
+    key: 'DEV-37',
+    projectId: 'proj_dev',
+    epicId: 't_epic_agents',
+    title: 'QA audit: keyboard navigation and accessibility',
+    description: 'Originating request: full keyboard-only flow; focus trapping and ARIA on Task Detail Drawer and Command Palette.',
+    issueType: 'TASK',
+    priority: 'HIGH',
+    statusId: 'st_todo',
+    status: { id: 'st_todo', name: 'To Do', category: 'TODO', color: '#3b82f6' },
+    sprintId: 'sp_dev_2',
+    storyPoints: 5,
+    order: 39,
+    labels: ['QA', 'a11y', 'Cursor'],
+    assignees: [{ id: 'usr_cursor', name: 'Cursor', avatarUrl: 'https://api.dicebear.com/7.x/bottts/svg?seed=cursor' }],
+  },
+  {
+    id: 't_dev_38',
+    key: 'DEV-38',
+    projectId: 'proj_dev',
+    epicId: 't_epic_agents',
+    title: 'QA audit: performance with 100+ seeded tasks',
+    description: 'Originating request: seed 100+ tasks; check frame drops on drag, search, filter. Fix perf bugs found.',
+    issueType: 'TASK',
+    priority: 'MEDIUM',
+    statusId: 'st_todo',
+    status: { id: 'st_todo', name: 'To Do', category: 'TODO', color: '#3b82f6' },
+    sprintId: 'sp_dev_2',
+    storyPoints: 5,
+    order: 40,
+    labels: ['QA', 'Performance', 'Cursor'],
+    assignees: [{ id: 'usr_cursor', name: 'Cursor', avatarUrl: 'https://api.dicebear.com/7.x/bottts/svg?seed=cursor' }],
+  },
+  {
+    id: 't_dev_39',
+    key: 'DEV-39',
+    projectId: 'proj_dev',
+    epicId: 't_epic_agents',
+    title: 'URL-persisted filters on List, Kanban, and Spreadsheet views',
+    description:
+      'Originating request: persist filters/search/sort in URL query (?priority=high&search=auth) for bookmarkable/shareable filtered views.',
+    issueType: 'STORY',
+    priority: 'HIGH',
+    statusId: 'st_todo',
+    status: { id: 'st_todo', name: 'To Do', category: 'TODO', color: '#3b82f6' },
+    sprintId: 'sp_dev_2',
+    storyPoints: 5,
+    order: 41,
+    labels: ['Filters', 'URL', 'Cursor'],
+    assignees: [{ id: 'usr_cursor', name: 'Cursor', avatarUrl: 'https://api.dicebear.com/7.x/bottts/svg?seed=cursor' }],
+  },
+  {
+    id: 't_dev_40',
+    key: 'DEV-40',
+    projectId: 'proj_dev',
+    epicId: 't_epic_agents',
+    title: 'Generate .cursorrules for stack, patterns, and agent workflow',
+    description:
+      'Originating request: root .cursorrules capturing tech stack, folder conventions, component/Tailwind/Zustand patterns, and standing task/deploy/doc-sync rules.',
+    issueType: 'TASK',
+    priority: 'MEDIUM',
+    statusId: 'st_todo',
+    status: { id: 'st_todo', name: 'To Do', category: 'TODO', color: '#3b82f6' },
+    sprintId: 'sp_dev_2',
+    storyPoints: 3,
+    order: 42,
+    labels: ['Cursor', 'Docs', 'Tooling'],
+    assignees: [{ id: 'usr_cursor', name: 'Cursor', avatarUrl: 'https://api.dicebear.com/7.x/bottts/svg?seed=cursor' }],
+  },
 ];
 
 const mockDocs: any[] = [
@@ -895,6 +1098,7 @@ Agent logins: \`cursor@kortex.dev\` · \`antigravity@kortex.dev\` (password \`pa
 - 🟢 **[DEV-30]** Add Deploying and Blocked board statuses for live agent tracking — **Done** · **Cursor**
 - 🟢 **[DEV-31]** Document agent workflow in Kortex Platform Walkthrough — **Done** · **Cursor**
 - 🟢 **[DEV-32]** Per-task deploy rules: one commit, verify, tag, changelog as deploy history — **Done** · **Cursor** · helpers in \`frontend/src/lib/agentWorkflow.ts\`
+- 🟢 **[DEV-33]** Fix all sprints showing the same tasks — **Done** · **Cursor** · Kanban syncs \`filters.sprintId\`; mock \`useTasks\` filters by project/sprint; sidebar counts are real task counts
 
 ---
 
@@ -1035,20 +1239,39 @@ export function useProject(projectId: string | null) {
 }
 
 // Tasks
+function filterMockTasks(projectId: string | null, params: Record<string, any> = {}) {
+  let list = mockTasks.slice();
+  if (projectId) list = list.filter((t) => t.projectId === projectId);
+  if (params.sprintId) list = list.filter((t) => t.sprintId === params.sprintId);
+  if (params.search) {
+    const q = String(params.search).toLowerCase();
+    list = list.filter(
+      (t) =>
+        t.title?.toLowerCase().includes(q) ||
+        t.key?.toLowerCase().includes(q) ||
+        t.description?.toLowerCase().includes(q)
+    );
+  }
+  if (params.statusId) list = list.filter((t) => t.statusId === params.statusId);
+  if (params.priority) list = list.filter((t) => t.priority === params.priority);
+  if (params.issueType) list = list.filter((t) => t.issueType === params.issueType);
+  return list;
+}
+
 export function useTasks(projectId: string | null, params: Record<string, any> = {}) {
   return useQuery<Task[]>({
     queryKey: ['tasks', projectId, params],
     queryFn: async () => {
       try {
-        if (!projectId) return mockTasks;
+        if (!projectId) return filterMockTasks(null, params);
         const queryParams = new URLSearchParams({ projectId, ...params }).toString();
         const res = await apiClient.get(`/tasks?${queryParams}`);
         return res.data;
       } catch (e) {
-        return mockTasks;
+        return filterMockTasks(projectId, params);
       }
     },
-    initialData: mockTasks,
+    initialData: () => filterMockTasks(projectId, params),
   });
 }
 

@@ -58,18 +58,21 @@ export const AppLayout: React.FC = () => {
     checkAuth();
   }, [checkAuth]);
 
-  // Project data & Tasks
+  // Project data & Tasks — string sprintId filters server/mock; null = backlog handled client-side
   const { data: project } = useProject(activeProjectId);
+  const sprintParam =
+    typeof filters.sprintId === 'string' && filters.sprintId ? filters.sprintId : undefined;
   const { data: rawTasks = [] } = useTasks(activeProjectId, {
-    sprintId: filters.sprintId,
+    sprintId: sprintParam,
     search: filters.search,
     statusId: filters.statusIds[0],
     priority: filters.priorities[0],
     issueType: filters.issueTypes[0],
   });
 
-  // Filter tasks in client (e.g. My Tasks toggle)
+  // Filter tasks in client (My Tasks + backlog-only when sprintId === null)
   const filteredTasks = rawTasks.filter((task) => {
+    if (filters.sprintId === null && task.sprintId) return false;
     if (filters.onlyMyTasks && user) {
       const isAssigned = task.assignees?.some((a) => a.id === user.id);
       const isReporter = task.reporterId === user.id;
