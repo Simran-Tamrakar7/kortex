@@ -111,46 +111,135 @@ const mockSprints: any[] = [
   {
     id: 'sp_dev_0',
     projectId: 'proj_dev',
-    name: 'Sprint 0 — Foundation & Stability Audit',
+    name: 'Sprint 0',
     goal: 'Audit codebase, fix key collisions, persist timers, and add server RBAC',
     status: 'COMPLETED',
     totalPoints: 37,
     completedPoints: 37,
-    startDate: new Date(Date.now() - 14 * 86400000).toISOString(),
-    endDate: new Date(Date.now() - 7 * 86400000).toISOString(),
+    startDate: new Date('2026-01-12').toISOString(),
+    endDate: new Date('2026-01-25').toISOString(),
   },
   {
     id: 'sp_dev_1',
     projectId: 'proj_dev',
-    name: 'Sprint 1 — Visualization & Workflows',
+    name: 'Sprint 1',
     goal: 'Rebuild 4-level mind map, Confluence markdown editor, and workflow automations',
     status: 'COMPLETED',
     totalPoints: 13,
     completedPoints: 13,
-    startDate: new Date(Date.now() - 7 * 86400000).toISOString(),
-    endDate: new Date().toISOString(),
+    startDate: new Date('2026-01-26').toISOString(),
+    endDate: new Date('2026-02-08').toISOString(),
   },
   {
     id: 'sp_dev_2',
     projectId: 'proj_dev',
-    name: 'Sprint 2 — AI Capabilities & Intelligence Engine',
+    name: 'Sprint 2',
     goal: 'Ship server-side AI task summaries, subtask generator, writing assistant & natural language task creation',
     status: 'ACTIVE',
     totalPoints: 38,
-    completedPoints: 0,
-    startDate: new Date().toISOString(),
-    endDate: null,
+    completedPoints: 8,
+    startDate: new Date('2026-02-09').toISOString(),
+    endDate: new Date('2026-02-22').toISOString(),
   },
   {
     id: 'sp_dev_3',
     projectId: 'proj_dev',
-    name: 'Sprint 3 — Docs Hierarchy & Portfolio Roadmap',
+    name: 'Sprint 3',
     goal: 'Confluence page tree hierarchy, advanced search syntax, and portfolio timeline',
     status: 'PLANNING',
     totalPoints: 24,
     completedPoints: 0,
-    startDate: new Date(Date.now() + 10 * 86400000).toISOString(),
-    endDate: null,
+    startDate: new Date('2026-02-23').toISOString(),
+    endDate: new Date('2026-03-08').toISOString(),
+  },
+  // Kortex Cloud Infrastructure (KOR) — ClickUp-style dated sprints
+  {
+    id: 'sp_kor_1',
+    projectId: 'proj_kor',
+    name: 'Sprint 1',
+    goal: 'Infra baseline & CI hardening',
+    status: 'COMPLETED',
+    totalPoints: 21,
+    completedPoints: 21,
+    startDate: new Date('2026-01-26').toISOString(),
+    endDate: new Date('2026-02-01').toISOString(),
+  },
+  {
+    id: 'sp_kor_2',
+    projectId: 'proj_kor',
+    name: 'Sprint 2',
+    goal: 'Realtime sync & caching layer',
+    status: 'ACTIVE',
+    totalPoints: 18,
+    completedPoints: 8,
+    startDate: new Date('2026-02-02').toISOString(),
+    endDate: new Date('2026-02-08').toISOString(),
+  },
+  {
+    id: 'sp_kor_3',
+    projectId: 'proj_kor',
+    name: 'Sprint 3',
+    goal: 'Observability & alerting',
+    status: 'ACTIVE',
+    totalPoints: 13,
+    completedPoints: 6,
+    startDate: new Date('2026-02-09').toISOString(),
+    endDate: new Date('2026-02-15').toISOString(),
+  },
+  {
+    id: 'sp_kor_4',
+    projectId: 'proj_kor',
+    name: 'Sprint 4',
+    goal: 'Multi-region failover dry-run',
+    status: 'ACTIVE',
+    totalPoints: 8,
+    completedPoints: 1,
+    startDate: new Date('2026-02-16').toISOString(),
+    endDate: new Date('2026-02-22').toISOString(),
+  },
+  {
+    id: 'sp_kor_5',
+    projectId: 'proj_kor',
+    name: 'Sprint 5',
+    goal: 'Cost optimization pass',
+    status: 'PLANNING',
+    totalPoints: 5,
+    completedPoints: 0,
+    startDate: new Date('2026-02-23').toISOString(),
+    endDate: new Date('2026-03-01').toISOString(),
+  },
+  {
+    id: 'sp_kor_6',
+    projectId: 'proj_kor',
+    name: 'Sprint 6',
+    goal: 'Edge CDN rollout',
+    status: 'PLANNING',
+    totalPoints: 8,
+    completedPoints: 0,
+    startDate: new Date('2026-03-09').toISOString(),
+    endDate: new Date('2026-03-15').toISOString(),
+  },
+  {
+    id: 'sp_kor_7',
+    projectId: 'proj_kor',
+    name: 'Sprint 7',
+    goal: 'Secret rotation automation',
+    status: 'PLANNING',
+    totalPoints: 5,
+    completedPoints: 0,
+    startDate: new Date('2026-03-16').toISOString(),
+    endDate: new Date('2026-03-22').toISOString(),
+  },
+  {
+    id: 'sp_kor_8',
+    projectId: 'proj_kor',
+    name: 'Sprint 8',
+    goal: 'DR game day & runbooks',
+    status: 'PLANNING',
+    totalPoints: 24,
+    completedPoints: 0,
+    startDate: new Date('2026-03-23').toISOString(),
+    endDate: new Date('2026-03-29').toISOString(),
   },
 ];
 
@@ -692,12 +781,30 @@ const mockTasks: any[] = [
     description: 'Placeholder: move to In Progress when an agent starts work; close as Done when shipped & deployed.',
     issueType: 'TASK',
     priority: 'MEDIUM',
-    statusId: 'st_todo',
-    status: { id: 'st_todo', name: 'To Do', category: 'TODO', color: '#3b82f6' },
+    statusId: 'st_done',
+    status: { id: 'st_done', name: 'Done', category: 'DONE', color: '#10b981' },
     sprintId: 'sp_dev_1',
     storyPoints: 3,
     order: 30,
     labels: ['Agents', 'Queue'],
+    assignees: [{ id: 'usr_cursor', name: 'Cursor', avatarUrl: 'https://api.dicebear.com/7.x/bottts/svg?seed=cursor' }],
+  },
+  {
+    id: 't_dev_29',
+    key: 'DEV-29',
+    projectId: 'proj_dev',
+    epicId: 't_epic_agents',
+    title: 'ClickUp-style nested Sprints folder in Space sidebar',
+    description:
+      'Under Spaces & Projects, each Scrum list gets a collapsible "{List} Sprints" dropdown with Sprint N (MM/DD - MM/DD) rows, green play/check icons, counts, urgency badges, and docs updated in the Platform Guide.',
+    issueType: 'STORY',
+    priority: 'HIGH',
+    statusId: 'st_done',
+    status: { id: 'st_done', name: 'Done', category: 'DONE', color: '#10b981' },
+    sprintId: 'sp_dev_1',
+    storyPoints: 5,
+    order: 31,
+    labels: ['Sidebar', 'Sprints', 'ClickUp', 'Cursor'],
     assignees: [{ id: 'usr_cursor', name: 'Cursor', avatarUrl: 'https://api.dicebear.com/7.x/bottts/svg?seed=cursor' }],
   },
 ];
@@ -723,7 +830,8 @@ Agent logins: \`cursor@kortex.dev\` · \`antigravity@kortex.dev\` (password \`pa
 ### 📅 August 21, 2026
 - 🟢 **[DEV-26]** Standardize fonts and text sizes to readable defaults — **Done** · **Cursor**
 - 🟢 **[DEV-27]** Create agent users Cursor & Antigravity + deploy work tracking — **Done** · **Cursor**, **Antigravity**
-- 🔵 **[DEV-28]** [Agent queue] Next Cursor / Antigravity turn — **To Do** · **Cursor**
+- 🟢 **[DEV-28]** [Agent queue] Next Cursor / Antigravity turn — **Done** · **Cursor**
+- 🟢 **[DEV-29]** ClickUp-style nested Sprints folder in Space sidebar — **Done** · **Cursor**
 
 ---
 
@@ -981,10 +1089,15 @@ export function useSprints(projectId: string | null) {
         const res = await apiClient.get(`/sprints?projectId=${projectId}`);
         return res.data;
       } catch (e) {
-        return mockSprints;
+        // ponytail: offline/Vercel demo — filter mocks by project like the API would
+        return projectId
+          ? mockSprints.filter((s) => s.projectId === projectId)
+          : mockSprints;
       }
     },
-    initialData: mockSprints,
+    initialData: projectId
+      ? mockSprints.filter((s) => s.projectId === projectId)
+      : mockSprints,
   });
 }
 

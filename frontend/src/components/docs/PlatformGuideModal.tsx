@@ -150,6 +150,10 @@ export const PlatformGuideModal: React.FC = () => {
                       <span className="font-bold text-indigo-500 shrink-0">4. Projects / Lists:</span>
                       <span>Agile software scrum boards (`KOR`), continuous Kanban boards, or IT Service Desks (`ITS`).</span>
                     </li>
+                    <li className="flex items-start gap-2">
+                      <span className="font-bold text-indigo-500 shrink-0">5. Sprints folder (ClickUp-style):</span>
+                      <span>Each Scrum list nests a collapsible <strong>{'{List}'} Sprints</strong> dropdown in the sidebar with dated sprint rows, backlog, and create-sprint.</span>
+                    </li>
                   </ul>
                 </div>
               </div>
@@ -239,14 +243,23 @@ export const PlatformGuideModal: React.FC = () => {
 
                 <div className="space-y-3">
                   <div className="p-4 rounded-xl bg-[var(--bg-elevated)] border border-[var(--border-default)] space-y-2">
-                    <h4 className="font-bold text-[var(--text-primary)]">1. Sprint Lifecycle & Rollover</h4>
+                    <h4 className="font-bold text-[var(--text-primary)]">1. ClickUp-style Sprint Folder in the Space sidebar</h4>
                     <p className="text-xs">
-                      Create planning sprints with goals and start dates. When completing a sprint, uncompleted issues can be rolled over to the next active sprint or returned to the backlog.
+                      Under <strong>Spaces &amp; Projects</strong>, every Scrum list shows a collapsible <strong>{'{List}'} Sprints</strong> folder
+                      (same pattern as ClickUp). Expand it to see <code>Sprint N (MM/DD - MM/DD)</code> rows with green play/check icons,
+                      task counts, and red urgency badges. Click a sprint to filter the board; use <strong>Create Sprint</strong> to add another.
                     </p>
                   </div>
 
                   <div className="p-4 rounded-xl bg-[var(--bg-elevated)] border border-[var(--border-default)] space-y-2">
-                    <h4 className="font-bold text-[var(--text-primary)]">2. Burndown & Velocity Charts</h4>
+                    <h4 className="font-bold text-[var(--text-primary)]">2. Sprint Lifecycle &amp; Rollover</h4>
+                    <p className="text-xs">
+                      Create planning sprints with goals and start/end dates. When completing a sprint, uncompleted issues can be rolled over to the next active sprint or returned to the backlog.
+                    </p>
+                  </div>
+
+                  <div className="p-4 rounded-xl bg-[var(--bg-elevated)] border border-[var(--border-default)] space-y-2">
+                    <h4 className="font-bold text-[var(--text-primary)]">3. Burndown &amp; Velocity Charts</h4>
                     <p className="text-xs">
                       Click <strong>Burndown Report</strong> on any active or completed sprint to inspect the ideal vs actual remaining story point curve rendered with Recharts.
                     </p>

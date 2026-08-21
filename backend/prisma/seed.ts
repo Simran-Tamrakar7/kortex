@@ -291,12 +291,32 @@ async function main() {
       description: 'Placeholder: move to In Progress when an agent starts work; close as Done when shipped & deployed.',
       issueType: 'TASK',
       priority: 'MEDIUM',
-      statusId: stDevTodo.id,
+      statusId: stDevDone.id,
       reporterId: alex.id,
       sprintId: sprint1.id,
       storyPoints: 3,
       labelsJson: JSON.stringify(['Agents', 'Queue']),
       order: 102,
+      assignees: { create: [{ userId: cursor.id }] },
+    },
+  });
+
+  await prisma.task.create({
+    data: {
+      key: 'DEV-29',
+      projectId: devProject.id,
+      epicId: epicAgents.id,
+      title: 'ClickUp-style nested Sprints folder in Space sidebar',
+      description:
+        'Under Spaces & Projects, each Scrum list gets a collapsible "{List} Sprints" dropdown with Sprint N (MM/DD - MM/DD) rows, green play/check icons, counts, urgency badges, and Platform Guide docs.',
+      issueType: 'STORY',
+      priority: 'HIGH',
+      statusId: stDevDone.id,
+      reporterId: cursor.id,
+      sprintId: sprint1.id,
+      storyPoints: 5,
+      labelsJson: JSON.stringify(['Sidebar', 'Sprints', 'ClickUp', 'Cursor']),
+      order: 103,
       assignees: { create: [{ userId: cursor.id }] },
     },
   });
@@ -321,7 +341,8 @@ Agent accounts: \`cursor@kortex.dev\` / \`antigravity@kortex.dev\` (password: \`
 ### 📅 August 21, 2026
 - **[DEV-26] Standardize typography** — Done · assignee **Cursor**
 - **[DEV-27] Agent users + deploy tracking** — Done · assignees **Cursor**, **Antigravity**
-- **[DEV-28] Next agent turn queue** — To Do · assignee **Cursor**
+- **[DEV-28] Agent queue turn** — Done · assignee **Cursor**
+- **[DEV-29] ClickUp-style nested Sprints folder in Space sidebar** — Done · assignee **Cursor**
 
 ---
 

@@ -6,7 +6,6 @@ import {
   Layers,
   Folder,
   FolderGit2,
-  Cpu,
   LifeBuoy,
   Plus,
   ChevronDown,
@@ -17,14 +16,24 @@ import {
   Zap,
   Settings,
   LayoutGrid,
-  Shield,
   PanelLeftClose,
   PanelLeft,
   BookOpen,
-  Sparkles,
+  PlayCircle,
+  CheckCheck,
+  Circle,
+  MoreHorizontal,
 } from 'lucide-react';
 import { apiClient } from '../../api/client';
 import { useQueryClient } from '@tanstack/react-query';
+
+/** ClickUp-style date range: (01/26 - 02/01) */
+function sprintDateRange(sp: { startDate?: string | null; endDate?: string | null }) {
+  if (!sp.startDate) return '';
+  const fmt = (d: string) =>
+    new Date(d).toLocaleDateString('en-US', { month: '2-digit', day: '2-digit' });
+  return sp.endDate ? `(${fmt(sp.startDate)} - ${fmt(sp.endDate)})` : `(${fmt(sp.startDate)})`;
+}
 
 export const Sidebar: React.FC = () => {
   const { organization, activeWorkspaceId, setActiveWorkspaceId } = useAuthStore();
@@ -33,7 +42,6 @@ export const Sidebar: React.FC = () => {
     setActiveProjectId,
     activeMainSection,
     setActiveMainSection,
-    activeView,
     setActiveView,
     filters,
     setFilter,
@@ -51,6 +59,7 @@ export const Sidebar: React.FC = () => {
 
   const [isCollapsed, setIsCollapsed] = useState(false);
   const [openFolders, setOpenFolders] = useState<Record<string, boolean>>({ all: true });
+  const [openSprintFolders, setOpenSprintFolders] = useState<Record<string, boolean>>({});
   const [isNewProjectModalOpen, setIsNewProjectModalOpen] = useState(false);
   const [newProjectName, setNewProjectName] = useState('');
   const [newProjectKey, setNewProjectKey] = useState('');
@@ -60,6 +69,13 @@ export const Sidebar: React.FC = () => {
 
   const toggleFolder = (folderId: string) => {
     setOpenFolders((prev) => ({ ...prev, [folderId]: !prev[folderId] }));
+  };
+
+  const isSprintFolderOpen = (projectId: string) =>
+    openSprintFolders[projectId] ?? activeProjectId === projectId;
+
+  const setSprintFolderOpen = (projectId: string, open: boolean) => {
+    setOpenSprintFolders((prev) => ({ ...prev, [projectId]: open }));
   };
 
   const handleCreateProject = async (e: React.FormEvent) => {
@@ -82,6 +98,171 @@ export const Sidebar: React.FC = () => {
     } catch (err: any) {
       alert(err.response?.data?.error || 'Failed to create project');
     }
+  };
+
+  /** ClickUp-style nested sprint list under a Space/List */
+  const renderSprintFolder = (proj: any) => {
+    if (proj.type === 'SERVICE_DESK' || proj.type === 'BUSINESS') return null;
+
+    const folderOpen = isSprintFolderOpen(proj.id);
+    const isActiveProject = activeProjectId === proj.id;
+    const projectSprints = isActiveProject
+      ? sprints
+      : []; // load counts from active project sprints only; expand selects project
+
+    return (
+      <div className="pl-2 mt-0.5 space-y-0.5">
+        <button
+          onClick={(e) => {
+            e.stopPropagation();
+            const nextOpen = !isSprintFolderOpen(proj.id);
+            setActiveProjectId(proj.id);
+            setActiveMainSection('PROJECT');
+            setSprintFolderOpen(proj.id, nextOpen);
+          }}
+          className="w-full flex items-center justify-between gap-1 px-2 py-1 rounded-md text-[var(--text-secondary)] hover:text-[var(--text-primary)] hover:bg-[var(--bg-hover)] transition-colors group"
+          title={`${proj.name} Sprints`}
+        >
+          <div className="flex items-center gap-1.5 min-w-0">
+            {folderOpen ? (
+              <ChevronDown className="w-3 h-3 shrink-0 text-[var(--text-muted)]" />
+            ) : (
+              <ChevronRight className="w-3 h-3 shrink-0 text-[var(--text-muted)]" />
+            )}
+            <Folder className="w-3.5 h-3.5 text-emerald-500 shrink-0" />
+            <span className="truncate font-semibold text-[var(--text-primary)]">
+              {proj.name.length > 18 ? `${proj.name.slice(0, 16)}…` : proj.name} Sprints
+            </span>
+          </div>
+          <span className="text-[var(--text-muted)] font-mono shrink-0">
+            {isActiveProject ? sprints.length : '·'}
+          </span>
+        </button>
+
+        {folderOpen && isActiveProject && (
+          <div className="pl-4 space-y-0.5 border-l border-[var(--border-subtle)] ml-2">
+            {projectSprints.map((sp) => {
+              const sprintTasks = allTasks.filter((t) => t.sprintId === sp.id);
+              const urgentCount = sprintTasks.filter(
+                (t) => t.priority === 'URGENT' || t.priority === 'HIGH'
+              ).length;
+              const isFilterActive = filters.sprintId === sp.id;
+              const dateLabel = sprintDateRange(sp);
+              const count = sprintTasks.length || sp.totalPoints || 0;
+
+              return (
+                <button
+                  key={sp.id}
+                  title={`${sp.name} ${dateLabel}`.trim()}
+                  onClick={(e) => {
+                    e.stopPropagation();
+                    setActiveProjectId(proj.id);
+                    setActiveMainSection('PROJECT');
+                    setActiveView('BOARD');
+                    setFilter('sprintId', sp.id);
+                  }}
+                  className={`w-full flex items-center justify-between gap-1 px-2 py-1 rounded transition-colors group ${
+                    isFilterActive
+                      ? 'bg-[var(--bg-hover)] text-[var(--text-primary)] font-semibold'
+                      : 'text-[var(--text-secondary)] hover:text-[var(--text-primary)] hover:bg-[var(--bg-hover)]'
+                  }`}
+                >
+                  <div className="flex items-center gap-1.5 min-w-0">
+                    {sp.status === 'COMPLETED' ? (
+                      <CheckCheck className="w-3.5 h-3.5 text-emerald-500 shrink-0" />
+                    ) : sp.status === 'ACTIVE' ? (
+                      <PlayCircle className="w-3.5 h-3.5 text-emerald-500 shrink-0" />
+                    ) : (
+                      <Circle className="w-3.5 h-3.5 text-emerald-500/70 shrink-0" />
+                    )}
+                    <span className="truncate">
+                      {sp.name}{' '}
+                      {dateLabel && (
+                        <span className="text-[var(--text-muted)]">{dateLabel}</span>
+                      )}
+                    </span>
+                  </div>
+
+                  <div className="flex items-center gap-1 shrink-0">
+                    {urgentCount > 0 && (
+                      <span className="min-w-[1.1rem] h-4 px-1 rounded-full bg-rose-500 text-white text-[10px] font-bold flex items-center justify-center">
+                        {urgentCount}
+                      </span>
+                    )}
+                    <span className="text-[var(--text-muted)] font-mono min-w-[1rem] text-right group-hover:hidden">
+                      {count}
+                    </span>
+                    <span className="hidden group-hover:inline-flex items-center gap-0.5 text-[var(--text-muted)]">
+                      <MoreHorizontal className="w-3.5 h-3.5" />
+                      <Plus className="w-3.5 h-3.5" />
+                    </span>
+                  </div>
+                </button>
+              );
+            })}
+
+            <button
+              onClick={(e) => {
+                e.stopPropagation();
+                setActiveView('BACKLOG');
+                setFilter('sprintId', undefined);
+              }}
+              className="w-full flex items-center justify-between px-2 py-1 rounded text-[var(--text-secondary)] hover:text-[var(--text-primary)] hover:bg-[var(--bg-hover)] transition-colors"
+            >
+              <div className="flex items-center gap-1.5 truncate">
+                <Layers className="w-3.5 h-3.5 text-[var(--text-muted)] shrink-0" />
+                <span className="truncate font-medium">Backlog</span>
+              </div>
+              <span className="text-[var(--text-muted)] font-mono">
+                {allTasks.filter((t) => !t.sprintId).length}
+              </span>
+            </button>
+
+            <button
+              onClick={(e) => {
+                e.stopPropagation();
+                setSprintModalOpen(true, { mode: 'create', sprint: null });
+              }}
+              className="w-full flex items-center gap-1.5 px-2 py-1 text-emerald-600 dark:text-emerald-400 hover:underline font-semibold"
+            >
+              <Plus className="w-3 h-3" />
+              <span>Create Sprint</span>
+            </button>
+          </div>
+        )}
+      </div>
+    );
+  };
+
+  const renderProjectRow = (proj: any) => {
+    const isSelected = activeProjectId === proj.id && activeMainSection === 'PROJECT';
+    return (
+      <div key={proj.id} className="space-y-0.5">
+        <button
+          onClick={() => {
+            setActiveProjectId(proj.id);
+            setActiveMainSection('PROJECT');
+            setSprintFolderOpen(proj.id, true);
+          }}
+          className={`w-full flex items-center justify-between px-2 py-1 rounded transition-colors ${
+            isSelected
+              ? 'bg-indigo-600/15 text-indigo-600 dark:text-indigo-300 font-bold border-l-2 border-indigo-500'
+              : 'text-[var(--text-secondary)] hover:text-[var(--text-primary)] hover:bg-[var(--bg-hover)]'
+          }`}
+        >
+          <div className="flex items-center gap-1.5 truncate">
+            {proj.type === 'SERVICE_DESK' ? (
+              <LifeBuoy className="w-3.5 h-3.5 text-emerald-500 shrink-0" />
+            ) : (
+              <FolderGit2 className="w-3.5 h-3.5 text-indigo-500 shrink-0" />
+            )}
+            <span className="truncate">{proj.name}</span>
+          </div>
+          <span className="text-[var(--text-muted)] font-mono ml-1">{proj.key}</span>
+        </button>
+        {renderSprintFolder(proj)}
+      </div>
+    );
   };
 
   if (isCollapsed) {
@@ -248,7 +429,7 @@ export const Sidebar: React.FC = () => {
               </button>
             </div>
 
-            {/* Folders & Projects inside Current Workspace */}
+            {/* Folders & Projects inside Current Workspace — ClickUp Space tree */}
             <div className="mt-1 space-y-1">
               {currentWorkspace?.folders?.map((folder: any) => {
                 const isOpen = openFolders[folder.id] ?? true;
@@ -264,258 +445,25 @@ export const Sidebar: React.FC = () => {
                     </button>
 
                     {isOpen && (
-                      <div className="pl-4 space-y-0.5">
-                        {folder.projects?.map((proj: any) => {
-                          const isSelected = activeProjectId === proj.id && activeMainSection === 'PROJECT';
-                          return (
-                            <div key={proj.id} className="space-y-0.5">
-                              <button
-                                onClick={() => {
-                                  setActiveProjectId(proj.id);
-                                  setActiveMainSection('PROJECT');
-                                }}
-                                className={`w-full flex items-center justify-between px-2 py-1 rounded transition-colors ${
-                                  isSelected
-                                    ? 'bg-indigo-600/15 text-indigo-600 dark:text-indigo-300 font-bold border-l-2 border-indigo-500'
-                                    : 'text-[var(--text-secondary)] hover:text-[var(--text-primary)] hover:bg-[var(--bg-hover)]'
-                                }`}
-                              >
-                                <div className="flex items-center gap-1.5 truncate">
-                                  {proj.type === 'SERVICE_DESK' ? (
-                                    <LifeBuoy className="w-3.5 h-3.5 text-emerald-500 shrink-0" />
-                                  ) : (
-                                    <FolderGit2 className="w-3.5 h-3.5 text-indigo-500 shrink-0" />
-                                  )}
-                                  <span className="truncate">{proj.name}</span>
-                                </div>
-                                <span className="text-xs text-[var(--text-muted)] font-mono ml-1">{proj.key}</span>
-                              </button>
-
-                              {/* ClickUp 3.0 Exact Sprint Folder Hierarchy */}
-                              {isSelected && (
-                                <div className="pl-3 space-y-1 pt-1 ml-1.5 border-l border-slate-700/50">
-                                  {/* Sprints Folder Header */}
-                                  <div className="flex items-center justify-between px-2 py-1 rounded-md bg-[var(--bg-elevated)] border border-[var(--border-subtle)] text-xs font-bold text-[var(--text-primary)]">
-                                    <div className="flex items-center gap-1.5 truncate">
-                                      <Layers className="w-3.5 h-3.5 text-indigo-500 shrink-0" />
-                                      <span className="truncate">{proj.name} Sprints</span>
-                                    </div>
-                                    <span className="text-xs text-[var(--text-muted)] font-mono">
-                                      {sprints.length}
-                                    </span>
-                                  </div>
-
-                                  {/* Sprints List (ClickUp 3.0 Style) */}
-                                  <div className="pl-2 space-y-0.5">
-                                    {sprints.map((sp, idx) => {
-                                      const sprintTasks = allTasks.filter((t) => t.sprintId === sp.id);
-                                      const isFilterActive = filters.sprintId === sp.id;
-                                      const dateLabel = sp.startDate
-                                        ? `[${new Date(sp.startDate).toLocaleDateString([], { month: '2-digit', day: '2-digit' })}${sp.endDate ? ` - ${new Date(sp.endDate).toLocaleDateString([], { month: '2-digit', day: '2-digit' })}` : ''}]`
-                                        : `[Sprint ${idx + 1}]`;
-
-                                      return (
-                                        <button
-                                          key={sp.id}
-                                          onClick={(e) => {
-                                            e.stopPropagation();
-                                            setActiveView('BOARD');
-                                            setFilter('sprintId', sp.id);
-                                          }}
-                                          className={`w-full flex items-center justify-between px-2 py-1 rounded text-xs transition-colors group ${
-                                            isFilterActive
-                                              ? 'bg-emerald-500/15 text-emerald-600 dark:text-emerald-300 font-bold border-l-2 border-emerald-500'
-                                              : 'text-[var(--text-secondary)] hover:text-[var(--text-primary)] hover:bg-[var(--bg-hover)]'
-                                          }`}
-                                        >
-                                          <div className="flex items-center gap-1.5 truncate pr-1">
-                                            {sp.status === 'ACTIVE' ? (
-                                              <span className="w-2.5 h-2.5 rounded-full bg-emerald-500 shrink-0 shadow-sm animate-pulse" />
-                                            ) : sp.status === 'COMPLETED' ? (
-                                              <span className="w-2.5 h-2.5 rounded-full border-2 border-emerald-500 shrink-0" />
-                                            ) : (
-                                              <span className="w-2.5 h-2.5 rounded-full border-2 border-slate-400 shrink-0" />
-                                            )}
-                                            <span className="truncate group-hover:text-emerald-500">
-                                              {sp.name.split(' — ')[0]} <span className="text-xs text-[var(--text-muted)] font-mono">{dateLabel}</span>
-                                            </span>
-                                          </div>
-
-                                          <div className="flex items-center gap-1 shrink-0">
-                                            {sp.status === 'ACTIVE' && (
-                                              <span className="w-4 h-4 rounded-full bg-rose-500 text-white text-[9px] font-bold flex items-center justify-center">
-                                                {sprintTasks.filter((t) => t.priority === 'URGENT' || t.priority === 'HIGH').length || 1}
-                                              </span>
-                                            )}
-                                            <span className="text-xs font-mono text-[var(--text-muted)] group-hover:text-[var(--text-primary)] min-w-[14px] text-right">
-                                              {sprintTasks.length || sp.totalPoints || 0}
-                                            </span>
-                                          </div>
-                                        </button>
-                                      );
-                                    })}
-
-                                    {/* Product Backlog List Item */}
-                                    <button
-                                      onClick={(e) => {
-                                        e.stopPropagation();
-                                        setActiveView('BACKLOG');
-                                        setFilter('sprintId', undefined);
-                                      }}
-                                      className="w-full flex items-center justify-between px-2 py-1 rounded text-xs text-[var(--text-secondary)] hover:text-[var(--text-primary)] hover:bg-[var(--bg-hover)] transition-colors group"
-                                    >
-                                      <div className="flex items-center gap-1.5 truncate">
-                                        <Layers className="w-3 h-3 text-slate-400 shrink-0" />
-                                        <span className="truncate group-hover:text-indigo-500 font-medium">Product Backlog</span>
-                                      </div>
-                                      <span className="text-xs font-mono text-[var(--text-muted)]">
-                                        {allTasks.filter((t) => !t.sprintId).length}
-                                      </span>
-                                    </button>
-
-                                    {/* + Create Sprint Action */}
-                                    <button
-                                      onClick={(e) => {
-                                        e.stopPropagation();
-                                        setSprintModalOpen(true, { mode: 'create', sprint: null });
-                                      }}
-                                      className="w-full flex items-center gap-1.5 px-2 py-1 text-xs text-emerald-600 dark:text-emerald-400 hover:underline font-semibold mt-1"
-                                    >
-                                      <Plus className="w-3 h-3" />
-                                      <span>Create Sprint</span>
-                                    </button>
-                                  </div>
-                                </div>
-                              )}
-                            </div>
-                          );
-                        })}
+                      <div className="pl-3 space-y-0.5">
+                        {folder.projects?.map((proj: any) => renderProjectRow(proj))}
                       </div>
                     )}
                   </div>
                 );
               })}
 
-              {/* Direct Projects */}
-              {currentWorkspace?.projects?.map((proj: any) => {
-                const isSelected = activeProjectId === proj.id && activeMainSection === 'PROJECT';
-                return (
-                  <div key={proj.id} className="space-y-0.5">
-                    <button
-                      onClick={() => {
-                        setActiveProjectId(proj.id);
-                        setActiveMainSection('PROJECT');
-                      }}
-                      className={`w-full flex items-center justify-between px-2 py-1 rounded transition-colors ${
-                        isSelected
-                          ? 'bg-indigo-600/15 text-indigo-600 dark:text-indigo-300 font-bold border-l-2 border-indigo-500'
-                          : 'text-[var(--text-secondary)] hover:text-[var(--text-primary)] hover:bg-[var(--bg-hover)]'
-                      }`}
-                    >
-                      <div className="flex items-center gap-1.5 truncate">
-                        {proj.type === 'SERVICE_DESK' ? (
-                          <LifeBuoy className="w-3.5 h-3.5 text-emerald-500 shrink-0" />
-                        ) : (
-                          <Cpu className="w-3.5 h-3.5 text-indigo-500 shrink-0" />
-                        )}
-                        <span className="truncate">{proj.name}</span>
-                      </div>
-                      <span className="text-xs text-[var(--text-muted)] font-mono ml-1">{proj.key}</span>
-                    </button>
-
-                    {/* Sprints Folder for Direct Project */}
-                    {isSelected && (
-                      <div className="pl-3 space-y-1 pt-1 ml-1.5 border-l border-slate-700/50">
-                        <div className="flex items-center justify-between px-2 py-1 rounded-md bg-[var(--bg-elevated)] border border-[var(--border-subtle)] text-xs font-bold text-[var(--text-primary)]">
-                          <div className="flex items-center gap-1.5 truncate">
-                            <Layers className="w-3.5 h-3.5 text-indigo-500 shrink-0" />
-                            <span className="truncate">{proj.name} Sprints</span>
-                          </div>
-                          <span className="text-xs text-[var(--text-muted)] font-mono">{sprints.length}</span>
-                        </div>
-
-                        <div className="pl-2 space-y-0.5">
-                          {sprints.map((sp, idx) => {
-                            const sprintTasks = allTasks.filter((t) => t.sprintId === sp.id);
-                            const isFilterActive = filters.sprintId === sp.id;
-                            const dateLabel = sp.startDate
-                              ? `[${new Date(sp.startDate).toLocaleDateString([], { month: '2-digit', day: '2-digit' })}${sp.endDate ? ` - ${new Date(sp.endDate).toLocaleDateString([], { month: '2-digit', day: '2-digit' })}` : ''}]`
-                              : `[Sprint ${idx + 1}]`;
-
-                            return (
-                              <button
-                                key={sp.id}
-                                onClick={(e) => {
-                                  e.stopPropagation();
-                                  setActiveView('BOARD');
-                                  setFilter('sprintId', sp.id);
-                                }}
-                                className={`w-full flex items-center justify-between px-2 py-1 rounded text-xs transition-colors group ${
-                                  isFilterActive
-                                    ? 'bg-emerald-500/15 text-emerald-600 dark:text-emerald-300 font-bold border-l-2 border-emerald-500'
-                                    : 'text-[var(--text-secondary)] hover:text-[var(--text-primary)] hover:bg-[var(--bg-hover)]'
-                                }`}
-                              >
-                                <div className="flex items-center gap-1.5 truncate pr-1">
-                                  {sp.status === 'ACTIVE' ? (
-                                    <span className="w-2.5 h-2.5 rounded-full bg-emerald-500 shrink-0 shadow-sm animate-pulse" />
-                                  ) : sp.status === 'COMPLETED' ? (
-                                    <span className="w-2.5 h-2.5 rounded-full border-2 border-emerald-500 shrink-0" />
-                                  ) : (
-                                    <span className="w-2.5 h-2.5 rounded-full border-2 border-slate-400 shrink-0" />
-                                  )}
-                                  <span className="truncate group-hover:text-emerald-500">
-                                    {sp.name.split(' — ')[0]} <span className="text-xs text-[var(--text-muted)] font-mono">{dateLabel}</span>
-                                  </span>
-                                </div>
-
-                                <div className="flex items-center gap-1 shrink-0">
-                                  {sp.status === 'ACTIVE' && (
-                                    <span className="w-4 h-4 rounded-full bg-rose-500 text-white text-[9px] font-bold flex items-center justify-center">
-                                      {sprintTasks.filter((t) => t.priority === 'URGENT' || t.priority === 'HIGH').length || 1}
-                                    </span>
-                                  )}
-                                  <span className="text-xs font-mono text-[var(--text-muted)] group-hover:text-[var(--text-primary)] min-w-[14px] text-right">
-                                    {sprintTasks.length || sp.totalPoints || 0}
-                                  </span>
-                                </div>
-                              </button>
-                            );
-                          })}
-
-                          <button
-                            onClick={(e) => {
-                              e.stopPropagation();
-                              setActiveView('BACKLOG');
-                              setFilter('sprintId', undefined);
-                            }}
-                            className="w-full flex items-center justify-between px-2 py-1 rounded text-xs text-[var(--text-secondary)] hover:text-[var(--text-primary)] hover:bg-[var(--bg-hover)] transition-colors group"
-                          >
-                            <div className="flex items-center gap-1.5 truncate">
-                              <Layers className="w-3 h-3 text-slate-400 shrink-0" />
-                              <span className="truncate group-hover:text-indigo-500 font-medium">Product Backlog</span>
-                            </div>
-                            <span className="text-xs font-mono text-[var(--text-muted)]">
-                              {allTasks.filter((t) => !t.sprintId).length}
-                            </span>
-                          </button>
-
-                          <button
-                            onClick={(e) => {
-                              e.stopPropagation();
-                              setSprintModalOpen(true, { mode: 'create', sprint: null });
-                            }}
-                            className="w-full flex items-center gap-1.5 px-2 py-1 text-xs text-emerald-600 dark:text-emerald-400 hover:underline font-semibold mt-1"
-                          >
-                            <Plus className="w-3 h-3" />
-                            <span>Create Sprint</span>
-                          </button>
-                        </div>
-                      </div>
-                    )}
-                  </div>
+              {/* Direct projects not already nested in a folder */}
+              {(() => {
+                const nestedIds = new Set(
+                  (currentWorkspace?.folders || []).flatMap((f: any) =>
+                    (f.projects || []).map((p: any) => p.id)
+                  )
                 );
-              })}
+                return (currentWorkspace?.projects || [])
+                  .filter((proj: any) => !nestedIds.has(proj.id))
+                  .map((proj: any) => renderProjectRow(proj));
+              })()}
             </div>
           </div>
         </div>
