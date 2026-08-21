@@ -1144,8 +1144,8 @@ const mockTasksSeed: any[] = [
       'Found in DEV-38 perf QA: getTasksForColumn filters+sorts the full list per column every render (including during drag). Precompute tasks-by-status once.',
     issueType: 'BUG',
     priority: 'HIGH',
-    statusId: 'st_todo',
-    status: { id: 'st_todo', name: 'To Do', category: 'TODO', color: '#3b82f6' },
+    statusId: 'st_done',
+    status: { id: 'st_done', name: 'Done', category: 'DONE', color: '#10b981' },
     sprintId: 'sp_dev_2',
     storyPoints: 2,
     order: 45,
@@ -1263,6 +1263,7 @@ Agent logins: \`cursor@kortex.dev\` · \`antigravity@kortex.dev\` (password \`pa
 - 🟢 **[DEV-36]** QA audit: CRUD edge cases — **Done** · **Cursor** · sanitizePlainText + max lengths; empty/HTML-only title reject; comment sanitize; break-words overflow
 - 🟢 **[DEV-37]** QA audit: keyboard & a11y — **Done** · **Cursor** · focus trap + Esc on Task Detail Drawer & Command Palette; ARIA dialog/listbox; Arrow/Enter navigation
 - 🟢 **[DEV-38]** QA audit: performance 100+ tasks — **Done** · **Cursor** · Seeded \`proj_load\` (LOAD-1…120). Findings → DEV-43 (Kanban regroup), DEV-44 (search debounce)
+- 🟢 **[DEV-43]** Bug: Kanban re-filters columns every render — **Done** · **Cursor** · \`tasksByStatus\` useMemo (single pass group+sort)
 
 ---
 
@@ -1358,6 +1359,7 @@ Deploy: <url|failed> · commit <sha>
 
 ## Perf QA sandbox
 - Space **Operations & IT Support** → project \`Load Test (100+ tasks)\` (\`proj_load\`, keys \`LOAD-1\`…\`LOAD-120\`) for drag/search/filter checks.
+- Kanban groups tasks by status once per data change (\`tasksByStatus\` memo) — avoids O(columns×n) filter during drag.
 
 ## Hierarchy
 Organization → Spaces → Folders → Projects/Lists → **ClickUp-style \`{List} Sprints\` dropdown** → Tasks
