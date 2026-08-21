@@ -16,6 +16,8 @@ interface FilterState {
   issueTypes: IssueType[];
   sprintId?: string | null;
   onlyMyTasks: boolean;
+  /** URL-persisted sort key: priority | -priority | key | title | order */
+  sort: string;
 }
 
 interface ActiveTimer {
@@ -109,6 +111,7 @@ const initialFilters: FilterState = {
   issueTypes: [],
   sprintId: undefined,
   onlyMyTasks: false,
+  sort: '',
 };
 
 function loadSessionNav() {

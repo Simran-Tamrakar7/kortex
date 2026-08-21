@@ -127,7 +127,8 @@ export const ViewTabs: React.FC<Props> = ({ totalTaskCount = 0 }) => {
     filters.priorities.length > 0 ||
     filters.issueTypes.length > 0 ||
     filters.statusIds.length > 0 ||
-    filters.sprintId !== undefined;
+    filters.sprintId !== undefined ||
+    !!filters.sort;
 
   const handleClear = () => {
     if (searchTimer.current) clearTimeout(searchTimer.current);
@@ -237,6 +238,24 @@ export const ViewTabs: React.FC<Props> = ({ totalTaskCount = 0 }) => {
             <option value="STORY">🔖 Story</option>
             <option value="TASK">☑️ Task</option>
             <option value="BUG">⚠️ Bug</option>
+          </select>
+
+          {/* Sort (URL-persisted on List / Kanban / Spreadsheet) */}
+          <select
+            value={filters.sort || ''}
+            onChange={(e) => {
+              setFilter('sort', e.target.value);
+              setActivePreset(null);
+            }}
+            className="bg-[var(--bg-input)] border border-[var(--border-default)] rounded-md px-2 py-1 text-xs text-[var(--text-primary)] outline-none cursor-pointer shadow-sm"
+          >
+            <option value="">Sort</option>
+            <option value="priority">Priority ↑</option>
+            <option value="-priority">Priority ↓</option>
+            <option value="key">Key ↑</option>
+            <option value="-key">Key ↓</option>
+            <option value="title">Title ↑</option>
+            <option value="-title">Title ↓</option>
           </select>
 
           {/* Clear Filters button */}

@@ -1108,8 +1108,8 @@ const mockTasksSeed: any[] = [
       'Originating request: persist filters/search/sort in URL query (?priority=high&search=auth) for bookmarkable/shareable filtered views.',
     issueType: 'STORY',
     priority: 'HIGH',
-    statusId: 'st_todo',
-    status: { id: 'st_todo', name: 'To Do', category: 'TODO', color: '#3b82f6' },
+    statusId: 'st_done',
+    status: { id: 'st_done', name: 'Done', category: 'DONE', color: '#10b981' },
     sprintId: 'sp_dev_2',
     storyPoints: 5,
     order: 41,
@@ -1265,6 +1265,7 @@ Agent logins: \`cursor@kortex.dev\` · \`antigravity@kortex.dev\` (password \`pa
 - 🟢 **[DEV-38]** QA audit: performance 100+ tasks — **Done** · **Cursor** · Seeded \`proj_load\` (LOAD-1…120). Findings → DEV-43 (Kanban regroup), DEV-44 (search debounce)
 - 🟢 **[DEV-43]** Bug: Kanban re-filters columns every render — **Done** · **Cursor** · \`tasksByStatus\` useMemo (single pass group+sort)
 - 🟢 **[DEV-44]** Bug: search updates store every keystroke — **Done** · **Cursor** · 200ms debounce on ViewTabs search before \`setFilter\`
+- 🟢 **[DEV-39]** URL-persisted filters (List/Kanban/Spreadsheet) — **Done** · **Cursor** · \`?view=&search=&priority=&type=&sprint=&sort=&my=1\` via \`useUrlFilterSync\`
 
 ---
 
@@ -1362,6 +1363,10 @@ Deploy: <url|failed> · commit <sha>
 - Space **Operations & IT Support** → project \`Load Test (100+ tasks)\` (\`proj_load\`, keys \`LOAD-1\`…\`LOAD-120\`) for drag/search/filter checks.
 - Kanban groups tasks by status once per data change (\`tasksByStatus\` memo) — avoids O(columns×n) filter during drag.
 - Toolbar search commits to filters after 200ms debounce (avoids per-keystroke board re-query).
+
+## URL-persisted filters
+- On **List**, **Kanban**, and **Spreadsheet** views, active filters sync to the query string (\`?view=BOARD&search=auth&priority=HIGH&type=BUG&sprint=…&sort=priority&my=1\`).
+- Bookmark/share restores on load (URL wins over session storage for those fields). Helpers: \`frontend/src/lib/urlFilters.ts\`, \`useUrlFilterSync\`.
 
 ## Hierarchy
 Organization → Spaces → Folders → Projects/Lists → **ClickUp-style \`{List} Sprints\` dropdown** → Tasks
