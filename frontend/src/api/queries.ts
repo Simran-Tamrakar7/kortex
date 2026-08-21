@@ -82,8 +82,10 @@ const mockProjectDev: any = {
     { id: 'st_backlog', name: 'Backlog', category: 'TODO', color: '#64748b', order: 0 },
     { id: 'st_todo', name: 'To Do', category: 'TODO', color: '#3b82f6', order: 1, wipLimit: 10 },
     { id: 'st_inprogress', name: 'In Progress', category: 'IN_PROGRESS', color: '#8b5cf6', order: 2, wipLimit: 6 },
-    { id: 'st_review', name: 'Code Review', category: 'IN_REVIEW', color: '#f59e0b', order: 3, wipLimit: 4 },
-    { id: 'st_done', name: 'Done', category: 'DONE', color: '#10b981', order: 4 },
+    { id: 'st_review', name: 'In Review', category: 'IN_REVIEW', color: '#f59e0b', order: 3, wipLimit: 4 },
+    { id: 'st_deploying', name: 'Deploying', category: 'DEPLOYING', color: '#06b6d4', order: 4, wipLimit: 3 },
+    { id: 'st_blocked', name: 'Blocked', category: 'BLOCKED', color: '#ef4444', order: 5 },
+    { id: 'st_done', name: 'Done', category: 'DONE', color: '#10b981', order: 6 },
   ],
   customFields: [
     { id: 'cf_1', name: 'Severity Level', type: 'DROPDOWN' },
@@ -102,8 +104,10 @@ const mockProjectKor: any = {
     { id: 'st_backlog', name: 'Backlog', category: 'TODO', color: '#64748b', order: 0 },
     { id: 'st_todo', name: 'To Do', category: 'TODO', color: '#3b82f6', order: 1, wipLimit: 8 },
     { id: 'st_inprogress', name: 'In Progress', category: 'IN_PROGRESS', color: '#8b5cf6', order: 2, wipLimit: 5 },
-    { id: 'st_review', name: 'Code Review', category: 'IN_REVIEW', color: '#f59e0b', order: 3, wipLimit: 4 },
-    { id: 'st_done', name: 'Done', category: 'DONE', color: '#10b981', order: 4 },
+    { id: 'st_review', name: 'In Review', category: 'IN_REVIEW', color: '#f59e0b', order: 3, wipLimit: 4 },
+    { id: 'st_deploying', name: 'Deploying', category: 'DEPLOYING', color: '#06b6d4', order: 4, wipLimit: 3 },
+    { id: 'st_blocked', name: 'Blocked', category: 'BLOCKED', color: '#ef4444', order: 5 },
+    { id: 'st_done', name: 'Done', category: 'DONE', color: '#10b981', order: 6 },
   ],
 };
 
@@ -719,7 +723,8 @@ const mockTasks: any[] = [
     key: 'DEV-EPIC-AGENTS',
     projectId: 'proj_dev',
     title: 'Agent Work Log — Cursor & Antigravity',
-    description: 'All autonomous agent turns are tracked here with accurate Kanban status (To Do → In Progress → Code Review → Done).',
+    description:
+      'All autonomous agent turns are tracked here. Live statuses: To Do → In Progress → In Review → Deploying → Done (or Blocked).',
     issueType: 'EPIC',
     priority: 'HIGH',
     statusId: 'st_inprogress',
@@ -807,6 +812,61 @@ const mockTasks: any[] = [
     labels: ['Sidebar', 'Sprints', 'ClickUp', 'Cursor'],
     assignees: [{ id: 'usr_cursor', name: 'Cursor', avatarUrl: 'https://api.dicebear.com/7.x/bottts/svg?seed=cursor' }],
   },
+  // Prompt: tighten agent workflow rules (statuses, auto-task, docs, deploy)
+  {
+    id: 't_dev_30',
+    key: 'DEV-30',
+    projectId: 'proj_dev',
+    epicId: 't_epic_agents',
+    title: 'Add Deploying and Blocked board statuses for live agent tracking',
+    description:
+      'Originating request: tighten agent Rule 1 with granular stages To Do → In Progress → In Review → Deploying → Done (or Blocked). Rename Code Review → In Review; add Deploying + Blocked columns on DEV/KOR boards.',
+    issueType: 'TASK',
+    priority: 'HIGH',
+    statusId: 'st_done',
+    status: { id: 'st_done', name: 'Done', category: 'DONE', color: '#10b981' },
+    sprintId: 'sp_dev_2',
+    storyPoints: 3,
+    order: 32,
+    labels: ['Agents', 'Statuses', 'Kanban', 'Cursor'],
+    assignees: [{ id: 'usr_cursor', name: 'Cursor', avatarUrl: 'https://api.dicebear.com/7.x/bottts/svg?seed=cursor' }],
+  },
+  {
+    id: 't_dev_31',
+    key: 'DEV-31',
+    projectId: 'proj_dev',
+    epicId: 't_epic_agents',
+    title: 'Document agent workflow in Kortex Platform Walkthrough',
+    description:
+      'Originating request: every prompt auto-creates DEV tasks before work; docs stay in sync; end-of-prompt summary format; living Walkthrough spec (no batching docs to the end).',
+    issueType: 'TASK',
+    priority: 'HIGH',
+    statusId: 'st_todo',
+    status: { id: 'st_todo', name: 'To Do', category: 'TODO', color: '#3b82f6' },
+    sprintId: 'sp_dev_2',
+    storyPoints: 5,
+    order: 33,
+    labels: ['Docs', 'Walkthrough', 'Agents', 'Cursor'],
+    assignees: [{ id: 'usr_cursor', name: 'Cursor', avatarUrl: 'https://api.dicebear.com/7.x/bottts/svg?seed=cursor' }],
+  },
+  {
+    id: 't_dev_32',
+    key: 'DEV-32',
+    projectId: 'proj_dev',
+    epicId: 't_epic_agents',
+    title: 'Per-task deploy rules: one commit, verify, tag, changelog as deploy history',
+    description:
+      'Originating request: deploy after every change; self-check before Deploying; no Done on failed deploy; rollback/Blocked on broken prod; version/task-ID tags; duplicate-task link preference.',
+    issueType: 'TASK',
+    priority: 'HIGH',
+    statusId: 'st_todo',
+    status: { id: 'st_todo', name: 'To Do', category: 'TODO', color: '#3b82f6' },
+    sprintId: 'sp_dev_2',
+    storyPoints: 5,
+    order: 34,
+    labels: ['Deploy', 'Vercel', 'Agents', 'Cursor'],
+    assignees: [{ id: 'usr_cursor', name: 'Cursor', avatarUrl: 'https://api.dicebear.com/7.x/bottts/svg?seed=cursor' }],
+  },
 ];
 
 const mockDocs: any[] = [
@@ -832,6 +892,9 @@ Agent logins: \`cursor@kortex.dev\` · \`antigravity@kortex.dev\` (password \`pa
 - 🟢 **[DEV-27]** Create agent users Cursor & Antigravity + deploy work tracking — **Done** · **Cursor**, **Antigravity**
 - 🟢 **[DEV-28]** [Agent queue] Next Cursor / Antigravity turn — **Done** · **Cursor**
 - 🟢 **[DEV-29]** ClickUp-style nested Sprints folder in Space sidebar — **Done** · **Cursor**
+- 🟢 **[DEV-30]** Add Deploying and Blocked board statuses for live agent tracking — **Done** · **Cursor**
+- 🔵 **[DEV-31]** Document agent workflow in Kortex Platform Walkthrough — **To Do** · **Cursor**
+- 🔵 **[DEV-32]** Per-task deploy rules: one commit, verify, tag, changelog as deploy history — **To Do** · **Cursor**
 
 ---
 

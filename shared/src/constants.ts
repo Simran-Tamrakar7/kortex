@@ -19,6 +19,8 @@ export const DEFAULT_STATUS_CATEGORIES: { key: StatusCategory; label: string; de
   { key: 'TODO', label: 'To Do', defaultColor: '#64748b' },
   { key: 'IN_PROGRESS', label: 'In Progress', defaultColor: '#3b82f6' },
   { key: 'IN_REVIEW', label: 'In Review', defaultColor: '#f59e0b' },
+  { key: 'DEPLOYING', label: 'Deploying', defaultColor: '#06b6d4' },
+  { key: 'BLOCKED', label: 'Blocked', defaultColor: '#ef4444' },
   { key: 'DONE', label: 'Done', defaultColor: '#10b981' },
 ];
 

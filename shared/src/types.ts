@@ -6,7 +6,7 @@ export type IssueType = 'EPIC' | 'STORY' | 'TASK' | 'SUBTASK' | 'BUG';
 
 export type Priority = 'URGENT' | 'HIGH' | 'MEDIUM' | 'LOW';
 
-export type StatusCategory = 'TODO' | 'IN_PROGRESS' | 'IN_REVIEW' | 'DONE';
+export type StatusCategory = 'TODO' | 'IN_PROGRESS' | 'IN_REVIEW' | 'DEPLOYING' | 'BLOCKED' | 'DONE';
 
 export type DependencyType = 'BLOCKS' | 'BLOCKED_BY' | 'RELATES_TO' | 'DUPLICATES';
 

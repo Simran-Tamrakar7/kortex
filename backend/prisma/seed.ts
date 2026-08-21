@@ -194,8 +194,10 @@ async function main() {
           { name: 'Backlog', category: 'TODO', color: '#64748b', order: 0 },
           { name: 'To Do', category: 'TODO', color: '#3b82f6', order: 1, wipLimit: 10 },
           { name: 'In Progress', category: 'IN_PROGRESS', color: '#8b5cf6', order: 2, wipLimit: 6 },
-          { name: 'Code Review', category: 'IN_REVIEW', color: '#f59e0b', order: 3, wipLimit: 4 },
-          { name: 'Done', category: 'DONE', color: '#10b981', order: 4 },
+          { name: 'In Review', category: 'IN_REVIEW', color: '#f59e0b', order: 3, wipLimit: 4 },
+          { name: 'Deploying', category: 'DEPLOYING', color: '#06b6d4', order: 4, wipLimit: 3 },
+          { name: 'Blocked', category: 'BLOCKED', color: '#ef4444', order: 5 },
+          { name: 'Done', category: 'DONE', color: '#10b981', order: 6 },
         ],
       },
     },
@@ -219,7 +221,8 @@ async function main() {
     orderBy: { order: 'asc' },
   });
   const stDevInProgress = devStatuses[2];
-  const stDevDone = devStatuses[4];
+  const stDevTodo = devStatuses[1];
+  const stDevDone = devStatuses[6]; // Done is last after Deploying + Blocked
 
   // Agent work log epic + completed/in-progress agent tasks (status mirrors real work)
   const epicAgents = await prisma.task.create({
@@ -227,13 +230,14 @@ async function main() {
       key: 'DEV-EPIC-AGENTS',
       projectId: devProject.id,
       title: 'Agent Work Log — Cursor & Antigravity',
-      description: 'All autonomous agent turns are tracked here with accurate Kanban status (To Do → In Progress → Code Review → Done).',
+      description:
+        'All autonomous agent turns are tracked here. Live statuses: To Do → In Progress → In Review → Deploying → Done (or Blocked).',
       issueType: 'EPIC',
       priority: 'HIGH',
       statusId: stDevInProgress.id,
       reporterId: alex.id,
       sprintId: sprint1.id,
-      storyPoints: 21,
+      storyPoints: 34,
       labelsJson: JSON.stringify(['Agents', 'Cursor', 'Antigravity']),
       order: 0,
       assignees: { create: [{ userId: cursor.id }, { userId: antigravity.id }] },
@@ -320,6 +324,66 @@ async function main() {
     },
   });
 
+  await prisma.task.create({
+    data: {
+      key: 'DEV-30',
+      projectId: devProject.id,
+      epicId: epicAgents.id,
+      title: 'Add Deploying and Blocked board statuses for live agent tracking',
+      description:
+        'Originating request: tighten agent Rule 1 with granular stages To Do → In Progress → In Review → Deploying → Done (or Blocked).',
+      issueType: 'TASK',
+      priority: 'HIGH',
+      statusId: stDevDone.id,
+      reporterId: cursor.id,
+      sprintId: sprint1.id,
+      storyPoints: 3,
+      labelsJson: JSON.stringify(['Agents', 'Statuses', 'Kanban', 'Cursor']),
+      order: 104,
+      assignees: { create: [{ userId: cursor.id }] },
+    },
+  });
+
+  await prisma.task.create({
+    data: {
+      key: 'DEV-31',
+      projectId: devProject.id,
+      epicId: epicAgents.id,
+      title: 'Document agent workflow in Kortex Platform Walkthrough',
+      description:
+        'Originating request: every prompt auto-creates DEV tasks before work; docs stay in sync; end-of-prompt summary format; living Walkthrough spec.',
+      issueType: 'TASK',
+      priority: 'HIGH',
+      statusId: stDevTodo.id,
+      reporterId: cursor.id,
+      sprintId: sprint1.id,
+      storyPoints: 5,
+      labelsJson: JSON.stringify(['Docs', 'Walkthrough', 'Agents', 'Cursor']),
+      order: 105,
+      assignees: { create: [{ userId: cursor.id }] },
+    },
+  });
+
+  await prisma.task.create({
+    data: {
+      key: 'DEV-32',
+      projectId: devProject.id,
+      epicId: epicAgents.id,
+      title: 'Per-task deploy rules: one commit, verify, tag, changelog as deploy history',
+      description:
+        'Originating request: deploy after every change; self-check before Deploying; rollback/Blocked on failed deploy; version/task-ID tags.',
+      issueType: 'TASK',
+      priority: 'HIGH',
+      statusId: stDevTodo.id,
+      reporterId: cursor.id,
+      sprintId: sprint1.id,
+      storyPoints: 5,
+      labelsJson: JSON.stringify(['Deploy', 'Vercel', 'Agents', 'Cursor']),
+      order: 106,
+      assignees: { create: [{ userId: cursor.id }] },
+    },
+  });
+
   // Create Kortex Changelog doc linked to DEV project
   await prisma.doc.create({
     data: {
@@ -332,16 +396,20 @@ async function main() {
 
 All completed engineering work items, bug fixes, and feature releases are logged below with dated entries and direct task links.
 
-Agent accounts: \`cursor@kortex.dev\` / \`antigravity@kortex.dev\` (password: \`password123\`). Every agent turn adds a DEV task and sets status to match work.
+Agent accounts: \`cursor@kortex.dev\` / \`antigravity@kortex.dev\` (password: \`password123\`).
+Live statuses: To Do → In Progress → In Review → Deploying → Done (or Blocked).
 
 ---
 
 ## 🤖 [Sprint 1] — Agent Work Log
 ### 📅 August 21, 2026
-- **[DEV-26] Standardize typography** — Done · assignee **Cursor**
-- **[DEV-27] Agent users + deploy tracking** — Done · assignees **Cursor**, **Antigravity**
-- **[DEV-28] Agent queue turn** — Done · assignee **Cursor**
-- **[DEV-29] ClickUp-style nested Sprints folder in Space sidebar** — Done · assignee **Cursor**
+- **[DEV-26] Standardize typography** — Done · **Cursor**
+- **[DEV-27] Agent users + deploy tracking** — Done · **Cursor**, **Antigravity**
+- **[DEV-28] Agent queue turn** — Done · **Cursor**
+- **[DEV-29] ClickUp-style nested Sprints folder** — Done · **Cursor**
+- **[DEV-30] Deploying + Blocked board statuses** — Done · **Cursor**
+- **[DEV-31] Agent workflow Walkthrough docs** — To Do · **Cursor**
+- **[DEV-32] Per-task deploy / verify / tag rules** — To Do · **Cursor**
 
 ---
 
@@ -444,10 +512,16 @@ Agent accounts: \`cursor@kortex.dev\` / \`antigravity@kortex.dev\` (password: \`
     data: { projectId: scrumProject.id, name: 'In Progress', category: 'IN_PROGRESS', color: '#8b5cf6', order: 2, wipLimit: 5 },
   });
   const statusCodeReview = await prisma.status.create({
-    data: { projectId: scrumProject.id, name: 'Code Review', category: 'IN_REVIEW', color: '#f59e0b', order: 3, wipLimit: 4 },
+    data: { projectId: scrumProject.id, name: 'In Review', category: 'IN_REVIEW', color: '#f59e0b', order: 3, wipLimit: 4 },
+  });
+  await prisma.status.create({
+    data: { projectId: scrumProject.id, name: 'Deploying', category: 'DEPLOYING', color: '#06b6d4', order: 4, wipLimit: 3 },
+  });
+  await prisma.status.create({
+    data: { projectId: scrumProject.id, name: 'Blocked', category: 'BLOCKED', color: '#ef4444', order: 5 },
   });
   const statusDone = await prisma.status.create({
-    data: { projectId: scrumProject.id, name: 'Done', category: 'DONE', color: '#10b981', order: 4 },
+    data: { projectId: scrumProject.id, name: 'Done', category: 'DONE', color: '#10b981', order: 6 },
   });
 
   // Default Views for Scrum project
