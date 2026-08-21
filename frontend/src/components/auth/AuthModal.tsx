@@ -19,6 +19,8 @@ export const AuthModal: React.FC = () => {
     { email: 'jordan@kortex.dev', name: 'Jordan Smith', role: 'Frontend Architect', avatar: 'https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?w=150&auto=format&fit=crop&q=80' },
     { email: 'devon@kortex.dev', name: 'Devon Vance', role: 'DevOps & SRE Lead', avatar: 'https://images.unsplash.com/photo-1500648767791-00dcc994a43e?w=150&auto=format&fit=crop&q=80' },
     { email: 'priya@kortex.dev', name: 'Priya Patel', role: 'QA Lead', avatar: 'https://images.unsplash.com/photo-1573496359142-b8d87734a5a2?w=150&auto=format&fit=crop&q=80' },
+    { email: 'cursor@kortex.dev', name: 'Cursor', role: 'AI Agent (Cloud)', avatar: 'https://api.dicebear.com/7.x/bottts/svg?seed=cursor' },
+    { email: 'antigravity@kortex.dev', name: 'Antigravity', role: 'AI Agent', avatar: 'https://api.dicebear.com/7.x/bottts/svg?seed=antigravity' },
   ];
 
   const handleSubmit = async (e: React.FormEvent) => {

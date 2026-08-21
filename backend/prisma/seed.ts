@@ -88,7 +88,28 @@ async function main() {
     },
   });
 
-  console.log('✅ Created 5 team users');
+  // Agent accounts — every agent turn logs work as DEV tasks under these users
+  const cursor = await prisma.user.create({
+    data: {
+      email: 'cursor@kortex.dev',
+      name: 'Cursor',
+      passwordHash: defaultPassword,
+      avatarUrl: 'https://api.dicebear.com/7.x/bottts/svg?seed=cursor',
+      timezone: 'UTC',
+    },
+  });
+
+  const antigravity = await prisma.user.create({
+    data: {
+      email: 'antigravity@kortex.dev',
+      name: 'Antigravity',
+      passwordHash: defaultPassword,
+      avatarUrl: 'https://api.dicebear.com/7.x/bottts/svg?seed=antigravity',
+      timezone: 'UTC',
+    },
+  });
+
+  console.log('✅ Created 7 team users (incl. Cursor + Antigravity agents)');
 
   // 3. Create Organization
   const org = await prisma.organization.create({
@@ -104,6 +125,8 @@ async function main() {
           { userId: jordan.id, role: 'MEMBER' },
           { userId: devon.id, role: 'MEMBER' },
           { userId: priya.id, role: 'MEMBER' },
+          { userId: cursor.id, role: 'MEMBER' },
+          { userId: antigravity.id, role: 'MEMBER' },
         ],
       },
     },
@@ -125,6 +148,8 @@ async function main() {
           { userId: jordan.id, role: 'MEMBER' },
           { userId: devon.id, role: 'MEMBER' },
           { userId: priya.id, role: 'MEMBER' },
+          { userId: cursor.id, role: 'MEMBER' },
+          { userId: antigravity.id, role: 'MEMBER' },
         ],
       },
     },
@@ -146,6 +171,8 @@ async function main() {
           { userId: jordan.id, role: 'MEMBER' },
           { userId: devon.id, role: 'MEMBER' },
           { userId: priya.id, role: 'MEMBER' },
+          { userId: cursor.id, role: 'MEMBER' },
+          { userId: antigravity.id, role: 'MEMBER' },
         ],
       },
     },
@@ -181,9 +208,96 @@ async function main() {
       name: 'Sprint 1',
       goal: 'Stabilize current build and ship AI features',
       status: 'ACTIVE',
-      totalPoints: 68,
-      completedPoints: 47,
+      totalPoints: 78,
+      completedPoints: 55,
       startDate: new Date(),
+    },
+  });
+
+  const devStatuses = await prisma.status.findMany({
+    where: { projectId: devProject.id },
+    orderBy: { order: 'asc' },
+  });
+  const stDevTodo = devStatuses[1];
+  const stDevInProgress = devStatuses[2];
+  const stDevDone = devStatuses[4];
+
+  // Agent work log epic + completed/in-progress agent tasks (status mirrors real work)
+  const epicAgents = await prisma.task.create({
+    data: {
+      key: 'DEV-EPIC-AGENTS',
+      projectId: devProject.id,
+      title: 'Agent Work Log — Cursor & Antigravity',
+      description: 'All autonomous agent turns are tracked here with accurate Kanban status (To Do → In Progress → Code Review → Done).',
+      issueType: 'EPIC',
+      priority: 'HIGH',
+      statusId: stDevInProgress.id,
+      reporterId: alex.id,
+      sprintId: sprint1.id,
+      storyPoints: 21,
+      labelsJson: JSON.stringify(['Agents', 'Cursor', 'Antigravity']),
+      order: 0,
+      assignees: { create: [{ userId: cursor.id }, { userId: antigravity.id }] },
+    },
+  });
+
+  await prisma.task.create({
+    data: {
+      key: 'DEV-26',
+      projectId: devProject.id,
+      epicId: epicAgents.id,
+      title: 'Standardize fonts and text sizes to readable defaults',
+      description:
+        'Set 16px browser-standard rem base, clamp size controls to 14–18px, replace hardcoded 10/11px text with rem-based text-xs, bump chart labels.',
+      issueType: 'TASK',
+      priority: 'HIGH',
+      statusId: stDevDone.id,
+      reporterId: cursor.id,
+      sprintId: sprint1.id,
+      storyPoints: 3,
+      labelsJson: JSON.stringify(['Typography', 'UI', 'Cursor']),
+      order: 100,
+      assignees: { create: [{ userId: cursor.id }] },
+    },
+  });
+
+  await prisma.task.create({
+    data: {
+      key: 'DEV-27',
+      projectId: devProject.id,
+      epicId: epicAgents.id,
+      title: 'Create agent users Cursor & Antigravity + deploy work tracking',
+      description:
+        'Seed/login users cursor@kortex.dev and antigravity@kortex.dev. Every agent change is logged as a DEV task with the correct status and assignee.',
+      issueType: 'TASK',
+      priority: 'HIGH',
+      statusId: stDevDone.id,
+      reporterId: cursor.id,
+      sprintId: sprint1.id,
+      storyPoints: 5,
+      labelsJson: JSON.stringify(['Agents', 'Seed', 'Deploy', 'Cursor']),
+      order: 101,
+      assignees: { create: [{ userId: cursor.id }, { userId: antigravity.id }] },
+    },
+  });
+
+  // Standing backlog slot for the next agent turn
+  await prisma.task.create({
+    data: {
+      key: 'DEV-28',
+      projectId: devProject.id,
+      epicId: epicAgents.id,
+      title: '[Agent queue] Next Cursor / Antigravity turn',
+      description: 'Placeholder: move to In Progress when an agent starts work; close as Done when shipped & deployed.',
+      issueType: 'TASK',
+      priority: 'MEDIUM',
+      statusId: stDevTodo.id,
+      reporterId: alex.id,
+      sprintId: sprint1.id,
+      storyPoints: 3,
+      labelsJson: JSON.stringify(['Agents', 'Queue']),
+      order: 102,
+      assignees: { create: [{ userId: cursor.id }] },
     },
   });
 
@@ -198,6 +312,16 @@ async function main() {
       content: `# Kortex Platform Changelog & Release Notes
 
 All completed engineering work items, bug fixes, and feature releases are logged below with dated entries and direct task links.
+
+Agent accounts: \`cursor@kortex.dev\` / \`antigravity@kortex.dev\` (password: \`password123\`). Every agent turn adds a DEV task and sets status to match work.
+
+---
+
+## 🤖 [Sprint 1] — Agent Work Log
+### 📅 August 21, 2026
+- **[DEV-26] Standardize typography** — Done · assignee **Cursor**
+- **[DEV-27] Agent users + deploy tracking** — Done · assignees **Cursor**, **Antigravity**
+- **[DEV-28] Next agent turn queue** — To Do · assignee **Cursor**
 
 ---
 

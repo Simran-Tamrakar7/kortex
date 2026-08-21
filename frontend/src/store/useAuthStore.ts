@@ -80,6 +80,30 @@ const demoUsersMap: Record<string, { user: User; role: string }> = {
     },
     role: 'MEMBER',
   },
+  'cursor@kortex.dev': {
+    user: {
+      id: 'usr_cursor',
+      email: 'cursor@kortex.dev',
+      name: 'Cursor',
+      avatarUrl: 'https://api.dicebear.com/7.x/bottts/svg?seed=cursor',
+      timezone: 'UTC',
+      createdAt: new Date().toISOString(),
+      updatedAt: new Date().toISOString(),
+    },
+    role: 'MEMBER',
+  },
+  'antigravity@kortex.dev': {
+    user: {
+      id: 'usr_antigravity',
+      email: 'antigravity@kortex.dev',
+      name: 'Antigravity',
+      avatarUrl: 'https://api.dicebear.com/7.x/bottts/svg?seed=antigravity',
+      timezone: 'UTC',
+      createdAt: new Date().toISOString(),
+      updatedAt: new Date().toISOString(),
+    },
+    role: 'MEMBER',
+  },
 };
 
 const fallbackOrg: Organization = {
@@ -93,6 +117,17 @@ const fallbackOrg: Organization = {
 };
 
 const fallbackWorkspaces: Workspace[] = [
+  {
+    id: 'ws_dev',
+    orgId: 'org_acme',
+    name: 'Product Development',
+    slug: 'product-dev',
+    description: 'Primary product development space for Kortex core platform and AI agents',
+    icon: 'Layers',
+    color: '#6366f1',
+    createdAt: new Date().toISOString(),
+    updatedAt: new Date().toISOString(),
+  },
   {
     id: 'ws_eng',
     orgId: 'org_acme',

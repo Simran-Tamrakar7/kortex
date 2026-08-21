@@ -623,6 +623,83 @@ const mockTasks: any[] = [
     labels: ['Whiteboard', 'Canvas', 'Ideation'],
     assignees: [{ id: 'usr_jordan', name: 'Jordan Smith', avatarUrl: 'https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?w=150&auto=format&fit=crop&q=80' }],
   },
+
+  // Agent work log (Cursor & Antigravity) — status always mirrors what agents shipped
+  {
+    id: 't_epic_agents',
+    key: 'DEV-EPIC-AGENTS',
+    projectId: 'proj_dev',
+    title: 'Agent Work Log — Cursor & Antigravity',
+    description: 'All autonomous agent turns are tracked here with accurate Kanban status (To Do → In Progress → Code Review → Done).',
+    issueType: 'EPIC',
+    priority: 'HIGH',
+    statusId: 'st_inprogress',
+    status: { id: 'st_inprogress', name: 'In Progress', category: 'IN_PROGRESS', color: '#8b5cf6' },
+    sprintId: 'sp_dev_1',
+    storyPoints: 21,
+    order: 27,
+    labels: ['Agents', 'Cursor', 'Antigravity'],
+    assignees: [
+      { id: 'usr_cursor', name: 'Cursor', avatarUrl: 'https://api.dicebear.com/7.x/bottts/svg?seed=cursor' },
+      { id: 'usr_antigravity', name: 'Antigravity', avatarUrl: 'https://api.dicebear.com/7.x/bottts/svg?seed=antigravity' },
+    ],
+  },
+  {
+    id: 't_dev_26',
+    key: 'DEV-26',
+    projectId: 'proj_dev',
+    epicId: 't_epic_agents',
+    title: 'Standardize fonts and text sizes to readable defaults',
+    description:
+      'Set 16px browser-standard rem base, clamp size controls to 14–18px, replace hardcoded 10/11px text with rem-based text-xs, bump chart labels.',
+    issueType: 'TASK',
+    priority: 'HIGH',
+    statusId: 'st_done',
+    status: { id: 'st_done', name: 'Done', category: 'DONE', color: '#10b981' },
+    sprintId: 'sp_dev_1',
+    storyPoints: 3,
+    order: 28,
+    labels: ['Typography', 'UI', 'Cursor'],
+    assignees: [{ id: 'usr_cursor', name: 'Cursor', avatarUrl: 'https://api.dicebear.com/7.x/bottts/svg?seed=cursor' }],
+  },
+  {
+    id: 't_dev_27',
+    key: 'DEV-27',
+    projectId: 'proj_dev',
+    epicId: 't_epic_agents',
+    title: 'Create agent users Cursor & Antigravity + deploy work tracking',
+    description:
+      'Seed/login users cursor@kortex.dev and antigravity@kortex.dev. Every agent change is logged as a DEV task with the correct status and assignee, then deployed.',
+    issueType: 'TASK',
+    priority: 'HIGH',
+    statusId: 'st_done',
+    status: { id: 'st_done', name: 'Done', category: 'DONE', color: '#10b981' },
+    sprintId: 'sp_dev_1',
+    storyPoints: 5,
+    order: 29,
+    labels: ['Agents', 'Seed', 'Deploy', 'Cursor'],
+    assignees: [
+      { id: 'usr_cursor', name: 'Cursor', avatarUrl: 'https://api.dicebear.com/7.x/bottts/svg?seed=cursor' },
+      { id: 'usr_antigravity', name: 'Antigravity', avatarUrl: 'https://api.dicebear.com/7.x/bottts/svg?seed=antigravity' },
+    ],
+  },
+  {
+    id: 't_dev_28',
+    key: 'DEV-28',
+    projectId: 'proj_dev',
+    epicId: 't_epic_agents',
+    title: '[Agent queue] Next Cursor / Antigravity turn',
+    description: 'Placeholder: move to In Progress when an agent starts work; close as Done when shipped & deployed.',
+    issueType: 'TASK',
+    priority: 'MEDIUM',
+    statusId: 'st_todo',
+    status: { id: 'st_todo', name: 'To Do', category: 'TODO', color: '#3b82f6' },
+    sprintId: 'sp_dev_1',
+    storyPoints: 3,
+    order: 30,
+    labels: ['Agents', 'Queue'],
+    assignees: [{ id: 'usr_cursor', name: 'Cursor', avatarUrl: 'https://api.dicebear.com/7.x/bottts/svg?seed=cursor' }],
+  },
 ];
 
 const mockDocs: any[] = [
@@ -635,6 +712,18 @@ const mockDocs: any[] = [
     content: `# Kortex Platform Changelog & Sprint Release History
 
 All engineering tasks, bug fixes, and feature milestones are documented below with direct task IDs and sprint tags.
+
+Agent logins: \`cursor@kortex.dev\` · \`antigravity@kortex.dev\` (password \`password123\`). Agents always create/update DEV tasks to match real status, then deploy.
+
+---
+
+## 🤖 Agent Work Log — Cursor & Antigravity
+*Status: ACTIVE*
+
+### 📅 August 21, 2026
+- 🟢 **[DEV-26]** Standardize fonts and text sizes to readable defaults — **Done** · **Cursor**
+- 🟢 **[DEV-27]** Create agent users Cursor & Antigravity + deploy work tracking — **Done** · **Cursor**, **Antigravity**
+- 🔵 **[DEV-28]** [Agent queue] Next Cursor / Antigravity turn — **To Do** · **Cursor**
 
 ---
 
